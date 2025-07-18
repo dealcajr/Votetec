@@ -3,19 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Fingerprint, User, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { Label } from "./ui/label";
 
 interface WelcomeScreenProps {
   onStart: (voterId: string) => void;
 }
-
-const juniorHighVoter = {
-  id: "VOTE-JH-12345",
-  name: "Jamie Santos",
-  grade: "10",
-  section: "A",
-};
 
 const seniorHighVoter = {
   id: "VOTE-SH-67890",
@@ -26,11 +17,10 @@ const seniorHighVoter = {
 };
 
 export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
-  const [step, setStep] = useState<"level" | "verify" | "verified">("level");
-  const [level, setLevel] = useState<"junior" | "senior" | null>(null);
+  const [step, setStep] = useState<"verify" | "verified">("verify");
   const [isVerifying, setIsVerifying] = useState(false);
 
-  const voter = level === "junior" ? juniorHighVoter : seniorHighVoter;
+  const voter = seniorHighVoter;
 
   const handleVerify = () => {
     setIsVerifying(true);
@@ -47,52 +37,6 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
     <div className="animate-fade-in w-full max-w-sm text-center">
       <AnimatePresence mode="wait">
-        {step === "level" && (
-          <motion.div
-            key="level"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="space-y-6"
-          >
-            <div className="space-y-2">
-              <h2 className="text-2xl font-semibold tracking-tight">
-                Select Your Level
-              </h2>
-              <p className="text-muted-foreground">
-                Please choose your current education level to continue.
-              </p>
-            </div>
-            <RadioGroup
-              onValueChange={(value: "junior" | "senior") => setLevel(value)}
-              className="space-y-3"
-            >
-              <Label
-                htmlFor="junior"
-                className="flex items-center space-x-4 rounded-lg border p-4 cursor-pointer transition-all duration-300 hover:bg-primary/10"
-              >
-                <RadioGroupItem value="junior" id="junior" className="h-5 w-5" />
-                <span className="font-medium">Junior High School</span>
-              </Label>
-              <Label
-                htmlFor="senior"
-                className="flex items-center space-x-4 rounded-lg border p-4 cursor-pointer transition-all duration-300 hover:bg-primary/10"
-              >
-                <RadioGroupItem value="senior" id="senior" className="h-5 w-5" />
-                <span className="font-medium">Senior High School</span>
-              </Label>
-            </RadioGroup>
-            <Button
-              onClick={() => setStep("verify")}
-              disabled={!level}
-              className="w-full"
-              size="lg"
-            >
-              Continue
-            </Button>
-          </motion.div>
-        )}
-
         {step === "verify" && (
           <motion.div
             key="verification"
@@ -166,34 +110,18 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
                   <span className="text-muted-foreground">Voter ID:</span>
                   <span className="font-medium">{voter.id}</span>
                 </div>
-                {level === "junior" && (
-                  <>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Grade:</span>
-                      <span className="font-medium">{voter.grade}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Section:</span>
-                      <span className="font-medium">{voter.section}</span>
-                    </div>
-                  </>
-                )}
-                {level === "senior" && (
-                  <>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Grade:</span>
-                      <span className="font-medium">{voter.grade}</span>
-                    </div>
-                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Track:</span>
-                      <span className="font-medium">{voter.track}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Strand:</span>
-                      <span className="font-medium">{voter.strand}</span>
-                    </div>
-                  </>
-                )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Grade:</span>
+                  <span className="font-medium">{voter.grade}</span>
+                </div>
+                 <div className="flex justify-between">
+                  <span className="text-muted-foreground">Track:</span>
+                  <span className="font-medium">{voter.track}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Strand:</span>
+                  <span className="font-medium">{voter.strand}</span>
+                </div>
               </CardContent>
             </Card>
 
