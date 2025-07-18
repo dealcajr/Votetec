@@ -1,35 +1,99 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Fingerprint, User, CheckCircle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Label } from "./ui/label";
 
 interface WelcomeScreenProps {
   onStart: (voterId: string) => void;
 }
 
+const juniorHighVoter = {
+  id: "VOTE-JH-12345",
+  name: "Jamie Santos",
+  grade: "10",
+  section: "A",
+};
+
+const seniorHighVoter = {
+  id: "VOTE-SH-67890",
+  name: "Alex Reyes",
+  grade: "12",
+  track: "Academic",
+  strand: "STEM",
+};
+
 export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
+  const [step, setStep] = useState<"level" | "verify" | "verified">("level");
+  const [level, setLevel] = useState<"junior" | "senior" | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
-  const voterId = "VOTE-98765";
-  const voterName = "Alex Doe";
+
+  const voter = level === "junior" ? juniorHighVoter : seniorHighVoter;
 
   const handleVerify = () => {
     setIsVerifying(true);
     setTimeout(() => {
       setIsVerifying(false);
-      setIsVerified(true);
+      setStep("verified");
     }, 1500);
   };
 
   const handleProceed = () => {
-    onStart(voterId);
+    onStart(voter.id);
   };
 
   return (
     <div className="animate-fade-in w-full max-w-sm text-center">
       <AnimatePresence mode="wait">
-        {!isVerified ? (
+        {step === "level" && (
+          <motion.div
+            key="level"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="space-y-6"
+          >
+            <div className="space-y-2">
+              <h2 className="text-2xl font-semibold tracking-tight">
+                Select Your Level
+              </h2>
+              <p className="text-muted-foreground">
+                Please choose your current education level to continue.
+              </p>
+            </div>
+            <RadioGroup
+              onValueChange={(value: "junior" | "senior") => setLevel(value)}
+              className="space-y-3"
+            >
+              <Label
+                htmlFor="junior"
+                className="flex items-center space-x-4 rounded-lg border p-4 cursor-pointer transition-all duration-300 hover:bg-primary/10"
+              >
+                <RadioGroupItem value="junior" id="junior" className="h-5 w-5" />
+                <span className="font-medium">Junior High School</span>
+              </Label>
+              <Label
+                htmlFor="senior"
+                className="flex items-center space-x-4 rounded-lg border p-4 cursor-pointer transition-all duration-300 hover:bg-primary/10"
+              >
+                <RadioGroupItem value="senior" id="senior" className="h-5 w-5" />
+                <span className="font-medium">Senior High School</span>
+              </Label>
+            </RadioGroup>
+            <Button
+              onClick={() => setStep("verify")}
+              disabled={!level}
+              className="w-full"
+              size="lg"
+            >
+              Continue
+            </Button>
+          </motion.div>
+        )}
+
+        {step === "verify" && (
           <motion.div
             key="verification"
             initial={{ opacity: 0, y: 20 }}
@@ -69,7 +133,9 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
               Your vote is anonymous and secure.
             </p>
           </motion.div>
-        ) : (
+        )}
+
+        {step === "verified" && (
           <motion.div
             key="verified"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -77,28 +143,58 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             className="space-y-6"
           >
             <div className="flex flex-col items-center space-y-4">
-               <CheckCircle className="h-20 w-20 text-accent animate-scale-in" />
-               <div className="space-y-1">
-                <h2 className="text-2xl font-semibold tracking-tight">Verification Complete</h2>
-                <p className="text-muted-foreground">Welcome, {voterName}!</p>
-               </div>
+              <CheckCircle className="h-20 w-20 text-accent animate-scale-in" />
+              <div className="space-y-1">
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  Verification Complete
+                </h2>
+                <p className="text-muted-foreground">Welcome, {voter.name}!</p>
+              </div>
             </div>
 
             <Card className="text-left bg-muted/50">
-                <CardHeader className="flex flex-row items-center space-x-4 pb-2">
-                    <User className="w-6 h-6 text-primary"/>
-                    <CardTitle className="text-lg">Voter Information</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm space-y-2">
+              <CardHeader className="flex flex-row items-center space-x-4 pb-2">
+                <User className="w-6 h-6 text-primary" />
+                <CardTitle className="text-lg">Voter Information</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Name:</span>
+                  <span className="font-medium">{voter.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Voter ID:</span>
+                  <span className="font-medium">{voter.id}</span>
+                </div>
+                {level === "junior" && (
+                  <>
                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">Name:</span>
-                        <span className="font-medium">{voterName}</span>
+                      <span className="text-muted-foreground">Grade:</span>
+                      <span className="font-medium">{voter.grade}</span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-muted-foreground">Voter ID:</span>
-                        <span className="font-medium">{voterId}</span>
+                      <span className="text-muted-foreground">Section:</span>
+                      <span className="font-medium">{voter.section}</span>
                     </div>
-                </CardContent>
+                  </>
+                )}
+                {level === "senior" && (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Grade:</span>
+                      <span className="font-medium">{voter.grade}</span>
+                    </div>
+                     <div className="flex justify-between">
+                      <span className="text-muted-foreground">Track:</span>
+                      <span className="font-medium">{voter.track}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Strand:</span>
+                      <span className="font-medium">{voter.strand}</span>
+                    </div>
+                  </>
+                )}
+              </CardContent>
             </Card>
 
             <Button onClick={handleProceed} className="w-full" size="lg">
