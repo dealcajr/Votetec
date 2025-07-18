@@ -1,0 +1,26 @@
+[
+  {
+    "id": "c1",
+    "name": "Quantum Quokkas",
+    "description": "Advocates for decentralized snack distribution.",
+    "icon": "User"
+  },
+  {
+    "id": "c2",
+    "name": "Cyber Capybaras",
+    "description": "Focuses on digital privacy and aquatic infrastructure.",
+    "icon": "Vote"
+  },
+  {
+    "id": "c3",
+    "name": "Techno Turtles",
+    "description": "Promotes slow, steady, and secure code development.",
+    "icon": "ShieldCheck"
+  },
+  {
+    "id": "c4",
+    "name": "Aero Axolotls",
+    "description": "Wants to build floating cities and regenerate the economy.",
+    "icon": "Rocket"
+  }
+]
