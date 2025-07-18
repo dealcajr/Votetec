@@ -22,6 +22,7 @@ import WelcomeScreen from "@/components/welcome-screen";
 import VotingScreen from "@/components/voting-screen";
 import VotedScreen from "@/components/voted-screen";
 import type { Candidate } from "@/types/candidate";
+import { Toaster } from "@/components/ui/toaster";
 
 export function VoteApp() {
   const [step, setStep] = useState<"welcome" | "voting" | "voted">("welcome");
@@ -53,10 +54,9 @@ export function VoteApp() {
       });
   }, []);
 
-  const handleStartVoting = () => {
-    if (voterId.trim()) {
-      setStep("voting");
-    }
+  const handleStartVoting = (verifiedVoterId: string) => {
+    setVoterId(verifiedVoterId);
+    setStep("voting");
   };
 
   const handleVote = () => {
@@ -101,8 +101,6 @@ export function VoteApp() {
       case "welcome":
         return (
           <WelcomeScreen
-            voterId={voterId}
-            setVoterId={setVoterId}
             onStart={handleStartVoting}
           />
         );
@@ -125,6 +123,7 @@ export function VoteApp() {
 
   return (
     <>
+      <Toaster />
       <Card className="w-full max-w-lg shadow-2xl animate-fade-in border-0 sm:border">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold text-primary/90">
