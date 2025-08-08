@@ -21,8 +21,10 @@ import {
 import WelcomeScreen from "@/components/welcome-screen";
 import VotingScreen from "@/components/voting-screen";
 import VotedScreen from "@/components/voted-screen";
+import SecurityDeviceMissing from "@/components/security-device-missing";
 import type { Candidate } from "@/types/candidate";
 import { Toaster } from "@/components/ui/toaster";
+import { Skeleton } from "./ui/skeleton";
 
 export function VoteApp() {
   const [step, setStep] = useState<"welcome" | "voting" | "voted">("welcome");
@@ -34,8 +36,17 @@ export function VoteApp() {
   );
   const [isConfirming, setIsConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [securityDeviceDetected, setSecurityDeviceDetected] = useState(false);
+  const [checkingDevice, setCheckingDevice] = useState(true);
 
   useEffect(() => {
+    // Simulate checking for the security device
+    const deviceCheckTimeout = setTimeout(() => {
+      // Set to true to simulate device found, false to show error
+      setSecurityDeviceDetected(true);
+      setCheckingDevice(false);
+    }, 2000);
+
     fetch("/candidates.json")
       .then((res) => {
         if (!res.ok) {
@@ -52,6 +63,8 @@ export function VoteApp() {
         setError("Could not load candidates. Please try again later.");
         setIsLoading(false);
       });
+
+    return () => clearTimeout(deviceCheckTimeout);
   }, []);
 
   const handleStartVoting = (verifiedVoterId: string) => {
@@ -66,8 +79,6 @@ export function VoteApp() {
   };
 
   const handleConfirmVote = () => {
-    // Here you would normally send the vote to a server
-    // e.g., fetch('/api/vote', { method: 'POST', body: JSON.stringify({ voterId, candidateId: selectedCandidateId }) });
     console.log(`Voter ${voterId} voted for ${selectedCandidateId}`);
     setStep("voted");
     setIsConfirming(false);
@@ -80,12 +91,36 @@ export function VoteApp() {
     setError(null);
   };
 
+  const handleRetryDeviceCheck = () => {
+    setCheckingDevice(true);
+    // Simulate checking for the security device again
+    const deviceCheckTimeout = setTimeout(() => {
+      setSecurityDeviceDetected(true); // You can change this to `false` to test the failure case again
+      setCheckingDevice(false);
+    }, 2000);
+    return () => clearTimeout(deviceCheckTimeout);
+  };
+
   const selectedCandidate = useMemo(
     () => candidates.find((c) => c.id === selectedCandidateId),
     [candidates, selectedCandidateId]
   );
 
-  const renderStep = () => {
+  const renderContent = () => {
+    if (checkingDevice) {
+      return (
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <Skeleton className="h-16 w-16 rounded-full" />
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+      );
+    }
+
+    if (!securityDeviceDetected) {
+      return <SecurityDeviceMissing onRetry={handleRetryDeviceCheck} />;
+    }
+
     if (error) {
       return (
         <div className="text-center text-destructive">
@@ -99,11 +134,7 @@ export function VoteApp() {
 
     switch (step) {
       case "welcome":
-        return (
-          <WelcomeScreen
-            onStart={handleStartVoting}
-          />
-        );
+        return <WelcomeScreen onStart={handleStartVoting} />;
       case "voting":
         return (
           <VotingScreen
@@ -135,7 +166,7 @@ export function VoteApp() {
         </CardHeader>
         <CardContent className="px-2 sm:px-6 py-4">
           <div className="min-h-[300px] flex items-center justify-center">
-            {renderStep()}
+            {renderContent()}
           </div>
         </CardContent>
       </Card>
