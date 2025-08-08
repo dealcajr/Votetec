@@ -6,13 +6,11 @@ import {
   Fingerprint,
   Loader2,
   AlertTriangle,
-  Camera,
   CheckCircle,
   User,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -30,7 +28,7 @@ interface WelcomeScreenProps {
   ) => void;
 }
 
-type VerificationStep = "start" | "camera" | "verifying" | "verified";
+type VerificationStep = "start" | "verifying" | "verified";
 
 export default function WelcomeScreen({
   onVerificationComplete,
@@ -40,70 +38,21 @@ export default function WelcomeScreen({
   const [verifiedData, setVerifiedData] = useState<VerifyVoterOutput | null>(
     null
   );
-  const [hasCameraPermission, setHasCameraPermission] = useState<
-    boolean | null
-  >(null);
-
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (step === "camera") {
-      const getCameraPermission = async () => {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "user" },
-          });
-          setHasCameraPermission(true);
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-          }
-        } catch (err) {
-          console.error("Error accessing camera:", err);
-          setHasCameraPermission(false);
-          setError(
-            "Camera access denied. Please enable camera permissions in your browser settings."
-          );
-          toast({
-            variant: "destructive",
-            title: "Camera Access Denied",
-            description:
-              "Please enable camera permissions to verify your identity.",
-          });
-          setStep("start");
-        }
-      };
-      getCameraPermission();
-    } else {
-      // Stop camera stream when not in camera step
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach((track) => track.stop());
-        videoRef.current.srcObject = null;
-      }
-    }
-  }, [step, toast]);
-
-  const handleCaptureAndVerify = async () => {
-    if (!videoRef.current || !canvasRef.current) return;
-
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const photoDataUri = canvas.toDataURL("image/jpeg");
-
+  const handleVerification = async () => {
     setStep("verifying");
     setError(null);
 
     try {
-      const result = await verifyVoter({ photoDataUri });
+      // In a real fingerprint module integration, you would get data here.
+      // We are passing a placeholder data URI as the AI flow expects it.
+      const result = await verifyVoter({
+        photoDataUri: "data:image/jpeg;base64,placeholder",
+      });
+      if (result.error) {
+        throw new Error(result.error);
+      }
       if (result.voter) {
         setVerifiedData(result);
         setStep("verified");
@@ -115,12 +64,12 @@ export default function WelcomeScreen({
       setError(
         err.message || "An unexpected error occurred during verification."
       );
-      setStep("camera");
+      setStep("start");
       toast({
         variant: "destructive",
         title: "Verification Failed",
         description:
-          "Could not verify your identity. Please ensure your face is clear and well-lit.",
+          "Could not verify your identity. Please try again or contact an administrator.",
       });
     }
   };
@@ -141,59 +90,25 @@ export default function WelcomeScreen({
                 Identity Verification
               </h2>
               <p className="text-muted-foreground">
-                Please use your device's camera to verify your identity.
+                Please place your finger on the scanner to verify your identity.
               </p>
             </div>
             <div className="flex justify-center items-center h-48">
               <Button
                 variant="ghost"
                 className="h-40 w-40 rounded-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-primary/20 hover:border-primary/50 transition-all duration-300"
-                onClick={() => setStep("camera")}
+                onClick={handleVerification}
               >
                 <Fingerprint className="h-16 w-16 text-primary/80" />
                 <span className="text-muted-foreground">Start Verification</span>
               </Button>
             </div>
+            {error && (
+               <p className="text-sm text-destructive">{error}</p>
+            )}
             <p className="text-xs text-muted-foreground pt-4">
               Your vote is anonymous and secure.
             </p>
-          </motion.div>
-        );
-
-      case "camera":
-        return (
-          <motion.div
-            key="camera"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="w-full space-y-4"
-          >
-            <div className="aspect-video w-full overflow-hidden rounded-lg border bg-muted">
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                playsInline
-              />
-              <canvas ref={canvasRef} className="hidden" />
-            </div>
-            {hasCameraPermission === false && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Camera Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            <Button
-              onClick={handleCaptureAndVerify}
-              disabled={hasCameraPermission !== true}
-              className="w-full"
-              size="lg"
-            >
-              <Camera className="mr-2 h-5 w-5" />
-              Capture and Verify
-            </Button>
           </motion.div>
         );
 
