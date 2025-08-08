@@ -1,15 +1,20 @@
 import { Button } from "@/components/ui/button";
 import type { Candidate } from "@/types/candidate";
-import { CheckCircle2, Lock } from "lucide-react";
+import { CheckCircle2, BarChart2 } from "lucide-react";
 
 interface VotedScreenProps {
   votedFor: Candidate;
+  onShowResults: () => void;
   onReset: () => void;
 }
 
-export default function VotedScreen({ votedFor, onReset }: VotedScreenProps) {
+export default function VotedScreen({
+  votedFor,
+  onShowResults,
+  onReset,
+}: VotedScreenProps) {
   return (
-    <div className="space-y-6 text-center flex flex-col items-center animate-fade-in">
+    <div className="space-y-8 text-center flex flex-col items-center animate-fade-in">
       <div className="relative">
         <CheckCircle2 className="h-24 w-24 text-accent animate-scale-in" />
       </div>
@@ -24,16 +29,20 @@ export default function VotedScreen({ votedFor, onReset }: VotedScreenProps) {
           </span>
           .
         </p>
-      </div>
-      <div className="flex items-center space-x-2 rounded-md bg-muted p-4 w-full justify-center">
-        <Lock className="h-5 w-5 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground font-medium">
-          System Locked. Please contact an administrator to reset.
+        <p className="text-sm text-muted-foreground pt-2">
+          Your vote has been securely recorded on the blockchain.
         </p>
       </div>
-      <Button onClick={onReset} variant="outline" className="w-full">
-        Cast Another Vote
-      </Button>
+
+      <div className="w-full space-y-3">
+        <Button onClick={onShowResults} className="w-full" size="lg">
+          <BarChart2 className="mr-2 h-5 w-5" />
+          View Live Results
+        </Button>
+        <Button onClick={onReset} variant="outline" className="w-full">
+          Cast Another Vote
+        </Button>
+      </div>
     </div>
   );
 }

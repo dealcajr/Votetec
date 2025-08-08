@@ -3,4 +3,5 @@ export interface Candidate {
   name: string;
   description: string;
   icon: string;
+  votes?: number;
 }
