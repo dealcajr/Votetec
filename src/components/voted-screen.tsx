@@ -32,7 +32,7 @@ export default function VotedScreen({ votedFor, onReset }: VotedScreenProps) {
         </p>
       </div>
       <Button onClick={onReset} variant="outline" className="w-full">
-        Cast Another Vote (Demo Only)
+        Cast Another Vote
       </Button>
     </div>
   );
