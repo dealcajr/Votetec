@@ -25,6 +25,7 @@ import SecurityDeviceMissing from "@/components/security-device-missing";
 import type { Candidate } from "@/types/candidate";
 import { Toaster } from "@/components/ui/toaster";
 import { Skeleton } from "./ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 export type SelectedVotes = Record<Candidate['position'], string | null>;
 
@@ -42,9 +43,11 @@ export function VoteApp() {
     'Public Information Officer': null,
   });
   const [isConfirming, setIsConfirming] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [securityDeviceDetected, setSecurityDeviceDetected] = useState(false);
   const [checkingDevice, setCheckingDevice] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Simulate checking for the security device
@@ -85,14 +88,51 @@ export function VoteApp() {
     }
   };
 
-  const handleConfirmVote = () => {
-    console.log(`Voter ${voterId} voted for:`, selectedVotes);
-    setStep("voted");
-    setIsConfirming(false);
+  const handleConfirmVote = async () => {
+    setIsSubmitting(true);
+    try {
+      // First, get the current votes
+      const votesRes = await fetch("/api/votes");
+      let allVotes = {};
+      if (votesRes.ok) {
+        allVotes = await votesRes.json();
+      }
+
+      // Add the new vote
+      const updatedVotes = {
+        ...allVotes,
+        [voterId]: selectedVotes,
+      };
+
+      // POST the updated votes back to the server
+      const res = await fetch("/api/votes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedVotes),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to submit vote");
+      }
+      
+      setStep("voted");
+
+    } catch (error) {
+       toast({
+        title: "Error",
+        description: "Failed to submit your vote. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+      setIsConfirming(false);
+    }
   };
 
   const handleReset = () => {
-    setVoterId("");
+    // A real app might require admin credentials to reset
+    const newVoterId = `VOTE-SH-${Date.now()}`;
+    setVoterId(newVoterId);
     setSelectedVotes({
       President: null,
       'Vice President': null,
@@ -214,12 +254,13 @@ export function VoteApp() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmVote}
+              disabled={isSubmitting}
               className="bg-accent hover:bg-accent/90 text-accent-foreground"
             >
-              Confirm Vote
+              {isSubmitting ? "Submitting..." : "Confirm Vote"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

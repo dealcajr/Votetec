@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -33,6 +33,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { Candidate } from "@/types/candidate";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const positions: Candidate['position'][] = [
     'President',
@@ -43,25 +44,41 @@ const positions: Candidate['position'][] = [
     'Public Information Officer',
 ];
 
+interface DisplayCandidate extends Candidate {
+    voteCount: number;
+    rank: number;
+}
+
 export default function AdminDashboard() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [votes, setVotes] = useState<Record<string, string[]>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
   const { toast } = useToast();
 
-  const fetchCandidates = async () => {
+  const fetchCandidatesAndVotes = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/candidates");
-      if (!res.ok) throw new Error("Failed to fetch candidates");
-      const data = await res.json();
-      setCandidates(Array.isArray(data) ? data : []);
+      const [candidatesRes, votesRes] = await Promise.all([
+        fetch("/api/candidates"),
+        fetch("/api/votes"),
+      ]);
+      
+      if (!candidatesRes.ok) throw new Error("Failed to fetch candidates");
+      if (!votesRes.ok) throw new Error("Failed to fetch votes");
+
+      const candidatesData = await candidatesRes.json();
+      const votesData = await votesRes.json();
+
+      setCandidates(Array.isArray(candidatesData) ? candidatesData : []);
+      setVotes(votesData || {});
+
     } catch (error) {
       toast({
         title: "Error",
-        description: "Could not fetch candidates.",
+        description: "Could not fetch data.",
         variant: "destructive",
       });
     } finally {
@@ -70,8 +87,36 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchCandidates();
+    fetchCandidatesAndVotes();
   }, []);
+
+  const processedCandidates = useMemo<DisplayCandidate[]>(() => {
+    const voteCounts = Object.values(votes).flat().reduce((acc, candidateId) => {
+        acc[candidateId] = (acc[candidateId] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const candidatesWithVotes = candidates.map(c => ({
+        ...c,
+        voteCount: voteCounts[c.id] || 0,
+    }));
+
+    const groupedByPosition = candidatesWithVotes.reduce((acc, c) => {
+        (acc[c.position] = acc[c.position] || []).push(c);
+        return acc;
+    }, {} as Record<Candidate['position'], (typeof candidatesWithVotes)>);
+
+    for (const position in groupedByPosition) {
+        groupedByPosition[position as Candidate['position']].sort((a, b) => b.voteCount - a.voteCount);
+    }
+
+    return candidatesWithVotes.map(c => {
+        const rank = groupedByPosition[c.position].findIndex(rankedC => rankedC.id === c.id) + 1;
+        return { ...c, rank };
+    });
+
+  }, [candidates, votes]);
+
 
   const handleEditClick = (candidate: Candidate) => {
     setEditingCandidate({ ...candidate });
@@ -216,17 +261,23 @@ export default function AdminDashboard() {
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Position</TableHead>
-              <TableHead>Icon</TableHead>
+              <TableHead>Votes</TableHead>
+              <TableHead>Rank</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {candidates.map((candidate) => (
+            {processedCandidates.map((candidate) => (
               <TableRow key={candidate.id}>
                 <TableCell className="font-medium">{candidate.name}</TableCell>
                 <TableCell>{candidate.description}</TableCell>
                 <TableCell>{candidate.position}</TableCell>
-                <TableCell>{candidate.icon}</TableCell>
+                <TableCell>{candidate.voteCount}</TableCell>
+                 <TableCell>
+                  <Badge variant={candidate.rank === 1 ? 'default' : 'secondary'}>
+                    #{candidate.rank}
+                  </Badge>
+                </TableCell>
                 <TableCell className="text-right">
                   <Button
                     variant="ghost"

@@ -1,0 +1,42 @@
+{
+  "voter-1": {
+    "President": "candidate-1672531201000",
+    "Vice President": "candidate-1672531202000",
+    "Secretary": "candidate-1672531203000",
+    "Treasurer": "candidate-1672531204000",
+    "Auditor": "candidate-1672531205000",
+    "Public Information Officer": "candidate-1672531206000"
+  },
+  "voter-2": {
+    "President": "candidate-1672531201000",
+    "Vice President": "candidate-1672531208000",
+    "Secretary": "candidate-1672531209000",
+    "Treasurer": "candidate-1672531210000",
+    "Auditor": "candidate-1672531211000",
+    "Public Information Officer": "candidate-1672531206000"
+  },
+  "voter-3": {
+    "President": "candidate-1672531207000",
+    "Vice President": "candidate-1672531202000",
+    "Secretary": "candidate-1672531203000",
+    "Treasurer": "candidate-1672531210000",
+    "Auditor": "candidate-1672531205000",
+    "Public Information Officer": "candidate-1672531212000"
+  },
+  "voter-4": {
+    "President": "candidate-1672531201000",
+    "Vice President": "candidate-1672531208000",
+    "Secretary": "candidate-1672531203000",
+    "Treasurer": "candidate-1672531204000",
+    "Auditor": "candidate-1672531211000",
+    "Public Information Officer": "candidate-1672531206000"
+  },
+  "voter-5": {
+    "President": "candidate-1672531201000",
+    "Vice President": "candidate-1672531202000",
+    "Secretary": "candidate-1672531209000",
+    "Treasurer": "candidate-1672531204000",
+    "Auditor": "candidate-1672531205000",
+    "Public Information Officer": "candidate-1672531212000"
+  }
+}
