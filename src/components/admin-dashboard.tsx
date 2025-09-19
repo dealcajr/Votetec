@@ -262,32 +262,30 @@ export default function AdminDashboard() {
           </DialogHeader>
           {editingCandidate && (
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
+              <div className="space-y-2">
+                <Label htmlFor="name">
                   Name
                 </Label>
                 <Input
                   id="name"
                   value={editingCandidate.name}
                   onChange={(e) => onFieldChange("name", e.target.value)}
-                  className="col-span-3"
                   disabled={isSaving}
                 />
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="description" className="text-right">
+              <div className="space-y-2">
+                <Label htmlFor="description">
                   Description
                 </Label>
                 <Input
                   id="description"
                   value={editingCandidate.description}
                   onChange={(e) => onFieldChange("description", e.target.value)}
-                  className="col-span-3"
                   disabled={isSaving}
                 />
               </div>
-               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="position" className="text-right">
+               <div className="space-y-2">
+                <Label htmlFor="position">
                     Position
                 </Label>
                  <Select
@@ -295,7 +293,7 @@ export default function AdminDashboard() {
                     onValueChange={onPositionChange}
                     disabled={isSaving}
                 >
-                    <SelectTrigger className="col-span-3">
+                    <SelectTrigger>
                         <SelectValue placeholder="Select a position" />
                     </SelectTrigger>
                     <SelectContent>
@@ -305,15 +303,14 @@ export default function AdminDashboard() {
                     </SelectContent>
                 </Select>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="icon" className="text-right">
+              <div className="space-y-2">
+                <Label htmlFor="icon">
                   Icon
                 </Label>
                 <Input
                   id="icon"
                   value={editingCandidate.icon}
                   onChange={(e) => onFieldChange("icon", e.target.value)}
-                  className="col-span-3"
                   disabled={isSaving}
                 />
               </div>

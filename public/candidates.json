@@ -1,20 +1,16 @@
 [
   {
-    "id": "candidate-1683833481293",
-    "name": "Sofia \"The Advocate\" Reyes",
-    "description": "Passionate about student rights and dedicated to amplifying the voices of her peers.",
-    "icon": "Vote"
+    "id": "candidate-1758292470339",
+    "name": "Harvy A'l Dump",
+    "description": "Padayon Party-list",
+    "icon": "Candidate",
+    "position": "President"
   },
   {
-    "id": "candidate-1683833503841",
-    "name": "Benjamin \"The Innovator\" Chen",
-    "description": "A forward-thinker with a knack for creative solutions to campus challenges.",
-    "icon": "Rocket"
-  },
-  {
-    "id": "candidate-1758291421221",
+    "id": "candidate-1758292513611",
     "name": "Norman Admin",
-    "description": "SSLG Presedent",
-    "icon": "User"
+    "description": "Padayon Party-list",
+    "icon": "Candidate",
+    "position": "Vice President"
   }
 ]
