@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -9,10 +11,10 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import type { SelectedVotes } from "./vote-app";
 
 const iconMap = {
-  User: <User className="h-8 w-8 text-primary/80" />,
-  Vote: <Vote className="h-8 w-8 text-primary/80" />,
-  ShieldCheck: <ShieldCheck className="h-8 w-8 text-primary/80" />,
-  Rocket: <Rocket className="h-8 w-8 text-primary/80" />,
+  User: <User className="h-6 w-6 text-primary/80" />,
+  Vote: <Vote className="h-6 w-6 text-primary/80" />,
+  ShieldCheck: <ShieldCheck className="h-6 w-6 text-primary/80" />,
+  Rocket: <Rocket className="h-6 w-6 text-primary/80" />,
 };
 
 interface VotingScreenProps {
@@ -91,14 +93,14 @@ export default function VotingScreen({
                 <RadioGroup
                     value={selectedVotes[position] ?? ""}
                     onValueChange={(candidateId) => handleSelect(position, candidateId)}
-                    className="space-y-3 p-3"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-3"
                 >
                     {groupedCandidates[position].map((candidate) => (
                     <Label
                         key={candidate.id}
-                        htmlFor={candidate.id}
+                        htmlFor={`${position}-${candidate.id}`}
                         className={cn(
-                        "flex items-center space-x-4 rounded-lg border p-4 cursor-pointer transition-all duration-300",
+                        "flex flex-col items-center justify-center space-y-3 rounded-lg border p-4 cursor-pointer transition-all duration-300 text-center",
                         "hover:bg-primary/10",
                         selectedVotes[position] === candidate.id &&
                             "ring-2 ring-primary border-primary bg-primary/20"
@@ -106,18 +108,18 @@ export default function VotingScreen({
                     >
                         <div className="flex-shrink-0 bg-primary/10 p-3 rounded-full">
                         {iconMap[candidate.icon as keyof typeof iconMap] || (
-                            <User className="h-8 w-8 text-primary" />
+                            <User className="h-6 w-6 text-primary" />
                         )}
                         </div>
                         <div className="flex-grow">
-                        <p className="font-semibold text-card-foreground">
-                            {candidate.name}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                            {candidate.description}
-                        </p>
+                          <p className="font-semibold text-card-foreground text-sm">
+                              {candidate.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                              {candidate.description}
+                          </p>
                         </div>
-                        <RadioGroupItem value={candidate.id} id={candidate.id} className="h-6 w-6" />
+                        <RadioGroupItem value={candidate.id} id={`${position}-${candidate.id}`} className="h-5 w-5" />
                     </Label>
                     ))}
                 </RadioGroup>
