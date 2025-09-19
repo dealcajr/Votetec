@@ -1,37 +1,102 @@
 [
   {
-    "message": "Received non-voter ID data from ESP32: \"Awaiting next fingerprint...\"",
+    "message": "Device is now scanning for fingerprints.",
     "type": "INFO",
-    "timestamp": "2025-10-06T13:54:04.710Z"
+    "timestamp": "2025-10-06T14:12:51.949Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"✅ Match Found - ID: 1 | Confidence: 107\"",
+    "type": "INFO",
+    "timestamp": "2025-10-06T14:13:01.518Z"
   },
   {
     "message": "Fingerprint scan successful. Received ID: VOTER-001",
     "type": "SUCCESS",
-    "timestamp": "2025-10-06T13:54:39.342Z"
+    "timestamp": "2025-10-06T14:13:01.557Z"
   },
   {
-    "message": "Received non-voter ID data from ESP32: \"✅ Match Found - ID: 1 | Confidence: 143\"",
+    "message": "Voting application initialized.",
     "type": "INFO",
-    "timestamp": "2025-10-06T13:54:39.352Z"
+    "timestamp": "2025-10-06T14:13:56.139Z"
   },
   {
-    "message": "Session reset. Ready for new voter.",
+    "message": "Attempting to connect to serial device.",
     "type": "INFO",
-    "timestamp": "2025-10-06T13:54:54.312Z"
+    "timestamp": "2025-10-06T14:13:58.608Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-06T14:14:00.743Z"
   },
   {
     "message": "Device is now scanning for fingerprints.",
     "type": "INFO",
-    "timestamp": "2025-10-06T13:54:54.350Z"
+    "timestamp": "2025-10-06T14:14:00.781Z"
   },
   {
-    "message": "Received non-voter ID data from ESP32: \"Awaiting next fingerprint...\"",
+    "message": "Received non-voter ID data from ESP32: \"✅ Match Found - ID: 1 | Confidence: 216\"",
     "type": "INFO",
-    "timestamp": "2025-10-06T13:54:54.411Z"
+    "timestamp": "2025-10-06T14:14:17.614Z"
   },
   {
-    "message": "Received non-voter ID data from ESP32: \"Voter ID: VOTER-001\"",
+    "message": "Fingerprint scan successful. Received ID: VOTER-001",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-06T14:14:17.650Z"
+  },
+  {
+    "message": "Voting application initialized.",
     "type": "INFO",
-    "timestamp": "2025-10-06T13:54:54.423Z"
+    "timestamp": "2025-10-06T14:14:33.754Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-06T14:14:34.615Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-06T14:14:37.339Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-06T14:14:37.385Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"✅ Match Found - ID: 1 | Confidence: 149\"",
+    "type": "INFO",
+    "timestamp": "2025-10-06T14:14:41.041Z"
+  },
+  {
+    "message": "Fingerprint scan successful. Received ID: VOTER-001",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-06T14:14:41.082Z"
+  },
+  {
+    "message": "Voter VOTER-001 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2025-10-06T14:14:49.056Z"
+  },
+  {
+    "message": "Voter VOTER-001 is submitting their vote.",
+    "type": "INFO",
+    "timestamp": "2025-10-06T14:15:21.856Z"
+  },
+  {
+    "message": "Voter VOTER-001 successfully submitted their vote.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-06T14:15:22.775Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T22:32:19.431Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T22:36:17.178Z"
   }
 ]
