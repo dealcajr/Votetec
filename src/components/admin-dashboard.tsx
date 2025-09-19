@@ -35,13 +35,26 @@ export default function AdminDashboard() {
   const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetch("/candidates.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setCandidates(data);
-        setIsLoading(false);
+  const fetchCandidates = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/candidates");
+      if (!res.ok) throw new Error("Failed to fetch candidates");
+      const data = await res.json();
+      setCandidates(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Could not fetch candidates.",
+        variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCandidates();
   }, []);
 
   const handleEditClick = (candidate: Candidate) => {
@@ -59,8 +72,37 @@ export default function AdminDashboard() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteClick = (candidateId: string) => {
-    setCandidates(candidates.filter((c) => c.id !== candidateId));
+  const handleDeleteClick = async (candidateId: string) => {
+    const originalCandidates = [...candidates];
+    const updatedCandidates = candidates.filter((c) => c.id !== candidateId);
+    setCandidates(updatedCandidates);
+
+    try {
+      setIsSaving(true);
+      const res = await fetch("/api/candidates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedCandidates),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete candidate");
+      }
+
+      toast({
+        title: "Success!",
+        description: "Candidate has been deleted.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete candidate. Please try again.",
+        variant: "destructive",
+      });
+      setCandidates(originalCandidates);
+    } finally {
+      setIsSaving(false);
+    }
   };
   
   const handleSave = async () => {
@@ -74,6 +116,8 @@ export default function AdminDashboard() {
         });
         return;
     }
+    
+    setIsSaving(true);
 
     const isNew = !candidates.some(c => c.id === editingCandidate.id);
     let updatedCandidates;
@@ -86,13 +130,37 @@ export default function AdminDashboard() {
         );
     }
 
+    const originalCandidates = [...candidates];
     setCandidates(updatedCandidates);
-    setIsDialogOpen(false);
-    setEditingCandidate(null);
-    toast({
-        title: "Success!",
-        description: `Candidate has been ${isNew ? 'added' : 'updated'}.`,
-    });
+
+    try {
+      const res = await fetch("/api/candidates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedCandidates),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to save candidate");
+      }
+
+      setIsDialogOpen(false);
+      setEditingCandidate(null);
+      toast({
+          title: "Success!",
+          description: `Candidate has been ${isNew ? 'added' : 'updated'}.`,
+      });
+
+    } catch(error) {
+        toast({
+            title: "Error",
+            description: "Failed to save candidate. Please try again.",
+            variant: "destructive",
+        });
+        setCandidates(originalCandidates);
+    } finally {
+        setIsSaving(false);
+    }
   };
 
   const onFieldChange = (field: keyof Candidate, value: string) => {
@@ -113,7 +181,7 @@ export default function AdminDashboard() {
   return (
     <>
       <div className="flex justify-end mb-4">
-        <Button onClick={handleAddNewClick}>
+        <Button onClick={handleAddNewClick} disabled={isSaving}>
             <PlusCircle className="mr-2" />
             Add New Candidate
         </Button>
@@ -139,6 +207,7 @@ export default function AdminDashboard() {
                     variant="ghost"
                     size="icon"
                     onClick={() => handleEditClick(candidate)}
+                    disabled={isSaving}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -147,6 +216,7 @@ export default function AdminDashboard() {
                     size="icon"
                     onClick={() => handleDeleteClick(candidate.id)}
                     className="text-destructive hover:text-destructive"
+                    disabled={isSaving}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -156,11 +226,8 @@ export default function AdminDashboard() {
           </TableBody>
         </Table>
       </div>
-      <p className="text-sm text-muted-foreground mt-4">
-        Note: Changes are not persisted in this demo. The candidate list will reset on page refresh.
-      </p>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      
+      <Dialog open={isDialogOpen} onOpenChange={(isOpen) => !isSaving && setIsDialogOpen(isOpen)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editingCandidate?.id.startsWith('candidate-') && !candidates.some(c => c.id === editingCandidate.id) ? "Add New Candidate" : "Edit Candidate"}</DialogTitle>
@@ -179,6 +246,7 @@ export default function AdminDashboard() {
                   value={editingCandidate.name}
                   onChange={(e) => onFieldChange("name", e.target.value)}
                   className="col-span-3"
+                  disabled={isSaving}
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
@@ -190,6 +258,7 @@ export default function AdminDashboard() {
                   value={editingCandidate.description}
                   onChange={(e) => onFieldChange("description", e.target.value)}
                   className="col-span-3"
+                  disabled={isSaving}
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
@@ -201,13 +270,14 @@ export default function AdminDashboard() {
                   value={editingCandidate.icon}
                   onChange={(e) => onFieldChange("icon", e.target.value)}
                   className="col-span-3"
+                  disabled={isSaving}
                 />
               </div>
             </div>
           )}
           <DialogFooter>
             <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button variant="outline" disabled={isSaving}>Cancel</Button>
             </DialogClose>
             <Button onClick={handleSave} disabled={isSaving}>
               {isSaving ? "Saving..." : "Save Changes"}

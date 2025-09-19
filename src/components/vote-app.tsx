@@ -47,7 +47,7 @@ export function VoteApp() {
       setCheckingDevice(false);
     }, 2000);
 
-    fetch("/candidates.json")
+    fetch("/api/candidates")
       .then((res) => {
         if (!res.ok) {
           throw new Error("Network response was not ok");
