@@ -208,7 +208,7 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
                 </div>
             </div>
              <Button onClick={onReset} variant="outline" className="w-full">
-              Scan Another Fingerprint
+              Enter Another Voter
             </Button>
           </motion.div>
         )}

@@ -143,5 +143,100 @@
     "message": "Election closing authorized by teacher.",
     "type": "SUCCESS",
     "timestamp": "2026-01-01T15:02:56.817Z"
+  },
+  {
+    "message": "Scan check: Failed to find voter with ID 112527130012.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:13:16.013Z"
+  },
+  {
+    "message": "Scan check: Failed to find voter with ID 112527130012.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:13:16.234Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:13:33.193Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T15:15:40.907Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T15:15:41.128Z"
+  },
+  {
+    "message": "Voter 112527130012 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:15:45.198Z"
+  },
+  {
+    "message": "Voter 112527130012 is submitting their vote.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:15:52.503Z"
+  },
+  {
+    "message": "Voter 112527130012 successfully submitted their vote.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T15:15:52.925Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:15:54.696Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:15:58.980Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:15:59.190Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:20:33.822Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:20:34.010Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:20:36.573Z"
+  },
+  {
+    "message": "Teacher fingerprint scan initiated for closing election.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:23:19.031Z"
+  },
+  {
+    "message": "Election closing authorized by teacher.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T15:23:25.309Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:26:58.718Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:26:58.883Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:27:00.103Z"
   }
 ]
