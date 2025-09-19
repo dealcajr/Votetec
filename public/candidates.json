@@ -4,20 +4,80 @@
     "name": "Harvy A'l Dump",
     "description": "Padayon Party-list",
     "icon": "Candidate",
-    "position": "President"
+    "position": "President",
+    "voteCount": 0,
+    "rank": 2,
+    "partylist": "Padayon Partylist"
   },
   {
     "id": "candidate-1758292513611",
     "name": "Norman Admin",
     "description": "Padayon Party-list",
     "icon": "Candidate",
-    "position": "Vice President"
+    "position": "Vice President",
+    "voteCount": 0,
+    "rank": 1,
+    "partylist": "Padayon Partylist"
   },
   {
     "id": "candidate-1758293359544",
     "name": "Reemarc Antonio",
     "description": "Sampagueta Party-list",
     "icon": "User",
-    "position": "President"
+    "position": "President",
+    "voteCount": 1,
+    "rank": 1,
+    "partylist": "Sapagueta Partylist"
+  },
+  {
+    "id": "candidate-1758294176166",
+    "name": "Tiara Lara",
+    "partylist": "Padayon Partylist",
+    "icon": "User",
+    "position": "Secretary"
+  },
+  {
+    "id": "candidate-1758294253500",
+    "name": "Aira Elpa",
+    "partylist": "Sapagueta Partylist",
+    "icon": "User",
+    "position": "Secretary"
+  },
+  {
+    "id": "candidate-1758294288365",
+    "name": "Nathalie Santelices",
+    "partylist": "Sapagueta Partylist",
+    "icon": "User",
+    "position": "Vice President",
+    "voteCount": 0,
+    "rank": 2
+  },
+  {
+    "id": "candidate-1758294371909",
+    "name": "Ralph Cama",
+    "partylist": "Padayon Partylist",
+    "icon": "User",
+    "position": "Treasurer"
+  },
+  {
+    "id": "candidate-1758294421982",
+    "name": "Jovilyn Dianela",
+    "partylist": "Sapagueta Partylist",
+    "icon": "User",
+    "position": "Treasurer"
+  },
+  {
+    "id": "candidate-1758294447436",
+    "name": "Marian Basas",
+    "partylist": "Padayon Partylist",
+    "icon": "User",
+    "position": "Auditor"
+  },
+  {
+    "id": "candidate-1758294481053",
+    "name": "Giles Bandola",
+    "partylist": "Sapagueta Partylist",
+    "icon": "User",
+    "position": "Auditor"
   }
 ]
