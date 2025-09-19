@@ -98,5 +98,620 @@
     "message": "Voting application initialized.",
     "type": "INFO",
     "timestamp": "2025-10-09T22:36:17.178Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:01:38.430Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:01:54.293Z"
+  },
+  {
+    "message": "Failed to connect to the device.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:01:54.325Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:02:00.190Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:03:50.881Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:00.021Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-09T23:04:18.866Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:18.931Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"��������Jt)����J��H�����D��(Jʄ�nΌ9J�\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:24.262Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:24.334Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:24.374Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:24.388Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"�`~L�1�)))��Jz 1�!��\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:37.522Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:37.567Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:37.660Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"✅ Fingerprint sensor detected!\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:37.702Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Awaiting Scan - Please place your finger on the scanner.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:37.723Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"��0��1����\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:56.902Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"��! �\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:57.037Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:57.135Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:57.153Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:04:58.090Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Ԋ0��1���H��)!6!�1\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:05:09.062Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:05:09.084Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:05:09.108Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:05:10.025Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:05:12.831Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:05:14.598Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-09T23:05:16.531Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:05:16.541Z"
+  },
+  {
+    "message": "Device disconnected during scan.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:05:45.113Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:06:30.241Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:06:35.086Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:06:36.254Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:06:38.309Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:06:50.136Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:06:51.797Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:06:58.480Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:07:02.452Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:07:59.085Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:08:00.313Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:08:03.883Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:08:11.621Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:08:12.922Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:08:24.631Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:08:27.406Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:08:28.355Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:08:43.119Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-09T23:08:43.146Z"
+  },
+  {
+    "message": "Device disconnected during scan.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:08:44.583Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:08:49.073Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:09:00.002Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:09:01.125Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:09:02.564Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:09:03.215Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:09:13.434Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:09:14.297Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:09:17.174Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:09:17.826Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:09:18.774Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:09:19.372Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:09:20.341Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:09:21.220Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:09:22.789Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:09:23.533Z"
+  },
+  {
+    "message": "No device was selected by the user.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:09:24.716Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:09:35.114Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:09:36.214Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-09T23:10:45.394Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:10:45.418Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:10:45.525Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:10:55.572Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:10:57.016Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:10:58.319Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-09T23:10:58.334Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"81����D��(Jʠ��� 1��\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:03.566Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:03.606Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:03.628Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"���L0N�!!!��)91�1 �\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:04.451Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:04.480Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:04.495Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"9��DD)!�9���䦕��\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:05.562Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:05.586Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"IniH�~��1�))��N)91�! �\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:05.975Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:05.987Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializin�81�0�D)�\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:06.533Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Jʄ��Ό9��\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:06.756Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:06.780Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:06.807Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:07.713Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"��0��D��(J�ǽm1 ! �\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:24.579Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:24.639Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:24.646Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:25.576Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"�`~��1������97!�1\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:40.508Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:40.538Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:40.559Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:41.476Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"H�~��1�����91!�1\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:42.022Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:42.056Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:42.072Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:42.994Z"
+  },
+  {
+    "message": "Device disconnected during scan.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:11:43.441Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:52.235Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-09T23:11:54.972Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:54.989Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"81G�����!)5\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:55.006Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:11:55.045Z"
+  },
+  {
+    "message": "Device disconnected during scan.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:12:10.050Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:12:45.378Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-09T23:12:46.647Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:12:46.662Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:12:46.716Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"���DbD)�\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:12:50.983Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"ESP32 Fingerprint Voting System\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:12:51.322Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Jʄ�iΌ9��\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:12:51.364Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Initializing fingerprint sensor...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:12:51.405Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"❌ Fingerprint sensor not found. Halting.\"",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:12:52.100Z"
+  },
+  {
+    "message": "Device disconnected during scan.",
+    "type": "ERROR",
+    "timestamp": "2025-10-09T23:13:11.692Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:21:39.328Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:22:04.320Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:28:25.196Z"
+  },
+  {
+    "message": "Voting application initialized.",
+    "type": "INFO",
+    "timestamp": "2025-10-09T23:53:34.841Z"
   }
 ]
