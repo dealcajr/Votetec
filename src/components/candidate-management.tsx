@@ -11,6 +11,17 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -31,7 +42,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { Candidate } from "@/types/candidate";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import { PlusCircle, Edit, Trash2, Trash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { DisplayCandidate } from "./admin-dashboard";
 
@@ -203,10 +214,62 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
         setEditingCandidate({ ...editingCandidate, position: value });
     }
   };
+  
+  const handleResetVotes = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/votes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}), // Sending an empty object will clear the votes
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to reset votes");
+      }
+      
+      onDataChange();
+      toast({
+        title: "Success!",
+        description: "All votes have been reset.",
+      });
+
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to reset votes. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <>
-      <div className="flex justify-end my-4">
+      <div className="flex justify-end my-4 gap-2">
+         <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive" disabled={isSaving}>
+              <Trash className="mr-2" />
+              Reset All Votes
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete all casted votes and reset all rankings to zero.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleResetVotes} className="bg-destructive hover:bg-destructive/90">
+                Yes, reset votes
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         <Button onClick={handleAddNewClick} disabled={isSaving}>
             <PlusCircle className="mr-2" />
             Add New Candidate

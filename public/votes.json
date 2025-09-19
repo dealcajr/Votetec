@@ -38,5 +38,13 @@
     "Treasurer": "candidate-1672531204000",
     "Auditor": "candidate-1672531205000",
     "Public Information Officer": "candidate-1672531212000"
+  },
+  "VOTE-SH-67890": {
+    "President": "candidate-1758292470339",
+    "Vice President": "candidate-1758292513611",
+    "Secretary": null,
+    "Treasurer": null,
+    "Auditor": null,
+    "Public Information Officer": null
   }
 }
