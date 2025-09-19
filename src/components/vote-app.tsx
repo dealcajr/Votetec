@@ -26,14 +26,21 @@ import type { Candidate } from "@/types/candidate";
 import { Toaster } from "@/components/ui/toaster";
 import { Skeleton } from "./ui/skeleton";
 
+export type SelectedVotes = Record<Candidate['position'], string | null>;
+
 export function VoteApp() {
   const [step, setStep] = useState<"welcome" | "voting" | "voted">("welcome");
   const [voterId, setVoterId] = useState("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(
-    null
-  );
+  const [selectedVotes, setSelectedVotes] = useState<SelectedVotes>({
+    President: null,
+    'Vice President': null,
+    Secretary: null,
+    Treasurer: null,
+    Auditor: null,
+    'Public Information Officer': null,
+  });
   const [isConfirming, setIsConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [securityDeviceDetected, setSecurityDeviceDetected] = useState(false);
@@ -55,7 +62,7 @@ export function VoteApp() {
         return res.json();
       })
       .then((data: Candidate[]) => {
-        setCandidates(data);
+        setCandidates(Array.isArray(data) ? data : []);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -73,20 +80,27 @@ export function VoteApp() {
   };
 
   const handleVote = () => {
-    if (selectedCandidateId) {
+    if (Object.values(selectedVotes).some(v => v !== null)) {
       setIsConfirming(true);
     }
   };
 
   const handleConfirmVote = () => {
-    console.log(`Voter ${voterId} voted for ${selectedCandidateId}`);
+    console.log(`Voter ${voterId} voted for:`, selectedVotes);
     setStep("voted");
     setIsConfirming(false);
   };
 
   const handleReset = () => {
     setVoterId("");
-    setSelectedCandidateId(null);
+    setSelectedVotes({
+      President: null,
+      'Vice President': null,
+      Secretary: null,
+      Treasurer: null,
+      Auditor: null,
+      'Public Information Officer': null,
+    });
     setStep("welcome");
     setError(null);
   };
@@ -101,10 +115,9 @@ export function VoteApp() {
     return () => clearTimeout(deviceCheckTimeout);
   };
 
-  const selectedCandidate = useMemo(
-    () => candidates.find((c) => c.id === selectedCandidateId),
-    [candidates, selectedCandidateId]
-  );
+  const isVoteButtonDisabled = useMemo(() => {
+    return Object.values(selectedVotes).every(v => v === null);
+  }, [selectedVotes]);
 
   const renderContent = () => {
     if (checkingDevice) {
@@ -140,17 +153,30 @@ export function VoteApp() {
           <VotingScreen
             candidates={candidates}
             isLoading={isLoading}
-            selectedCandidateId={selectedCandidateId}
-            onSelectCandidate={setSelectedCandidateId}
+            selectedVotes={selectedVotes}
+            onSelectVote={setSelectedVotes}
             onVote={handleVote}
+            isVoteDisabled={isVoteButtonDisabled}
           />
         );
       case "voted":
-        return <VotedScreen votedFor={selectedCandidate!} onReset={handleReset} />;
+        return <VotedScreen onReset={handleReset} />;
       default:
         return null;
     }
   };
+  
+  const confirmationDetails = useMemo(() => {
+    if (!isConfirming) return [];
+    
+    return Object.entries(selectedVotes)
+      .filter(([, candidateId]) => candidateId !== null)
+      .map(([position, candidateId]) => {
+        const candidate = candidates.find(c => c.id === candidateId);
+        return { position, name: candidate?.name || 'Unknown' };
+      });
+  }, [selectedVotes, candidates, isConfirming]);
+
 
   return (
     <>
@@ -176,11 +202,15 @@ export function VoteApp() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Your Vote</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to cast your vote for{" "}
-              <strong className="text-primary/90">
-                {selectedCandidate?.name}
-              </strong>
-              ? This action cannot be undone.
+              Are you sure you want to cast your votes? This action cannot be undone.
+               <ul className="mt-4 space-y-2">
+                 {confirmationDetails.map(({ position, name }) => (
+                    <li key={position}>
+                      <span className="font-semibold text-muted-foreground">{position}:</span>{' '}
+                      <strong className="text-primary/90">{name}</strong>
+                    </li>
+                 ))}
+               </ul>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -22,10 +22,26 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { Candidate } from "@/types/candidate";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlusCircle, Edit, Trash2 } from "lucide-react";
+
+const positions: Candidate['position'][] = [
+    'President',
+    'Vice President',
+    'Secretary',
+    'Treasurer',
+    'Auditor',
+    'Public Information Officer',
+];
 
 export default function AdminDashboard() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -41,7 +57,7 @@ export default function AdminDashboard() {
       const res = await fetch("/api/candidates");
       if (!res.ok) throw new Error("Failed to fetch candidates");
       const data = await res.json();
-      setCandidates(data);
+      setCandidates(Array.isArray(data) ? data : []);
     } catch (error) {
       toast({
         title: "Error",
@@ -67,7 +83,8 @@ export default function AdminDashboard() {
       id: `candidate-${Date.now()}`,
       name: "",
       description: "",
-      icon: "User", // Default icon
+      icon: "User",
+      position: "President", // Default position
     });
     setIsDialogOpen(true);
   };
@@ -108,7 +125,7 @@ export default function AdminDashboard() {
   const handleSave = async () => {
     if (!editingCandidate) return;
 
-    if (!editingCandidate.name || !editingCandidate.description) {
+    if (!editingCandidate.name || !editingCandidate.description || !editingCandidate.position) {
         toast({
             title: "Error",
             description: "Please fill out all fields.",
@@ -163,9 +180,15 @@ export default function AdminDashboard() {
     }
   };
 
-  const onFieldChange = (field: keyof Candidate, value: string) => {
+  const onFieldChange = (field: keyof Omit<Candidate, 'position'>, value: string) => {
     if (editingCandidate) {
       setEditingCandidate({ ...editingCandidate, [field]: value });
+    }
+  };
+
+  const onPositionChange = (value: Candidate['position']) => {
+    if (editingCandidate) {
+        setEditingCandidate({ ...editingCandidate, position: value });
     }
   };
 
@@ -192,6 +215,7 @@ export default function AdminDashboard() {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
+              <TableHead>Position</TableHead>
               <TableHead>Icon</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -201,6 +225,7 @@ export default function AdminDashboard() {
               <TableRow key={candidate.id}>
                 <TableCell className="font-medium">{candidate.name}</TableCell>
                 <TableCell>{candidate.description}</TableCell>
+                <TableCell>{candidate.position}</TableCell>
                 <TableCell>{candidate.icon}</TableCell>
                 <TableCell className="text-right">
                   <Button
@@ -260,6 +285,25 @@ export default function AdminDashboard() {
                   className="col-span-3"
                   disabled={isSaving}
                 />
+              </div>
+               <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="position" className="text-right">
+                    Position
+                </Label>
+                 <Select
+                    value={editingCandidate.position}
+                    onValueChange={onPositionChange}
+                    disabled={isSaving}
+                >
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a position" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {positions.map(pos => (
+                            <SelectItem key={pos} value={pos}>{pos}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="icon" className="text-right">

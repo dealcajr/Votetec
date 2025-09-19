@@ -1,11 +1,5 @@
 [
   {
-    "id": "candidate-1683833448937",
-    "name": "Alexendre \"The Strategist\" Monteiro",
-    "description": "Brings a wealth of experience in student governance and a vision for a more inclusive campus.",
-    "icon": "User"
-  },
-  {
     "id": "candidate-1683833481293",
     "name": "Sofia \"The Advocate\" Reyes",
     "description": "Passionate about student rights and dedicated to amplifying the voices of her peers.",
@@ -16,5 +10,11 @@
     "name": "Benjamin \"The Innovator\" Chen",
     "description": "A forward-thinker with a knack for creative solutions to campus challenges.",
     "icon": "Rocket"
+  },
+  {
+    "id": "candidate-1758291421221",
+    "name": "Norman Admin",
+    "description": "SSLG Presedent",
+    "icon": "User"
   }
 ]

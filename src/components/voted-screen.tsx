@@ -1,13 +1,11 @@
 import { Button } from "@/components/ui/button";
-import type { Candidate } from "@/types/candidate";
 import { CheckCircle2, Lock } from "lucide-react";
 
 interface VotedScreenProps {
-  votedFor: Candidate;
   onReset: () => void;
 }
 
-export default function VotedScreen({ votedFor, onReset }: VotedScreenProps) {
+export default function VotedScreen({ onReset }: VotedScreenProps) {
   return (
     <div className="space-y-6 text-center flex flex-col items-center animate-fade-in">
       <div className="relative">
@@ -18,11 +16,7 @@ export default function VotedScreen({ votedFor, onReset }: VotedScreenProps) {
           Vote Submitted!
         </h2>
         <p className="text-muted-foreground">
-          Thank you for voting for{" "}
-          <span className="font-bold text-primary/90">
-            {votedFor?.name || "your candidate"}
-          </span>
-          .
+          Thank you for participating in the election.
         </p>
       </div>
       <div className="flex items-center space-x-2 rounded-md bg-muted p-4 w-full justify-center">
