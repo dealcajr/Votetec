@@ -38,7 +38,7 @@ export default function SecurityCheck({ status, errorMessage, onConnect, onRetry
                             <Usb className="h-20 w-20 text-primary/30" />
                         </div>
                         <Button onClick={onConnect} size="lg">
-                            <Wifi className="mr-2" /> Connect to Device
+                            <Usb className="mr-2" /> Connect to Device
                         </Button>
                     </motion.div>
                 );
