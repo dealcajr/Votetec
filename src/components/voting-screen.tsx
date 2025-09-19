@@ -116,7 +116,7 @@ export default function VotingScreen({
                               {candidate.name}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1">
-                              {candidate.description}
+                              {candidate.partylist}
                           </p>
                         </div>
                         <RadioGroupItem value={candidate.id} id={`${position}-${candidate.id}`} className="h-5 w-5" />

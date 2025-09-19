@@ -12,5 +12,12 @@
     "description": "Padayon Party-list",
     "icon": "Candidate",
     "position": "Vice President"
+  },
+  {
+    "id": "candidate-1758293359544",
+    "name": "Reemarc Antonio",
+    "description": "Sampagueta Party-list",
+    "icon": "User",
+    "position": "President"
   }
 ]

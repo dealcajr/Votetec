@@ -107,7 +107,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
     setEditingCandidate({
       id: `candidate-${Date.now()}`,
       name: "",
-      description: "",
+      partylist: "",
       icon: "User",
       position: "President", // Default position
     });
@@ -150,7 +150,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
   const handleSave = async () => {
     if (!editingCandidate) return;
 
-    if (!editingCandidate.name || !editingCandidate.description || !editingCandidate.position) {
+    if (!editingCandidate.name || !editingCandidate.partylist || !editingCandidate.position) {
         toast({
             title: "Error",
             description: "Please fill out all fields.",
@@ -203,7 +203,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
     }
   };
 
-  const onFieldChange = (field: keyof Omit<Candidate, 'position'>, value: string) => {
+  const onFieldChange = (field: keyof Omit<Candidate, 'position' | 'id'>, value: string) => {
     if (editingCandidate) {
       setEditingCandidate({ ...editingCandidate, [field]: value });
     }
@@ -280,7 +280,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
+              <TableHead>Partylist Group</TableHead>
               <TableHead>Position</TableHead>
               <TableHead>Votes</TableHead>
               <TableHead>Rank</TableHead>
@@ -291,7 +291,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
             {processedCandidates.map((candidate) => (
               <TableRow key={candidate.id}>
                 <TableCell className="font-medium">{candidate.name}</TableCell>
-                <TableCell>{candidate.description}</TableCell>
+                <TableCell>{candidate.partylist}</TableCell>
                 <TableCell>{candidate.position}</TableCell>
                 <TableCell>{candidate.voteCount}</TableCell>
                  <TableCell>
@@ -346,13 +346,13 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">
-                  Description
+                <Label htmlFor="partylist">
+                  Partylist Group
                 </Label>
                 <Input
-                  id="description"
-                  value={editingCandidate.description}
-                  onChange={(e) => onFieldChange("description", e.target.value)}
+                  id="partylist"
+                  value={editingCandidate.partylist}
+                  onChange={(e) => onFieldChange("partylist", e.target.value)}
                   disabled={isSaving}
                 />
               </div>
