@@ -1,30 +1,37 @@
 [
   {
-    "id": "VOTE-SH-67890",
-    "name": "Alex Reyes",
+    "id": "VOTER-23",
+    "name": "Juan Dela Cruz",
     "grade": "12",
     "track": "Academic",
     "strand": "STEM"
   },
   {
-    "id": "VOTE-SH-12345",
-    "name": "Maria Garcia",
+    "id": "VOTER-002",
+    "name": "Maria Clara",
     "grade": "11",
     "track": "Academic",
-    "strand": "ABM"
+    "strand": "HUMSS"
   },
   {
-    "id": "VOTE-SH-54321",
-    "name": "John Cruz",
+    "id": "VOTER-003",
+    "name": "Jose Rizal",
     "grade": "12",
     "track": "TVL",
     "strand": "ICT"
   },
   {
-    "id": "VOTE-SH-98765",
-    "name": "Sofia Lee",
+    "id": "VOTER-004",
+    "name": "Andres Bonifacio",
     "grade": "11",
+    "track": "Sports",
+    "strand": ""
+  },
+  {
+    "id": "VOTER-005",
+    "name": "Apolinario Mabini",
+    "grade": "12",
     "track": "Arts and Design",
-    "strand": "Performing Arts"
+    "strand": ""
   }
 ]
