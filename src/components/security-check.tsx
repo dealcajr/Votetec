@@ -29,15 +29,18 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
                 reader.releaseLock();
             } catch (error) {
                 console.error("Error cancelling reader:", error);
+            } finally {
+                reader = null;
             }
-            reader = null;
         }
         if (port?.writable) {
             try {
                  // The writer needs to be closed before the port can be closed.
                 const writer = port.writable.getWriter();
-                writer.close();
-                writer.releaseLock();
+                if(writer) {
+                    writer.close();
+                    writer.releaseLock();
+                }
             } catch (error) {
                  console.error("Error closing writer:", error);
             }
@@ -68,7 +71,10 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
                     while (true) {
                         const { value, done } = await reader.read();
                         if (done) {
-                            reader.releaseLock();
+                            if (reader) {
+                                reader.releaseLock();
+                                reader = null;
+                            }
                             break;
                         }
                         const text = new TextDecoder().decode(value).trim();
@@ -101,6 +107,7 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
         } finally {
             if(reader){
                 reader.releaseLock();
+                reader = null;
             }
         }
     };
