@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Lock, ArrowLeft } from "lucide-react";
+import { CheckCircle2, Lock } from "lucide-react";
 
 interface VotedScreenProps {
   onReset: () => void;
-  onEdit: () => void;
 }
 
-export default function VotedScreen({ onReset, onEdit }: VotedScreenProps) {
+export default function VotedScreen({ onReset }: VotedScreenProps) {
   return (
     <div className="space-y-6 text-center flex flex-col items-center animate-fade-in">
       <div className="relative">
@@ -27,9 +26,6 @@ export default function VotedScreen({ onReset, onEdit }: VotedScreenProps) {
         </p>
       </div>
       <div className="flex flex-col sm:flex-row gap-2 w-full">
-         <Button onClick={onEdit} variant="outline" className="w-full">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Go Back & Edit
-        </Button>
         <Button onClick={onReset} variant="secondary" className="w-full">
             Start New Session
         </Button>

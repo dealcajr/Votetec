@@ -30,7 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 export type SelectedVotes = Record<Candidate['position'], string | null>;
 
 export function VoteApp() {
-  const [step, setStep] = useState<"security-check" | "welcome" | "voting" | "voted" | "edit">("security-check");
+  const [step, setStep] = useState<"security-check" | "welcome" | "voting" | "voted">("security-check");
   const [voterId, setVoterId] = useState("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [allVotes, setAllVotes] = useState<Record<string, SelectedVotes>>({});
@@ -80,12 +80,6 @@ export function VoteApp() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (step === 'edit') {
-      setStep('voting');
-    }
-  }, [step]);
-  
   const handleSecurityDeviceConnected = () => {
     setStep("welcome");
   };
@@ -152,10 +146,6 @@ export function VoteApp() {
     fetchData();
   };
   
-  const handleEdit = () => {
-    setStep('edit');
-  }
-
   const isVoteButtonDisabled = useMemo(() => {
     return Object.values(selectedVotes).every(v => v === null);
   }, [selectedVotes]);
@@ -178,7 +168,6 @@ export function VoteApp() {
       case "welcome":
         return <WelcomeScreen onStart={handleStartVoting} votes={allVotes} />;
       case "voting":
-      case "edit":
         return (
           <VotingScreen
             candidates={candidates}
@@ -190,7 +179,7 @@ export function VoteApp() {
           />
         );
       case "voted":
-        return <VotedScreen onReset={handleReset} onEdit={handleEdit} />;
+        return <VotedScreen onReset={handleReset} />;
       default:
         return null;
     }
