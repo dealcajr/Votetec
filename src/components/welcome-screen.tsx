@@ -1,6 +1,9 @@
+
+"use client";
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Fingerprint, User, CheckCircle, AlertTriangle } from "lucide-react";
+import { User, CheckCircle, AlertTriangle, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
@@ -15,21 +18,37 @@ interface Voter {
 }
 
 interface WelcomeScreenProps {
+  voterId: string;
   onStart: (voterId: string) => void;
+  onReset: () => void;
   votes: Record<string, SelectedVotes>;
 }
 
-export default function WelcomeScreen({ onStart, votes }: WelcomeScreenProps) {
-  const [step, setStep] = useState<"verify" | "verified" | "alreadyVoted">("verify");
-  const [isVerifying, setIsVerifying] = useState(false);
+export default function WelcomeScreen({ voterId, onStart, onReset, votes }: WelcomeScreenProps) {
+  const [status, setStatus] = useState<"loading" | "verified" | "alreadyVoted" | "notFound">("loading");
   const [voters, setVoters] = useState<Voter[]>([]);
   const [currentVoter, setCurrentVoter] = useState<Voter | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
+    // Fetch all voters to find the one matching the ID from the device
     fetch('/api/voters')
       .then(res => res.json())
-      .then(data => setVoters(data))
+      .then(data => {
+        setVoters(data);
+        const voter = data.find((v: Voter) => v.id === voterId);
+        
+        if (voter) {
+            setCurrentVoter(voter);
+            if (votes[voter.id]) {
+                setStatus("alreadyVoted");
+            } else {
+                setStatus("verified");
+            }
+        } else {
+            setStatus("notFound");
+        }
+      })
       .catch(() => {
         toast({
             title: "Error",
@@ -37,93 +56,35 @@ export default function WelcomeScreen({ onStart, votes }: WelcomeScreenProps) {
             variant: "destructive",
         })
       });
-  }, [toast]);
+  }, [voterId, votes, toast]);
 
-  const handleVerify = () => {
-    if (voters.length === 0) {
-        toast({
-            title: "No Voters Found",
-            description: "There are no voters in the system to verify.",
-            variant: "destructive",
-        })
-        return;
-    }
-
-    setIsVerifying(true);
-    setTimeout(() => {
-      // Randomly select a voter to simulate fingerprint scan
-      const randomVoter = voters[Math.floor(Math.random() * voters.length)];
-      setCurrentVoter(randomVoter);
-      setIsVerifying(false);
-
-      if (votes[randomVoter.id]) {
-        setStep("alreadyVoted");
-      } else {
-        setStep("verified");
-      }
-
-    }, 1500);
-  };
 
   const handleProceed = () => {
     if(currentVoter) {
         onStart(currentVoter.id);
     }
   };
-
-  const handleReset = () => {
-    setStep("verify");
-    setCurrentVoter(null);
-  }
   
   const voter = currentVoter;
 
   return (
     <div className="animate-fade-in w-full max-w-sm text-center">
       <AnimatePresence mode="wait">
-        {step === "verify" && (
-          <motion.div
-            key="verification"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="space-y-6"
-          >
-            <div className="space-y-2">
-              <h2 className="text-2xl font-semibold tracking-tight">
-                Identity Verification
-              </h2>
-              <p className="text-muted-foreground">
-                Please use your fingerprint to verify your identity.
-              </p>
-            </div>
-            <div className="flex justify-center items-center h-48">
-              <Button
-                variant="ghost"
-                className="h-40 w-40 rounded-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-primary/20 hover:border-primary/50 transition-all duration-300"
-                onClick={handleVerify}
-                disabled={isVerifying}
-              >
-                {isVerifying ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                    <span className="text-muted-foreground">Verifying...</span>
-                  </div>
-                ) : (
-                  <>
-                    <Fingerprint className="h-16 w-16 text-primary/80" />
-                    <span className="text-muted-foreground">Tap to Scan</span>
-                  </>
-                )}
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground pt-4">
-              Your vote is anonymous and secure.
-            </p>
-          </motion.div>
+        {status === "loading" && (
+            <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center gap-4 text-center"
+            >
+                <Loader2 className="animate-spin h-16 w-16 text-primary" />
+                <h2 className="text-xl font-semibold">Verifying Voter...</h2>
+                <p className="text-muted-foreground">Checking database for ID: {voterId}</p>
+            </motion.div>
         )}
 
-        {step === "verified" && voter && (
+        {status === "verified" && voter && (
           <motion.div
             key="verified"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -175,9 +136,9 @@ export default function WelcomeScreen({ onStart, votes }: WelcomeScreenProps) {
           </motion.div>
         )}
 
-        {step === "alreadyVoted" && voter && (
+        {(status === "alreadyVoted" || status === "notFound") && (
           <motion.div
-            key="alreadyVoted"
+            key="errorStatus"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -187,15 +148,18 @@ export default function WelcomeScreen({ onStart, votes }: WelcomeScreenProps) {
                 <AlertTriangle className="h-20 w-20 text-destructive animate-scale-in" />
                 <div className="space-y-1">
                     <h2 className="text-2xl font-semibold tracking-tight text-destructive">
-                    Already Voted
+                      {status === 'alreadyVoted' ? 'Already Voted' : 'Voter Not Found'}
                     </h2>
                     <p className="text-muted-foreground">
-                    Our records show that <strong className="text-primary/90">{voter.name}</strong> (ID: {voter.id}) has already cast a vote.
+                      {status === 'alreadyVoted' && voter ?
+                        <>Our records show that <strong className="text-primary/90">{voter.name}</strong> (ID: {voter.id}) has already cast a vote.</> :
+                        <>No voter found with the ID <strong className="text-primary/90">{voterId}</strong>.</>
+                      }
                     </p>
                 </div>
             </div>
-             <Button onClick={handleReset} variant="outline" className="w-full">
-              Verify Another Voter
+             <Button onClick={onReset} variant="outline" className="w-full">
+              Scan Another Fingerprint
             </Button>
           </motion.div>
         )}

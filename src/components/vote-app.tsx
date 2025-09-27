@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
@@ -80,7 +81,8 @@ export function VoteApp() {
     fetchData();
   }, []);
 
-  const handleSecurityDeviceConnected = () => {
+  const handleVoterVerified = (verifiedVoterId: string) => {
+    setVoterId(verifiedVoterId);
     setStep("welcome");
   };
 
@@ -143,6 +145,8 @@ export function VoteApp() {
     });
     setStep("security-check");
     setError(null);
+    setVoterId("");
+    // We can re-fetch data in case it has changed
     fetchData();
   };
   
@@ -164,9 +168,9 @@ export function VoteApp() {
 
     switch (step) {
       case "security-check":
-        return <SecurityCheck onDeviceConnected={handleSecurityDeviceConnected} />;
+        return <SecurityCheck onVoterVerified={handleVoterVerified} />;
       case "welcome":
-        return <WelcomeScreen onStart={handleStartVoting} votes={allVotes} />;
+        return <WelcomeScreen voterId={voterId} onStart={handleStartVoting} onReset={handleReset} votes={allVotes} />;
       case "voting":
         return (
           <VotingScreen
@@ -220,7 +224,7 @@ export function VoteApp() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Your Vote</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription asChild>
               <div>
                 Are you sure you want to cast your votes? This action cannot be
                 undone.
