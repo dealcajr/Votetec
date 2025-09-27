@@ -42,15 +42,9 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
                  console.error("Error closing writer:", error);
             }
         }
+        
+        // Check if port is readable (i.e., open) before trying to close.
         if (port?.readable) {
-             try {
-                // Cancel any pending reads
-                port.readable.cancel();
-            } catch (error) {
-                console.error("Error cancelling readable stream:", error);
-            }
-        }
-        if (port?.close) {
             try {
                 await port.close();
             } catch (error) {
