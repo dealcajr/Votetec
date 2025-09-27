@@ -30,7 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 export type SelectedVotes = Record<Candidate['position'], string | null>;
 
 export function VoteApp() {
-  const [step, setStep] = useState<"welcome" | "voting" | "voted">("welcome");
+  const [step, setStep] = useState<"welcome" | "voting" | "voted" | "edit">("welcome");
   const [voterId, setVoterId] = useState("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,6 +76,12 @@ export function VoteApp() {
 
     return () => clearTimeout(deviceCheckTimeout);
   }, []);
+
+  useEffect(() => {
+    if (step === 'edit') {
+      setStep('voting');
+    }
+  }, [step]);
 
   const handleStartVoting = (verifiedVoterId: string) => {
     setVoterId(verifiedVoterId);
@@ -144,6 +150,10 @@ export function VoteApp() {
     setStep("welcome");
     setError(null);
   };
+  
+  const handleEdit = () => {
+    setStep('edit');
+  }
 
   const handleRetryDeviceCheck = () => {
     setCheckingDevice(true);
@@ -189,6 +199,7 @@ export function VoteApp() {
       case "welcome":
         return <WelcomeScreen onStart={handleStartVoting} />;
       case "voting":
+      case "edit":
         return (
           <VotingScreen
             candidates={candidates}
@@ -200,7 +211,7 @@ export function VoteApp() {
           />
         );
       case "voted":
-        return <VotedScreen onReset={handleReset} />;
+        return <VotedScreen onReset={handleReset} onEdit={handleEdit} />;
       default:
         return null;
     }

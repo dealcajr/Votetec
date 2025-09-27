@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Lock } from "lucide-react";
+import { CheckCircle2, Lock, ArrowLeft } from "lucide-react";
 
 interface VotedScreenProps {
   onReset: () => void;
+  onEdit: () => void;
 }
 
-export default function VotedScreen({ onReset }: VotedScreenProps) {
+export default function VotedScreen({ onReset, onEdit }: VotedScreenProps) {
   return (
     <div className="space-y-6 text-center flex flex-col items-center animate-fade-in">
       <div className="relative">
@@ -13,21 +14,26 @@ export default function VotedScreen({ onReset }: VotedScreenProps) {
       </div>
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight">
-          Vote Submitted!
+          Vote Submitted Successfully!
         </h2>
         <p className="text-muted-foreground">
-          Thank you for participating in the election.
+          Thank you for participating in the election. Your vote is recorded.
         </p>
       </div>
       <div className="flex items-center space-x-2 rounded-md bg-muted p-4 w-full justify-center">
         <Lock className="h-5 w-5 text-muted-foreground" />
         <p className="text-sm text-muted-foreground font-medium">
-          System Locked. Please contact an administrator to reset.
+          The system is now locked for this session.
         </p>
       </div>
-      <Button onClick={onReset} variant="outline" className="w-full">
-        Cast Another Vote
-      </Button>
+      <div className="flex flex-col sm:flex-row gap-2 w-full">
+         <Button onClick={onEdit} variant="outline" className="w-full">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Go Back & Edit
+        </Button>
+        <Button onClick={onReset} variant="secondary" className="w-full">
+            Start New Session
+        </Button>
+      </div>
     </div>
   );
 }
