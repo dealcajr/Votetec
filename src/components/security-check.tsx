@@ -96,6 +96,9 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
                         // This error occurs when the device is disconnected.
                         setErrorMessage("Device disconnected. Please reconnect and try again.");
                         setStatus("error");
+                    } else if (error instanceof DOMException && error.name === "AbortError") {
+                        // This happens when cleanup is called, it's not a "real" error.
+                        console.log("Reader cancelled.");
                     } else {
                         console.error("Read error:", error);
                         setErrorMessage("An error occurred while reading from the device.");
@@ -280,3 +283,5 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
         </div>
     );
 }
+
+    
