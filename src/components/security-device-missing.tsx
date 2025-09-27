@@ -3,9 +3,10 @@ import { AlertTriangle, WifiOff } from "lucide-react";
 
 interface SecurityDeviceMissingProps {
   onRetry: () => void;
+  errorMessage?: string;
 }
 
-export default function SecurityDeviceMissing({ onRetry }: SecurityDeviceMissingProps) {
+export default function SecurityDeviceMissing({ onRetry, errorMessage }: SecurityDeviceMissingProps) {
   return (
     <div className="space-y-6 text-center flex flex-col items-center animate-fade-in">
       <div className="relative">
@@ -13,11 +14,10 @@ export default function SecurityDeviceMissing({ onRetry }: SecurityDeviceMissing
       </div>
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight text-destructive">
-          Security Device Missing
+          Security Device Error
         </h2>
         <p className="text-muted-foreground">
-          The ESP32 security device could not be detected. Please ensure it is
-          connected and powered on.
+          {errorMessage || "The ESP32 security device could not be detected. Please ensure it is connected and powered on."}
         </p>
       </div>
       <div className="flex items-center space-x-2 rounded-md bg-muted p-4 w-full justify-center">

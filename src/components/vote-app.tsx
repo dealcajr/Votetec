@@ -21,7 +21,7 @@ import {
 import WelcomeScreen from "@/components/welcome-screen";
 import VotingScreen from "@/components/voting-screen";
 import VotedScreen from "@/components/voted-screen";
-import SecurityDeviceMissing from "@/components/security-device-missing";
+import SecurityCheck from "@/components/security-check";
 import type { Candidate } from "@/types/candidate";
 import { Toaster } from "@/components/ui/toaster";
 import { Skeleton } from "./ui/skeleton";
@@ -30,7 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 export type SelectedVotes = Record<Candidate['position'], string | null>;
 
 export function VoteApp() {
-  const [step, setStep] = useState<"welcome" | "voting" | "voted" | "edit">("welcome");
+  const [step, setStep] = useState<"security-check" | "welcome" | "voting" | "voted" | "edit">("security-check");
   const [voterId, setVoterId] = useState("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [allVotes, setAllVotes] = useState<Record<string, SelectedVotes>>({});
@@ -46,8 +46,6 @@ export function VoteApp() {
   const [isConfirming, setIsConfirming] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [securityDeviceDetected, setSecurityDeviceDetected] = useState(false);
-  const [checkingDevice, setCheckingDevice] = useState(true);
   const { toast } = useToast();
 
   const fetchData = async () => {
@@ -79,16 +77,7 @@ export function VoteApp() {
   };
 
   useEffect(() => {
-    // Simulate checking for the security device
-    const deviceCheckTimeout = setTimeout(() => {
-      // Set to true to simulate device found, false to show error
-      setSecurityDeviceDetected(true);
-      setCheckingDevice(false);
-    }, 2000);
-
     fetchData();
-
-    return () => clearTimeout(deviceCheckTimeout);
   }, []);
 
   useEffect(() => {
@@ -96,6 +85,10 @@ export function VoteApp() {
       setStep('voting');
     }
   }, [step]);
+  
+  const handleSecurityDeviceConnected = () => {
+    setStep("welcome");
+  };
 
   const handleStartVoting = (verifiedVoterId: string) => {
     setVoterId(verifiedVoterId);
@@ -111,24 +104,19 @@ export function VoteApp() {
   const handleConfirmVote = async () => {
     setIsSubmitting(true);
     try {
-      // First, get the current votes
       const votesRes = await fetch("/api/votes");
-      let currentVotes = {};
-      if (votesRes.ok) {
-        currentVotes = await votesRes.json();
-      }
-
-      // Add the new vote
+      if (!votesRes.ok) throw new Error("Failed to fetch current votes.");
+      const currentVotes = await votesRes.json();
+      
       const updatedVotes = {
         ...currentVotes,
         [voterId]: selectedVotes,
       };
 
-      // POST the updated votes back to the server
       const res = await fetch("/api/votes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedVotes),
+        body: JSON.stringify(updatedVotes, null, 2),
       });
 
       if (!res.ok) {
@@ -159,7 +147,7 @@ export function VoteApp() {
       Auditor: null,
       'Public Information Officer': null,
     });
-    setStep("welcome");
+    setStep("security-check");
     setError(null);
     fetchData();
   };
@@ -168,35 +156,11 @@ export function VoteApp() {
     setStep('edit');
   }
 
-  const handleRetryDeviceCheck = () => {
-    setCheckingDevice(true);
-    // Simulate checking for the security device again
-    const deviceCheckTimeout = setTimeout(() => {
-      setSecurityDeviceDetected(true); // You can change this to `false` to test the failure case again
-      setCheckingDevice(false);
-    }, 2000);
-    return () => clearTimeout(deviceCheckTimeout);
-  };
-
   const isVoteButtonDisabled = useMemo(() => {
     return Object.values(selectedVotes).every(v => v === null);
   }, [selectedVotes]);
 
   const renderContent = () => {
-    if (checkingDevice) {
-      return (
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <Skeleton className="h-16 w-16 rounded-full" />
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-4 w-64" />
-        </div>
-      );
-    }
-
-    if (!securityDeviceDetected) {
-      return <SecurityDeviceMissing onRetry={handleRetryDeviceCheck} />;
-    }
-
     if (error) {
       return (
         <div className="text-center text-destructive">
@@ -209,6 +173,8 @@ export function VoteApp() {
     }
 
     switch (step) {
+      case "security-check":
+        return <SecurityCheck onDeviceConnected={handleSecurityDeviceConnected} />;
       case "welcome":
         return <WelcomeScreen onStart={handleStartVoting} votes={allVotes} />;
       case "voting":
