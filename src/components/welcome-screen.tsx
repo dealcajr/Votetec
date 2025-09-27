@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Fingerprint, User, CheckCircle } from "lucide-react";
+import { Fingerprint, User, CheckCircle, AlertTriangle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
+import type { SelectedVotes } from "./vote-app";
 
 interface Voter {
   id: string;
@@ -15,10 +16,11 @@ interface Voter {
 
 interface WelcomeScreenProps {
   onStart: (voterId: string) => void;
+  votes: Record<string, SelectedVotes>;
 }
 
-export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
-  const [step, setStep] = useState<"verify" | "verified">("verify");
+export default function WelcomeScreen({ onStart, votes }: WelcomeScreenProps) {
+  const [step, setStep] = useState<"verify" | "verified" | "alreadyVoted">("verify");
   const [isVerifying, setIsVerifying] = useState(false);
   const [voters, setVoters] = useState<Voter[]>([]);
   const [currentVoter, setCurrentVoter] = useState<Voter | null>(null);
@@ -53,7 +55,13 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
       const randomVoter = voters[Math.floor(Math.random() * voters.length)];
       setCurrentVoter(randomVoter);
       setIsVerifying(false);
-      setStep("verified");
+
+      if (votes[randomVoter.id]) {
+        setStep("alreadyVoted");
+      } else {
+        setStep("verified");
+      }
+
     }, 1500);
   };
 
@@ -62,6 +70,11 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
         onStart(currentVoter.id);
     }
   };
+
+  const handleReset = () => {
+    setStep("verify");
+    setCurrentVoter(null);
+  }
   
   const voter = currentVoter;
 
@@ -158,6 +171,31 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
 
             <Button onClick={handleProceed} className="w-full" size="lg">
               Proceed to Vote
+            </Button>
+          </motion.div>
+        )}
+
+        {step === "alreadyVoted" && voter && (
+          <motion.div
+            key="alreadyVoted"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="space-y-6"
+          >
+            <div className="flex flex-col items-center space-y-4">
+                <AlertTriangle className="h-20 w-20 text-destructive animate-scale-in" />
+                <div className="space-y-1">
+                    <h2 className="text-2xl font-semibold tracking-tight text-destructive">
+                    Already Voted
+                    </h2>
+                    <p className="text-muted-foreground">
+                    Our records show that <strong className="text-primary/90">{voter.name}</strong> (ID: {voter.id}) has already cast a vote.
+                    </p>
+                </div>
+            </div>
+             <Button onClick={handleReset} variant="outline" className="w-full">
+              Verify Another Voter
             </Button>
           </motion.div>
         )}

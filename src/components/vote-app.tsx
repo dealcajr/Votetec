@@ -33,6 +33,7 @@ export function VoteApp() {
   const [step, setStep] = useState<"welcome" | "voting" | "voted" | "edit">("welcome");
   const [voterId, setVoterId] = useState("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [allVotes, setAllVotes] = useState<Record<string, SelectedVotes>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [selectedVotes, setSelectedVotes] = useState<SelectedVotes>({
     President: null,
@@ -49,6 +50,34 @@ export function VoteApp() {
   const [checkingDevice, setCheckingDevice] = useState(true);
   const { toast } = useToast();
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const [candidatesRes, votesRes] = await Promise.all([
+        fetch("/api/candidates"),
+        fetch("/api/votes"),
+      ]);
+      
+      if (!candidatesRes.ok) throw new Error("Could not load candidates.");
+      if (!votesRes.ok) throw new Error("Could not load votes.");
+
+      const candidatesData = await candidatesRes.json();
+      const votesData = await votesRes.json();
+      
+      setCandidates(Array.isArray(candidatesData) ? candidatesData : []);
+      setAllVotes(votesData || {});
+
+    } catch (err) {
+       if (err instanceof Error) {
+        setError(err.message);
+       } else {
+        setError("An unknown error occurred.");
+       }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     // Simulate checking for the security device
     const deviceCheckTimeout = setTimeout(() => {
@@ -57,22 +86,7 @@ export function VoteApp() {
       setCheckingDevice(false);
     }, 2000);
 
-    fetch("/api/candidates")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return res.json();
-      })
-      .then((data: Candidate[]) => {
-        setCandidates(Array.isArray(data) ? data : []);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch candidates:", error);
-        setError("Could not load candidates. Please try again later.");
-        setIsLoading(false);
-      });
+    fetchData();
 
     return () => clearTimeout(deviceCheckTimeout);
   }, []);
@@ -99,14 +113,14 @@ export function VoteApp() {
     try {
       // First, get the current votes
       const votesRes = await fetch("/api/votes");
-      let allVotes = {};
+      let currentVotes = {};
       if (votesRes.ok) {
-        allVotes = await votesRes.json();
+        currentVotes = await votesRes.json();
       }
 
       // Add the new vote
       const updatedVotes = {
-        ...allVotes,
+        ...currentVotes,
         [voterId]: selectedVotes,
       };
 
@@ -121,6 +135,7 @@ export function VoteApp() {
         throw new Error("Failed to submit vote");
       }
       
+      setAllVotes(updatedVotes);
       setStep("voted");
 
     } catch (error) {
@@ -136,9 +151,6 @@ export function VoteApp() {
   };
 
   const handleReset = () => {
-    // A real app might require admin credentials to reset
-    const newVoterId = `VOTE-SH-${Date.now()}`;
-    setVoterId(newVoterId);
     setSelectedVotes({
       President: null,
       'Vice President': null,
@@ -149,6 +161,7 @@ export function VoteApp() {
     });
     setStep("welcome");
     setError(null);
+    fetchData();
   };
   
   const handleEdit = () => {
@@ -197,7 +210,7 @@ export function VoteApp() {
 
     switch (step) {
       case "welcome":
-        return <WelcomeScreen onStart={handleStartVoting} />;
+        return <WelcomeScreen onStart={handleStartVoting} votes={allVotes} />;
       case "voting":
       case "edit":
         return (
