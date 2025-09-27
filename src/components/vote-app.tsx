@@ -253,15 +253,20 @@ export function VoteApp() {
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Your Vote</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to cast your votes? This action cannot be undone.
-               <ul className="mt-4 space-y-2">
-                 {confirmationDetails.map(({ position, name }) => (
+              <div>
+                Are you sure you want to cast your votes? This action cannot be
+                undone.
+                <ul className="mt-4 space-y-2">
+                  {confirmationDetails.map(({ position, name }) => (
                     <li key={position}>
-                      <span className="font-semibold text-muted-foreground">{position}:</span>{' '}
+                      <span className="font-semibold text-muted-foreground">
+                        {position}:
+                      </span>{" "}
                       <strong className="text-primary/90">{name}</strong>
                     </li>
-                 ))}
-               </ul>
+                  ))}
+                </ul>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
