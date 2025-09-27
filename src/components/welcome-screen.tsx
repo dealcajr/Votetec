@@ -1,38 +1,69 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Fingerprint, User, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
+import { useToast } from "@/hooks/use-toast";
+
+interface Voter {
+  id: string;
+  name: string;
+  grade: string;
+  track: string;
+  strand: string;
+}
 
 interface WelcomeScreenProps {
   onStart: (voterId: string) => void;
 }
 
-const seniorHighVoter = {
-  id: "VOTE-SH-67890",
-  name: "Alex Reyes",
-  grade: "12",
-  track: "Academic",
-  strand: "STEM",
-};
-
 export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   const [step, setStep] = useState<"verify" | "verified">("verify");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [voters, setVoters] = useState<Voter[]>([]);
+  const [currentVoter, setCurrentVoter] = useState<Voter | null>(null);
+  const { toast } = useToast();
 
-  const voter = seniorHighVoter;
+  useEffect(() => {
+    fetch('/api/voters')
+      .then(res => res.json())
+      .then(data => setVoters(data))
+      .catch(() => {
+        toast({
+            title: "Error",
+            description: "Could not load voter list.",
+            variant: "destructive",
+        })
+      });
+  }, [toast]);
 
   const handleVerify = () => {
+    if (voters.length === 0) {
+        toast({
+            title: "No Voters Found",
+            description: "There are no voters in the system to verify.",
+            variant: "destructive",
+        })
+        return;
+    }
+
     setIsVerifying(true);
     setTimeout(() => {
+      // Randomly select a voter to simulate fingerprint scan
+      const randomVoter = voters[Math.floor(Math.random() * voters.length)];
+      setCurrentVoter(randomVoter);
       setIsVerifying(false);
       setStep("verified");
     }, 1500);
   };
 
   const handleProceed = () => {
-    onStart(voter.id);
+    if(currentVoter) {
+        onStart(currentVoter.id);
+    }
   };
+  
+  const voter = currentVoter;
 
   return (
     <div className="animate-fade-in w-full max-w-sm text-center">
@@ -79,7 +110,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           </motion.div>
         )}
 
-        {step === "verified" && (
+        {step === "verified" && voter && (
           <motion.div
             key="verified"
             initial={{ opacity: 0, scale: 0.9 }}

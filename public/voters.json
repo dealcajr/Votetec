@@ -1,0 +1,30 @@
+[
+  {
+    "id": "VOTE-SH-67890",
+    "name": "Alex Reyes",
+    "grade": "12",
+    "track": "Academic",
+    "strand": "STEM"
+  },
+  {
+    "id": "VOTE-SH-12345",
+    "name": "Maria Garcia",
+    "grade": "11",
+    "track": "Academic",
+    "strand": "ABM"
+  },
+  {
+    "id": "VOTE-SH-54321",
+    "name": "John Cruz",
+    "grade": "12",
+    "track": "TVL",
+    "strand": "ICT"
+  },
+  {
+    "id": "VOTE-SH-98765",
+    "name": "Sofia Lee",
+    "grade": "11",
+    "track": "Arts and Design",
+    "strand": "Performing Arts"
+  }
+]
