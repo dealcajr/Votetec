@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Usb, CheckCircle, Wifi, AlertTriangle, Fingerprint, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -11,58 +11,65 @@ interface SecurityCheckProps {
     onVoterVerified: (voterId: string) => void;
 }
 
-let port: SerialPort | null = null;
-let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
-let keepReading = true;
-
-
 export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
     const [status, setStatus] = useState<"idle" | "connecting" | "connected" | "scanning" | "error">("idle");
     const [errorMessage, setErrorMessage] = useState("");
     const { toast } = useToast();
 
+    // Use refs to hold port, reader, and state to avoid issues with stale closures
+    const portRef = useRef<SerialPort | null>(null);
+    const keepReadingRef = useRef(true);
+    const isCleaningUpRef = useRef(false);
+
     const cleanup = async () => {
-        keepReading = false;
-        if (reader) {
+        if (isCleaningUpRef.current) return;
+        isCleaningUpRef.current = true;
+        
+        keepReadingRef.current = false;
+        
+        const port = portRef.current;
+        if (!port) {
+            isCleaningUpRef.current = false;
+            return;
+        }
+
+        // The reader is automatically released when the port is closed.
+        // Explicitly canceling can sometimes help speed up the process.
+        if (port.readable && port.readable.locked) {
             try {
-                await reader.cancel();
+                await port.readable.getReader().cancel();
             } catch (error) {
-                console.error("Error cancelling reader:", error);
+                // Ignore errors, as we are closing anyway
             }
         }
         
-        if (port?.writable) {
-            try {
-                await port.writable.getWriter().close();
-            } catch (error) {
-                console.error("Error closing writer:", error);
-            }
-        }
-
-        if (port?.readable) {
-            try {
-                await port.close();
-            } catch (error) {
+        try {
+            await port.close();
+        } catch (error) {
+            // Ignore errors if the port is already closing or closed.
+            if (!(error instanceof DOMException && error.name === 'InvalidStateError')) {
                 console.error("Error closing port:", error);
             }
         }
-        port = null;
-        reader = null;
+        
+        portRef.current = null;
+        isCleaningUpRef.current = false;
     };
 
 
     const listenForData = async () => {
+        const port = portRef.current;
         if (!port || !port.readable) return;
         
         setStatus("scanning");
-        keepReading = true;
+        keepReadingRef.current = true;
         const textDecoder = new TextDecoder();
-        let buffer = '';
-
-        while (port.readable && keepReading) {
-            reader = port.readable.getReader();
+        
+        while (port.readable && keepReadingRef.current) {
+            const reader = port.readable.getReader();
+            let buffer = '';
             try {
-                while (true) {
+                while (keepReadingRef.current) {
                     const { value, done } = await reader.read();
                     if (done) {
                         break;
@@ -70,23 +77,26 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
                     
                     buffer += textDecoder.decode(value, { stream: true });
                     
-                    // Process complete lines
                     let newlineIndex;
                     while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
                         const line = buffer.slice(0, newlineIndex).trim();
                         buffer = buffer.slice(newlineIndex + 1);
 
-                        // Clean non-printable characters
-                        const cleanedVoterId = line.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
+                        // Clean non-printable characters and trim whitespace
+                        const cleanedVoterId = line.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
 
                         if (cleanedVoterId) {
                             onVoterVerified(cleanedVoterId);
-                            await cleanup();
+                            // No need to call cleanup here, the component will unmount and trigger it.
                             return; 
                         }
                     }
                 }
             } catch (error) {
+                 if (!keepReadingRef.current) {
+                    // This error is expected if we're intentionally cleaning up
+                    break;
+                }
                 if (error instanceof DOMException && error.name === 'NetworkError') {
                     setErrorMessage("Device disconnected. Please reconnect and try again.");
                 } else {
@@ -94,18 +104,18 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
                     setErrorMessage("An error occurred while reading from the device.");
                 }
                 setStatus("error");
-                await cleanup();
-                break; 
+                break;
             } finally {
-                 if (reader) {
-                    try {
-                        reader.releaseLock();
-                    } catch (e) {
-                       // Reader may already be released
-                    }
-                    reader = null;
+                try {
+                    reader.releaseLock();
+                } catch (e) {
+                   // Reader might already be released, ignore
                 }
             }
+        }
+         // If we exit the loop because of an error, ensure cleanup happens
+        if (status !== 'error') {
+            await cleanup();
         }
     };
     
@@ -124,8 +134,8 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
         setStatus("connecting");
         try {
             // @ts-ignore
-            port = await navigator.serial.requestPort();
-            await port.open({ baudRate: 9600 });
+            portRef.current = await navigator.serial.requestPort();
+            await portRef.current.open({ baudRate: 9600 });
             
             setStatus("connected");
             toast({
@@ -135,7 +145,7 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
             
             setTimeout(() => {
                 listenForData();
-            }, 1500);
+            }, 1000);
             
         } catch (error) {
             let message = "Failed to connect to the device.";
@@ -158,10 +168,11 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
     const handleRetry = () => {
         setStatus('idle');
         setErrorMessage('');
-        cleanup();
+        cleanup(); // Ensure everything is reset before trying again
     }
     
     useEffect(() => {
+        // This is a cleanup function that runs when the component unmounts
         return () => {
             cleanup();
         };
