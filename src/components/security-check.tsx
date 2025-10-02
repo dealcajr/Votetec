@@ -11,9 +11,9 @@ interface SecurityCheckProps {
     onVoterVerified: (voterId: string) => void;
 }
 
-// We'll keep the port and reader in a global scope to persist them across re-renders.
 let port: SerialPort | null = null;
 let reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
+let keepReading = true;
 
 
 export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
@@ -21,31 +21,33 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
     const [errorMessage, setErrorMessage] = useState("");
     const { toast } = useToast();
 
-    // Cleanup function to close the port and reader
     const cleanup = async () => {
+        keepReading = false;
         if (reader) {
             try {
-                // The reader must be cancelled before it can be released.
                 await reader.cancel();
-                reader.releaseLock();
             } catch (error) {
-                // It's okay if cancel or releaseLock throws an error, e.g., if the port is already closed.
-                console.error("Error cancelling or releasing reader lock:", error);
-            } finally {
-                reader = null;
+                console.error("Error cancelling reader:", error);
             }
         }
         
-        // Only try to close the port if it's open (i.e., readable is not null)
+        if (port?.writable) {
+            try {
+                await port.writable.getWriter().close();
+            } catch (error) {
+                console.error("Error closing writer:", error);
+            }
+        }
+
         if (port?.readable) {
             try {
                 await port.close();
             } catch (error) {
-                 // This can happen if the device is unplugged, which also closes the port.
                 console.error("Error closing port:", error);
             }
         }
         port = null;
+        reader = null;
     };
 
 
@@ -53,53 +55,57 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
         if (!port || !port.readable) return;
         
         setStatus("scanning");
+        keepReading = true;
+        const textDecoder = new TextDecoder();
+        let buffer = '';
 
-        try {
-            while (port.readable) {
-                reader = port.readable.getReader();
-                let receivedData = '';
-                try {
-                    while (true) {
-                        const { value, done } = await reader.read();
-                        if (done) {
-                           // This happens when the reader is cancelled.
-                            break;
-                        }
-                        const text = new TextDecoder().decode(value).trim();
-                        receivedData += text;
-                        // The device should send a newline character after the ID
-                        if (receivedData.includes('\n')) {
-                            const lines = receivedData.split('\n');
-                            const voterId = lines[0].trim(); // Get the first complete line
-                            if(voterId) {
-                                onVoterVerified(voterId);
-                                await cleanup();
-                                return; // Exit after successful verification
-                            }
-                            // Keep any partial data for the next read
-                            receivedData = lines.slice(1).join('\n'); 
-                        }
+        while (port.readable && keepReading) {
+            reader = port.readable.getReader();
+            try {
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) {
+                        break;
                     }
-                } catch (error) {
-                    if (error instanceof DOMException && error.name === 'NetworkError') {
-                        setErrorMessage("Device disconnected. Please reconnect and try again.");
-                    } else {
-                        console.error("Read error:", error);
-                        setErrorMessage("An error occurred while reading from the device.");
-                    }
-                    setStatus("error");
-                    break; // Exit the listening loop on error
-                } finally {
-                     if (reader) {
-                        reader.releaseLock();
-                        reader = null;
+                    
+                    buffer += textDecoder.decode(value, { stream: true });
+                    
+                    // Process complete lines
+                    let newlineIndex;
+                    while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
+                        const line = buffer.slice(0, newlineIndex).trim();
+                        buffer = buffer.slice(newlineIndex + 1);
+
+                        // Clean non-printable characters
+                        const cleanedVoterId = line.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
+
+                        if (cleanedVoterId) {
+                            onVoterVerified(cleanedVoterId);
+                            await cleanup();
+                            return; 
+                        }
                     }
                 }
+            } catch (error) {
+                if (error instanceof DOMException && error.name === 'NetworkError') {
+                    setErrorMessage("Device disconnected. Please reconnect and try again.");
+                } else {
+                    console.error("Read error:", error);
+                    setErrorMessage("An error occurred while reading from the device.");
+                }
+                setStatus("error");
+                await cleanup();
+                break; 
+            } finally {
+                 if (reader) {
+                    try {
+                        reader.releaseLock();
+                    } catch (e) {
+                       // Reader may already be released
+                    }
+                    reader = null;
+                }
             }
-        } catch(e) {
-             console.error("Outer listen loop error:", e);
-             setStatus("error");
-             setErrorMessage("Device connection lost.");
         }
     };
     
@@ -127,7 +133,6 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
                 description: "The ESP32 security device has been connected successfully.",
             });
             
-            // Give the "Connected" message a moment to display before scanning
             setTimeout(() => {
                 listenForData();
             }, 1500);
@@ -156,7 +161,6 @@ export default function SecurityCheck({ onVoterVerified }: SecurityCheckProps) {
         cleanup();
     }
     
-    // Cleanup on component unmount
     useEffect(() => {
         return () => {
             cleanup();
