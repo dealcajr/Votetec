@@ -101,7 +101,7 @@ export default function SecurityCheck({ status, errorMessage, onConnect, onRetry
                         className="space-y-6 text-center"
                     >
                         <div className="flex flex-col items-center gap-4">
-                            <AlertTriangle className="h-20 w-20 text-destructive animate-scale-in" />
+                            <AlertTriangle className="h-20 w-20 text-destructive animate-shake" />
                             <div className="space-y-1">
                                 <h2 className="text-2xl font-semibold tracking-tight text-destructive">
                                     Connection Failed
@@ -125,5 +125,3 @@ export default function SecurityCheck({ status, errorMessage, onConnect, onRetry
         </div>
     );
 }
-
-    
