@@ -1,0 +1,38 @@
+
+[
+  {
+    "id": "VOTER-001",
+    "name": "Juan Dela Cruz",
+    "grade": "12",
+    "track": "Academic",
+    "strand": "STEM"
+  },
+  {
+    "id": "VOTER-002",
+    "name": "Maria Clara",
+    "grade": "11",
+    "track": "Academic",
+    "strand": "HUMSS"
+  },
+  {
+    "id": "VOTER-003",
+    "name": "Jose Rizal",
+    "grade": "12",
+    "track": "TVL",
+    "strand": "ICT"
+  },
+  {
+    "id": "VOTER-004",
+    "name": "Gabriela Silang",
+    "grade": "11",
+    "track": "Arts and Design",
+    "strand": "Visual Arts"
+  },
+  {
+    "id": "VOTER-023",
+    "name": "Andres Bonifacio",
+    "grade": "12",
+    "track": "Sports",
+    "strand": "Coaching"
+  }
+]
