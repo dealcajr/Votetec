@@ -19,23 +19,22 @@ interface Voter {
 
 interface WelcomeScreenProps {
   voterId: string;
-  onStart: (voterId: string) => void;
+  onStart: () => void;
   onReset: () => void;
   votes: Record<string, SelectedVotes>;
 }
 
 export default function WelcomeScreen({ voterId, onStart, onReset, votes }: WelcomeScreenProps) {
   const [status, setStatus] = useState<"loading" | "verified" | "alreadyVoted" | "notFound">("loading");
-  const [voters, setVoters] = useState<Voter[]>([]);
   const [currentVoter, setCurrentVoter] = useState<Voter | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
+    setStatus("loading");
     // Fetch all voters to find the one matching the ID from the device
     fetch('/api/voters')
       .then(res => res.json())
       .then(data => {
-        setVoters(data);
         const voter = data.find((v: Voter) => v.id === voterId);
         
         if (voter) {
@@ -54,14 +53,15 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
             title: "Error",
             description: "Could not load voter list.",
             variant: "destructive",
-        })
+        });
+        setStatus("notFound");
       });
   }, [voterId, votes, toast]);
 
 
   const handleProceed = () => {
     if(currentVoter) {
-        onStart(currentVoter.id);
+        onStart();
     }
   };
   
@@ -167,3 +167,5 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
     </div>
   );
 }
+
+    
