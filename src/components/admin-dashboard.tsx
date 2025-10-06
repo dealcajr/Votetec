@@ -11,6 +11,7 @@ import VoteAnalytics from "@/components/vote-analytics";
 import RankingOverview from "@/components/ranking-overview";
 import { Button } from "./ui/button";
 import { RefreshCw } from "lucide-react";
+import LogViewer from "./log-viewer";
 
 export default function AdminDashboard() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -65,10 +66,11 @@ export default function AdminDashboard() {
   return (
     <Tabs defaultValue="manage" className="w-full">
       <div className="flex justify-between items-center mb-4">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="manage">Manage Candidates</TabsTrigger>
           <TabsTrigger value="rankings">Rankings</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="logs">Logs</TabsTrigger>
         </TabsList>
         <Button onClick={fetchCandidatesAndVotes} disabled={isLoading} variant="outline" className="ml-4 shrink-0">
           <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -87,6 +89,9 @@ export default function AdminDashboard() {
       </TabsContent>
       <TabsContent value="analytics" className="mt-4">
         <VoteAnalytics candidates={candidates} votes={votes} />
+      </TabsContent>
+      <TabsContent value="logs" className="mt-4">
+        <LogViewer />
       </TabsContent>
     </Tabs>
   );

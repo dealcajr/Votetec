@@ -30,6 +30,19 @@ import { useToast } from "@/hooks/use-toast";
 export type SelectedVotes = Record<Candidate['position'], string | null>;
 export type SecurityStatus = "idle" | "connecting" | "connected" | "scanning" | "error";
 
+async function postLog(message: string, type: 'INFO' | 'ERROR' | 'SUCCESS') {
+    try {
+        await fetch('/api/logs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, type }),
+        });
+    } catch (error) {
+        console.error('Failed to post log:', error);
+    }
+}
+
+
 export function VoteApp() {
   const [step, setStep] = useState<"security-check" | "welcome" | "voting" | "voted">("security-check");
   const [voterId, setVoterId] = useState("");
@@ -90,6 +103,7 @@ export function VoteApp() {
     if (!portRef.current || !portRef.current.readable) return;
   
     setSecurityStatus("scanning");
+    postLog('Device is now scanning for fingerprints.', 'INFO');
     keepReadingRef.current = true;
     const textDecoder = new TextDecoder();
   
@@ -103,7 +117,9 @@ export function VoteApp() {
             break;
           }
   
-          buffer += textDecoder.decode(value, { stream: true });
+          const decodedChunk = textDecoder.decode(value, { stream: true });
+          console.log('Raw data from ESP32:', decodedChunk);
+          buffer += decodedChunk;
           
           let newlineIndex;
           while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
@@ -112,17 +128,21 @@ export function VoteApp() {
 
             const cleanedVoterId = line.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
 
-            if (cleanedVoterId) {
+            if (cleanedVoterId.startsWith('VOTER-')) {
+              postLog(`Fingerprint scan successful. Received ID: ${cleanedVoterId}`, 'SUCCESS');
               setVoterId(cleanedVoterId);
               setStep("welcome");
-              // Stop listening, but keep port open
-              keepReadingRef.current = false;
+              keepReadingRef.current = false; // Stop listening but keep port open
+            } else if (cleanedVoterId) {
+               postLog(`Received non-voter ID data from ESP32: "${cleanedVoterId}"`, 'INFO');
             }
           }
         }
       } catch (error) {
         if (!keepReadingRef.current) break; // Expected when cleaning up
-        setSecurityError("Device disconnected. Please reconnect.");
+        const errorMessage = "Device disconnected during scan.";
+        setSecurityError(errorMessage);
+        postLog(errorMessage, 'ERROR');
         setSecurityStatus("error");
         await cleanupSerial(true);
         break;
@@ -137,30 +157,35 @@ export function VoteApp() {
 
   const handleConnect = useCallback(async () => {
     if (!("serial" in navigator)) {
-      setSecurityError("Web Serial API not supported. Use Chrome or Edge.");
+      const errorMessage = "Web Serial API not supported. Please use a compatible browser like Chrome or Edge.";
+      setSecurityError(errorMessage);
+      postLog(errorMessage, 'ERROR');
       setSecurityStatus("error");
       return;
     }
   
     setSecurityStatus("connecting");
+    postLog('Attempting to connect to serial device.', 'INFO');
     try {
       // @ts-ignore
       const port = await navigator.serial.requestPort();
       await port.open({ baudRate: 9600 });
       portRef.current = port;
       setSecurityStatus("connected");
+      const successMessage = "Serial device connected successfully.";
       toast({ title: "Device Connected", description: "Ready to scan for fingerprints." });
+      postLog(successMessage, 'SUCCESS');
       
-      // Automatically start listening
       listenForData();
 
     } catch (error) {
       let message = "Failed to connect to the device.";
       if (error instanceof Error && error.name === 'NotFoundError') {
-        message = "No device was selected.";
+        message = "No device was selected by the user.";
       }
       setSecurityError(message);
-      setSecurityStatus("idle"); // Go back to idle instead of error
+      postLog(message, 'ERROR');
+      setSecurityStatus("idle"); 
       await cleanupSerial();
     }
   }, [cleanupSerial, listenForData, toast]);
@@ -185,8 +210,10 @@ export function VoteApp() {
     } catch (err) {
        if (err instanceof Error) {
         setError(err.message);
+        postLog(`Data fetch error: ${err.message}`, 'ERROR');
        } else {
         setError("An unknown error occurred.");
+        postLog("An unknown error occurred during data fetch.", 'ERROR');
        }
     } finally {
       setIsLoading(false);
@@ -194,10 +221,12 @@ export function VoteApp() {
   };
 
   useEffect(() => {
+    postLog("Voting application initialized.", "INFO");
     fetchData();
   }, []);
 
   const handleStartVoting = () => {
+    postLog(`Voter ${voterId} started the voting process.`, 'INFO');
     setStep("voting");
   };
 
@@ -209,6 +238,7 @@ export function VoteApp() {
 
   const handleConfirmVote = async () => {
     setIsSubmitting(true);
+    postLog(`Voter ${voterId} is submitting their vote.`, 'INFO');
     try {
       const votesRes = await fetch("/api/votes");
       if (!votesRes.ok) throw new Error("Failed to fetch current votes.");
@@ -231,13 +261,16 @@ export function VoteApp() {
       
       setAllVotes(updatedVotes);
       setStep("voted");
+      postLog(`Voter ${voterId} successfully submitted their vote.`, 'SUCCESS');
 
     } catch (error) {
+       const errorMessage = "Failed to submit vote.";
        toast({
         title: "Error",
         description: "Failed to submit your vote. Please try again.",
         variant: "destructive",
       });
+      postLog(`${errorMessage} Voter: ${voterId}. Error: ${error instanceof Error ? error.message : String(error)}`, 'ERROR');
     } finally {
       setIsSubmitting(false);
       setIsConfirming(false);
@@ -245,6 +278,7 @@ export function VoteApp() {
   };
 
   const handleReset = () => {
+    postLog("Session reset. Ready for new voter.", 'INFO');
     setSelectedVotes({
       President: null,
       'Vice President': null,
