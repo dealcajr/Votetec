@@ -1,0 +1,37 @@
+[
+  {
+    "message": "Received non-voter ID data from ESP32: \"Awaiting next fingerprint...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-06T13:54:04.710Z"
+  },
+  {
+    "message": "Fingerprint scan successful. Received ID: VOTER-001",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-06T13:54:39.342Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"✅ Match Found - ID: 1 | Confidence: 143\"",
+    "type": "INFO",
+    "timestamp": "2025-10-06T13:54:39.352Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2025-10-06T13:54:54.312Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-06T13:54:54.350Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Awaiting next fingerprint...\"",
+    "type": "INFO",
+    "timestamp": "2025-10-06T13:54:54.411Z"
+  },
+  {
+    "message": "Received non-voter ID data from ESP32: \"Voter ID: VOTER-001\"",
+    "type": "INFO",
+    "timestamp": "2025-10-06T13:54:54.423Z"
+  }
+]
