@@ -1,70 +1,22 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import type { Candidate } from "@/types/candidate";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
-
-const positions: Candidate['position'][] = [
-    'President',
-    'Vice President',
-    'Secretary',
-    'Treasurer',
-    'Auditor',
-    'Public Information Officer',
-];
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CandidateManagement from "@/components/candidate-management";
 import VoteAnalytics from "@/components/vote-analytics";
 import RankingOverview from "@/components/ranking-overview";
 
-export interface DisplayCandidate extends Candidate {
-    voteCount: number;
-    rank: number;
-}
-
 export default function AdminDashboard() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [votes, setVotes] = useState<Record<string, Record<string, string>>>(
-    {}
-  );
+  const [votes, setVotes] = useState<Record<string, Record<string, string>>>({});
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
 
-  const fetchCandidatesAndVotes = async () => {
+  const fetchCandidatesAndVotes = useCallback(async () => {
     setIsLoading(true);
     try {
       const [candidatesRes, votesRes] = await Promise.all([
@@ -83,274 +35,47 @@ export default function AdminDashboard() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Could not fetch data.",
+        description: error instanceof Error ? error.message : "Could not fetch data.",
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     fetchCandidatesAndVotes();
-  }, []);
-
-  const handleEditClick = (candidate: Candidate) => {
-    setEditingCandidate({ ...candidate });
-    setIsDialogOpen(true);
-  };
-
-  const handleAddNewClick = () => {
-    setEditingCandidate({
-      id: `candidate-${Date.now()}`,
-      name: "",
-      partylist: "",
-      icon: "User",
-      position: "President", // Default position
-    });
-    setIsDialogOpen(true);
-  };
-
-  const handleDeleteClick = async (candidateId: string) => {
-    const originalCandidates = [...candidates];
-    const updatedCandidates = candidates.filter((c) => c.id !== candidateId);
-    setCandidates(updatedCandidates);
-
-    try {
-      setIsSaving(true);
-      const res = await fetch("/api/candidates", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedCandidates),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to delete candidate");
-      }
-
-      toast({
-        title: "Success!",
-        description: "Candidate has been deleted.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete candidate. Please try again.",
-        variant: "destructive",
-      });
-      setCandidates(originalCandidates);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-  
-  const handleSave = async () => {
-    if (!editingCandidate) return;
-
-    if (!editingCandidate.name || !editingCandidate.partylist || !editingCandidate.position) {
-        toast({
-            title: "Error",
-            description: "Please fill out all fields.",
-            variant: "destructive",
-        });
-        return;
-    }
-    
-    setIsSaving(true);
-
-    const isNew = !candidates.some(c => c.id === editingCandidate.id);
-    let updatedCandidates;
-
-    if (isNew) {
-        updatedCandidates = [...candidates, editingCandidate];
-    } else {
-        updatedCandidates = candidates.map((c) =>
-            c.id === editingCandidate.id ? editingCandidate : c
-        );
-    }
-
-    const originalCandidates = [...candidates];
-    setCandidates(updatedCandidates);
-
-    try {
-      const res = await fetch("/api/candidates", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedCandidates),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to save candidate");
-      }
-
-      setIsDialogOpen(false);
-      setEditingCandidate(null);
-      toast({
-          title: "Success!",
-          description: `Candidate has been ${isNew ? 'added' : 'updated'}.`,
-      });
-
-    } catch(error) {
-        toast({
-            title: "Error",
-            description: "Failed to save candidate. Please try again.",
-            variant: "destructive",
-        });
-        setCandidates(originalCandidates);
-    } finally {
-        setIsSaving(false);
-    }
-  };
-
-  const onFieldChange = (field: keyof Omit<Candidate, 'position' | 'id'>, value: string) => {
-    if (editingCandidate) {
-      setEditingCandidate({ ...editingCandidate, [field]: value });
-    }
-  };
-
-  const onPositionChange = (value: Candidate['position']) => {
-    if (editingCandidate) {
-        setEditingCandidate({ ...editingCandidate, position: value });
-    }
-  };
+  }, [fetchCandidatesAndVotes]);
 
   if (isLoading) {
     return (
-        <div className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-96 w-full" />
-        </div>
+      <div className="space-y-4">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-96 w-full" />
+      </div>
     );
   }
 
   return (
-    <>
-      <div className="flex justify-end mb-4">
-        <Button onClick={handleAddNewClick} disabled={isSaving}>
-            <PlusCircle className="mr-2" />
-            Add New Candidate
-        </Button>
-      </div>
-      <div className="rounded-lg border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Partylist</TableHead>
-              <TableHead>Position</TableHead>
-              <TableHead>Icon</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {candidates.map((candidate) => (
-              <TableRow key={candidate.id}>
-                <TableCell className="font-medium">{candidate.name}</TableCell>
-                <TableCell>{candidate.partylist}</TableCell>
-                <TableCell>{candidate.position}</TableCell>
-                <TableCell>{candidate.icon}</TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleEditClick(candidate)}
-                    disabled={isSaving}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDeleteClick(candidate.id)}
-                    className="text-destructive hover:text-destructive"
-                    disabled={isSaving}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      
-      <Dialog open={isDialogOpen} onOpenChange={(isOpen) => !isSaving && setIsDialogOpen(isOpen)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingCandidate?.id.startsWith('candidate-') && !candidates.some(c => c.id === editingCandidate.id) ? "Add New Candidate" : "Edit Candidate"}</DialogTitle>
-            <DialogDescription>
-              Modify the candidate's details below.
-            </DialogDescription>
-          </DialogHeader>
-          {editingCandidate && (
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  value={editingCandidate.name}
-                  onChange={(e) => onFieldChange("name", e.target.value)}
-                  className="col-span-3"
-                  disabled={isSaving}
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="partylist" className="text-right">
-                  Partylist
-                </Label>
-                <Input
-                  id="partylist"
-                  value={editingCandidate.partylist}
-                  onChange={(e) => onFieldChange("partylist", e.target.value)}
-                  className="col-span-3"
-                  disabled={isSaving}
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="position" className="text-right">
-                  Position
-                </Label>
-                <Select
-                    value={editingCandidate.position}
-                    onValueChange={onPositionChange}
-                    disabled={isSaving}
-                >
-                    <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Select a position" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {positions.map(pos => (
-                            <SelectItem key={pos} value={pos}>{pos}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="icon" className="text-right">
-                  Icon
-                </Label>
-                <Input
-                  id="icon"
-                  value={editingCandidate.icon}
-                  onChange={(e) => onFieldChange("icon", e.target.value)}
-                  className="col-span-3"
-                  disabled={isSaving}
-                />
-              </div>
-            </div>
-          )}
-          <DialogFooter>
-            <DialogClose asChild>
-                <Button variant="outline" disabled={isSaving}>Cancel</Button>
-            </DialogClose>
-            <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save Changes"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+    <Tabs defaultValue="manage" className="w-full">
+      <TabsList className="grid w-full grid-cols-3">
+        <TabsTrigger value="manage">Manage Candidates</TabsTrigger>
+        <TabsTrigger value="rankings">Rankings</TabsTrigger>
+        <TabsTrigger value="analytics">Analytics</TabsTrigger>
+      </TabsList>
+      <TabsContent value="manage" className="mt-4">
+        <CandidateManagement 
+            initialCandidates={candidates}
+            initialVotes={votes}
+            onDataChange={fetchCandidatesAndVotes}
+        />
+      </TabsContent>
+      <TabsContent value="rankings" className="mt-4">
+        <RankingOverview candidates={candidates} votes={votes} />
+      </TabsContent>
+      <TabsContent value="analytics" className="mt-4">
+        <VoteAnalytics candidates={candidates} votes={votes} />
+      </TabsContent>
+    </Tabs>
   );
 }
