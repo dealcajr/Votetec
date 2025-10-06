@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CandidateManagement from "@/components/candidate-management";
 import VoteAnalytics from "@/components/vote-analytics";
 import RankingOverview from "@/components/ranking-overview";
+import { Button } from "./ui/button";
+import { RefreshCw } from "lucide-react";
 
 export default function AdminDashboard() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -32,6 +34,10 @@ export default function AdminDashboard() {
 
       setCandidates(Array.isArray(candidatesData) ? candidatesData : []);
       setVotes(votesData || {});
+      toast({
+        title: "Data Refreshed",
+        description: "The latest election data has been loaded.",
+      });
     } catch (error) {
       toast({
         title: "Error",
@@ -47,7 +53,7 @@ export default function AdminDashboard() {
     fetchCandidatesAndVotes();
   }, [fetchCandidatesAndVotes]);
 
-  if (isLoading) {
+  if (isLoading && !candidates.length) { // Prevent full-screen loader on refresh
     return (
       <div className="space-y-4">
         <Skeleton className="h-10 w-full" />
@@ -58,11 +64,17 @@ export default function AdminDashboard() {
 
   return (
     <Tabs defaultValue="manage" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="manage">Manage Candidates</TabsTrigger>
-        <TabsTrigger value="rankings">Rankings</TabsTrigger>
-        <TabsTrigger value="analytics">Analytics</TabsTrigger>
-      </TabsList>
+      <div className="flex justify-between items-center mb-4">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="manage">Manage Candidates</TabsTrigger>
+          <TabsTrigger value="rankings">Rankings</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        </TabsList>
+        <Button onClick={fetchCandidatesAndVotes} disabled={isLoading} variant="outline" className="ml-4 shrink-0">
+          <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          {isLoading ? 'Refreshing...' : 'Refresh Data'}
+        </Button>
+      </div>
       <TabsContent value="manage" className="mt-4">
         <CandidateManagement 
             initialCandidates={candidates}
