@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -46,7 +47,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CandidateManagement from "@/components/candidate-management";
 import VoteAnalytics from "@/components/vote-analytics";
 import RankingOverview from "@/components/ranking-overview";
-import { Skeleton } from "./ui/skeleton";
 
 export interface DisplayCandidate extends Candidate {
     voteCount: number;
@@ -330,3 +330,5 @@ export default function AdminDashboard() {
     </>
   );
 }
+
+    
