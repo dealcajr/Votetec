@@ -60,6 +60,9 @@ export default function AdminDashboard() {
   );
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
 
   const fetchCandidatesAndVotes = async () => {
     setIsLoading(true);
@@ -101,7 +104,7 @@ export default function AdminDashboard() {
     setEditingCandidate({
       id: `candidate-${Date.now()}`,
       name: "",
-      description: "",
+      partylist: "",
       icon: "User",
       position: "President", // Default position
     });
@@ -144,7 +147,7 @@ export default function AdminDashboard() {
   const handleSave = async () => {
     if (!editingCandidate) return;
 
-    if (!editingCandidate.name || !editingCandidate.description || !editingCandidate.position) {
+    if (!editingCandidate.name || !editingCandidate.partylist || !editingCandidate.position) {
         toast({
             title: "Error",
             description: "Please fill out all fields.",
@@ -199,7 +202,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const onFieldChange = (field: keyof Omit<Candidate, 'position'>, value: string) => {
+  const onFieldChange = (field: keyof Omit<Candidate, 'position' | 'id'>, value: string) => {
     if (editingCandidate) {
       setEditingCandidate({ ...editingCandidate, [field]: value });
     }
@@ -233,7 +236,8 @@ export default function AdminDashboard() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
+              <TableHead>Partylist</TableHead>
+              <TableHead>Position</TableHead>
               <TableHead>Icon</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -242,7 +246,8 @@ export default function AdminDashboard() {
             {candidates.map((candidate) => (
               <TableRow key={candidate.id}>
                 <TableCell className="font-medium">{candidate.name}</TableCell>
-                <TableCell>{candidate.description}</TableCell>
+                <TableCell>{candidate.partylist}</TableCell>
+                <TableCell>{candidate.position}</TableCell>
                 <TableCell>{candidate.icon}</TableCell>
                 <TableCell className="text-right">
                   <Button
@@ -292,16 +297,35 @@ export default function AdminDashboard() {
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="description" className="text-right">
-                  Description
+                <Label htmlFor="partylist" className="text-right">
+                  Partylist
                 </Label>
                 <Input
-                  id="description"
-                  value={editingCandidate.description}
-                  onChange={(e) => onFieldChange("description", e.target.value)}
+                  id="partylist"
+                  value={editingCandidate.partylist}
+                  onChange={(e) => onFieldChange("partylist", e.target.value)}
                   className="col-span-3"
                   disabled={isSaving}
                 />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="position" className="text-right">
+                  Position
+                </Label>
+                <Select
+                    value={editingCandidate.position}
+                    onValueChange={onPositionChange}
+                    disabled={isSaving}
+                >
+                    <SelectTrigger className="col-span-3">
+                        <SelectValue placeholder="Select a position" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {positions.map(pos => (
+                            <SelectItem key={pos} value={pos}>{pos}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="icon" className="text-right">
@@ -330,5 +354,3 @@ export default function AdminDashboard() {
     </>
   );
 }
-
-    
