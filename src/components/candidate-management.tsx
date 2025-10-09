@@ -44,7 +44,12 @@ import { useToast } from "@/hooks/use-toast";
 import type { Candidate } from "@/types/candidate";
 import { PlusCircle, Edit, Trash2, Trash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import type { DisplayCandidate } from "./admin-dashboard";
+
+interface DisplayCandidate extends Candidate {
+    voteCount: number;
+    rank: number;
+}
+
 
 const positions: Candidate['position'][] = [
     'President',

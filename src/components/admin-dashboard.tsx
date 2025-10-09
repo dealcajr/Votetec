@@ -2,16 +2,48 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { Candidate } from "@/types/candidate";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PlusCircle, Edit, Trash2, RefreshCw } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CandidateManagement from "@/components/candidate-management";
-import VoteAnalytics from "@/components/vote-analytics";
 import RankingOverview from "@/components/ranking-overview";
-import { Button } from "./ui/button";
-import { RefreshCw } from "lucide-react";
-import LogViewer from "./log-viewer";
+import VoteAnalytics from "@/components/vote-analytics";
+import LogViewer from "@/components/log-viewer";
+
+export interface DisplayCandidate extends Candidate {
+    voteCount: number;
+    rank: number;
+}
 
 export default function AdminDashboard() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -32,17 +64,19 @@ export default function AdminDashboard() {
 
       const candidatesData = await candidatesRes.json();
       const votesData = await votesRes.json();
-
+      
       setCandidates(Array.isArray(candidatesData) ? candidatesData : []);
       setVotes(votesData || {});
+      
       toast({
         title: "Data Refreshed",
-        description: "The latest election data has been loaded.",
+        description: "Latest candidates and votes have been loaded."
       });
+
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Could not fetch data.",
+        description: "Could not fetch latest data.",
         variant: "destructive",
       });
     } finally {
@@ -53,8 +87,8 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchCandidatesAndVotes();
   }, [fetchCandidatesAndVotes]);
-
-  if (isLoading && !candidates.length) { // Prevent full-screen loader on refresh
+  
+  if (isLoading) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-10 w-full" />
@@ -77,20 +111,16 @@ export default function AdminDashboard() {
           {isLoading ? 'Refreshing...' : 'Refresh Data'}
         </Button>
       </div>
-      <TabsContent value="manage" className="mt-4">
-        <CandidateManagement 
-            initialCandidates={candidates}
-            initialVotes={votes}
-            onDataChange={fetchCandidatesAndVotes}
-        />
+      <TabsContent value="manage">
+        <CandidateManagement initialCandidates={candidates} initialVotes={votes} onDataChange={fetchCandidatesAndVotes} />
       </TabsContent>
-      <TabsContent value="rankings" className="mt-4">
+      <TabsContent value="rankings">
         <RankingOverview candidates={candidates} votes={votes} />
       </TabsContent>
-      <TabsContent value="analytics" className="mt-4">
+      <TabsContent value="analytics">
         <VoteAnalytics candidates={candidates} votes={votes} />
       </TabsContent>
-      <TabsContent value="logs" className="mt-4">
+      <TabsContent value="logs">
         <LogViewer />
       </TabsContent>
     </Tabs>
