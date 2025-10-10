@@ -35,8 +35,8 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
   useEffect(() => {
     setStatus("loading");
 
-    if (voterId === 'Voter-001') {
-      postLog('Admin access initiated by Voter-001.', 'INFO');
+    if (voterId === 'VOTER-001') {
+      postLog('Admin access initiated by VOTER-001.', 'INFO');
       setStatus('admin');
       return;
     }
@@ -55,7 +55,8 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
                 postLog(`Scan check: Voter ${voterId} (${voter.name}) verified successfully.`, 'SUCCESS');
                 setStatus("verified");
             }
-        } else {
+        } 
+        else {
             postLog(`Scan check: Failed to find voter with ID ${voterId}.`, 'ERROR');
             setStatus("notFound");
         }
@@ -79,19 +80,8 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
     }
   };
   
-  const handleAdminLogin = () => {
-    try {
-      localStorage.setItem("admin-auth", "true");
-      postLog('Admin successfully logged in.', 'SUCCESS');
-      router.replace("/admin");
-    } catch (e) {
-      toast({
-        title: "Login Failed",
-        description: "Your browser does not support local storage. Please use a modern browser.",
-        variant: "destructive",
-      });
-      postLog('Admin login failed: Local storage not supported.', 'ERROR');
-    }
+  const handleGoToAdmin = () => {
+    router.push("/admin");
   };
   
   const voter = currentVoter;
@@ -130,8 +120,8 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
               </div>
             </div>
             <div className="grid grid-cols-1 gap-2">
-               <Button onClick={handleAdminLogin} className="w-full" size="lg">
-                 Go to Admin Dashboard
+               <Button onClick={handleGoToAdmin} className="w-full" size="lg">
+                 Go to Admin Login
                </Button>
                <Button onClick={onReset} variant="outline" className="w-full">
                  Scan Another Fingerprint

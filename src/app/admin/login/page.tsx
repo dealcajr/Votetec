@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -8,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, LogIn } from "lucide-react";
+import { postLog } from "@/components/vote-app";
 
 // The admin passcode is hardcoded here for simplicity.
 // In a real-world application, this should be handled securely on the backend.
@@ -23,6 +25,8 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    postLog("Admin login attempt.", "INFO");
+
 
     // Simulate a network request
     setTimeout(() => {
@@ -31,12 +35,14 @@ export default function AdminLoginPage() {
         // For this demo, we'll use localStorage.
         try {
           localStorage.setItem("admin-auth", "true");
+          postLog("Admin login successful.", "SUCCESS");
           router.replace("/admin");
         } catch (e) {
           setError("Your browser does not support local storage. Please use a modern browser.");
           setIsLoading(false);
         }
       } else {
+        postLog("Admin login failed: Invalid passcode.", "ERROR");
         setError("Invalid passcode. Please try again.");
         setIsLoading(false);
       }
