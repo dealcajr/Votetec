@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import type { SelectedVotes } from "./vote-app";
+import { postLog } from "./vote-app";
 
 interface Voter {
   id: string;
@@ -40,11 +41,14 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
         if (voter) {
             setCurrentVoter(voter);
             if (votes[voter.id]) {
+                postLog(`Scan check: Voter ${voterId} has already voted.`, 'ERROR');
                 setStatus("alreadyVoted");
             } else {
+                postLog(`Scan check: Voter ${voterId} verified successfully.`, 'SUCCESS');
                 setStatus("verified");
             }
         } else {
+            postLog(`Scan check: Voter ID ${voterId} not found in registered voters.`, 'ERROR');
             setStatus("notFound");
         }
       })
@@ -54,6 +58,7 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
             description: "Could not load voter list.",
             variant: "destructive",
         });
+        postLog(`Scan check: Failed to fetch voter list to verify ID ${voterId}.`, 'ERROR');
         setStatus("notFound");
       });
   }, [voterId, votes, toast]);

@@ -30,7 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 export type SelectedVotes = Record<Candidate['position'], string | null>;
 export type SecurityStatus = "idle" | "connecting" | "connected" | "scanning" | "error";
 
-async function postLog(message: string, type: 'INFO' | 'ERROR' | 'SUCCESS') {
+export async function postLog(message: string, type: 'INFO' | 'ERROR' | 'SUCCESS') {
     try {
         await fetch('/api/logs', {
             method: 'POST',
@@ -118,7 +118,6 @@ export function VoteApp() {
           }
   
           const decodedChunk = textDecoder.decode(value, { stream: true });
-          console.log('Raw data from ESP32:', decodedChunk);
           buffer += decodedChunk;
           
           let newlineIndex;
@@ -129,12 +128,10 @@ export function VoteApp() {
             const cleanedVoterId = line.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
 
             if (cleanedVoterId.startsWith('VOTER-')) {
-              postLog(`Fingerprint scan successful. Received ID: ${cleanedVoterId}`, 'SUCCESS');
+              postLog(`Fingerprint scan detected. Received ID: ${cleanedVoterId}`, 'INFO');
               setVoterId(cleanedVoterId);
               setStep("welcome");
               keepReadingRef.current = false; // Stop listening but keep port open
-            } else if (cleanedVoterId) {
-               postLog(`Received non-voter ID data from ESP32: "${cleanedVoterId}"`, 'INFO');
             }
           }
         }
@@ -221,7 +218,6 @@ export function VoteApp() {
   };
 
   useEffect(() => {
-    postLog("Voting application initialized.", "INFO");
     fetchData();
   }, []);
 
