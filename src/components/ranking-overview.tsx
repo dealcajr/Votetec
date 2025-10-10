@@ -53,7 +53,7 @@ export default function RankingOverview({
       const candidatesForPosition = candidates
         .filter((c) => c.position === position)
         .map((c) => ({
-          name: c.name,
+          ...c,
           votes: voteCounts[c.id] || 0,
         }))
         .sort((a, b) => b.votes - a.votes);

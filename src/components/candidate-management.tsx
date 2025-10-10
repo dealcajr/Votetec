@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -72,6 +72,11 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
   const { toast } = useToast();
+  
+  useEffect(() => {
+    setCandidates(initialCandidates);
+  }, [initialCandidates]);
+
 
   const processedCandidates = useMemo<DisplayCandidate[]>(() => {
     const voteCounts = Object.values(initialVotes).flatMap(voterVotes => Object.values(voterVotes)).reduce((acc, candidateId) => {
