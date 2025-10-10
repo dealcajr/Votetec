@@ -38,5 +38,165 @@
     "message": "Received non-voter ID data from ESP32: \"oter ID: VOTER-001\"",
     "type": "INFO",
     "timestamp": "2025-10-10T07:48:30.548Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T07:52:26.290Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-10T07:52:28.361Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T07:52:28.393Z"
+  },
+  {
+    "message": "Fingerprint scan detected. Received ID: VOTER-001",
+    "type": "INFO",
+    "timestamp": "2025-10-10T07:53:00.733Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-001 has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-10-10T07:53:01.002Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-001 has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-10-10T07:53:01.346Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T07:53:03.793Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T07:53:03.822Z"
+  },
+  {
+    "message": "Fingerprint scan detected. Received ID: VOTER-001",
+    "type": "INFO",
+    "timestamp": "2025-10-10T07:53:07.144Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-001 has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-10-10T07:53:07.683Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-001 has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-10-10T07:53:07.703Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T07:53:10.927Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T07:53:10.951Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T08:02:40.360Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-10T08:02:42.655Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T08:02:42.680Z"
+  },
+  {
+    "message": "Fingerprint scan detected. Received ID: VOTER-001",
+    "type": "INFO",
+    "timestamp": "2025-10-10T08:02:58.249Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-001 has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-10-10T08:02:58.980Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-001 has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-10-10T08:02:59.343Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T08:03:02.879Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T08:03:02.913Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T08:17:04.178Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T08:17:06.242Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-10T08:17:06.260Z"
+  },
+  {
+    "message": "Fingerprint scan detected. Received ID: VOTER-001",
+    "type": "INFO",
+    "timestamp": "2025-10-10T08:17:15.334Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-001 has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-10-10T08:17:15.659Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-001 has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-10-10T08:17:15.923Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T08:17:18.624Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T08:17:18.665Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T09:36:05.204Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-10T09:36:13.277Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T09:36:13.283Z"
   }
 ]

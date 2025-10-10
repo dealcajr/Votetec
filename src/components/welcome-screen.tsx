@@ -3,12 +3,13 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { User, CheckCircle, AlertTriangle, Loader2 } from "lucide-react";
+import { User, CheckCircle, AlertTriangle, Loader2, KeyRound } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AnimatePresence, motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import type { SelectedVotes } from "./vote-app";
 import { postLog } from "./vote-app";
+import { useRouter } from "next/navigation";
 
 interface Voter {
   id: string;
@@ -26,39 +27,47 @@ interface WelcomeScreenProps {
 }
 
 export default function WelcomeScreen({ voterId, onStart, onReset, votes }: WelcomeScreenProps) {
-  const [status, setStatus] = useState<"loading" | "verified" | "alreadyVoted" | "notFound">("loading");
+  const [status, setStatus] = useState<"loading" | "verified" | "alreadyVoted" | "notFound" | "admin" >("loading");
   const [currentVoter, setCurrentVoter] = useState<Voter | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   useEffect(() => {
     setStatus("loading");
-    // Fetch all voters to find the one matching the ID from the device
+
+    if (voterId === 'Voter-001') {
+      postLog('Admin access initiated by Voter-001.', 'INFO');
+      setStatus('admin');
+      return;
+    }
+
     fetch('/api/voters')
       .then(res => res.json())
-      .then(data => {
-        const voter = data.find((v: Voter) => v.id === voterId);
+      .then((allVoters: Voter[]) => {
+        const voter = allVoters.find((v: Voter) => v.id === voterId);
         
         if (voter) {
             setCurrentVoter(voter);
             if (votes[voter.id]) {
-                postLog(`Scan check: Voter ${voterId} has already voted.`, 'ERROR');
+                postLog(`Scan check: Voter ${voterId} (${voter.name}) has already voted.`, 'ERROR');
                 setStatus("alreadyVoted");
             } else {
-                postLog(`Scan check: Voter ${voterId} verified successfully.`, 'SUCCESS');
+                postLog(`Scan check: Voter ${voterId} (${voter.name}) verified successfully.`, 'SUCCESS');
                 setStatus("verified");
             }
         } else {
-            postLog(`Scan check: Voter ID ${voterId} not found in registered voters.`, 'ERROR');
+            postLog(`Scan check: Failed to find voter with ID ${voterId}.`, 'ERROR');
             setStatus("notFound");
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
         toast({
             title: "Error",
             description: "Could not load voter list.",
             variant: "destructive",
         });
-        postLog(`Scan check: Failed to fetch voter list to verify ID ${voterId}.`, 'ERROR');
+        postLog(`Scan check: Failed to fetch voter list to verify ID ${voterId}. Error: ${errorMessage}`, 'ERROR');
         setStatus("notFound");
       });
   }, [voterId, votes, toast]);
@@ -67,6 +76,21 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
   const handleProceed = () => {
     if(currentVoter) {
         onStart();
+    }
+  };
+  
+  const handleAdminLogin = () => {
+    try {
+      localStorage.setItem("admin-auth", "true");
+      postLog('Admin successfully logged in.', 'SUCCESS');
+      router.replace("/admin");
+    } catch (e) {
+      toast({
+        title: "Login Failed",
+        description: "Your browser does not support local storage. Please use a modern browser.",
+        variant: "destructive",
+      });
+      postLog('Admin login failed: Local storage not supported.', 'ERROR');
     }
   };
   
@@ -87,6 +111,33 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
                 <h2 className="text-xl font-semibold">Verifying Voter...</h2>
                 <p className="text-muted-foreground">Checking database for ID: {voterId}</p>
             </motion.div>
+        )}
+        
+        {status === 'admin' && (
+          <motion.div
+            key="admin"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="space-y-6"
+          >
+             <div className="flex flex-col items-center space-y-4">
+              <KeyRound className="h-20 w-20 text-primary animate-scale-in" />
+              <div className="space-y-1">
+                <h2 className="text-2xl font-semibold tracking-tight">
+                  Admin Access
+                </h2>
+                <p className="text-muted-foreground">Welcome, Administrator.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+               <Button onClick={handleAdminLogin} className="w-full" size="lg">
+                 Go to Admin Dashboard
+               </Button>
+               <Button onClick={onReset} variant="outline" className="w-full">
+                 Scan Another Fingerprint
+               </Button>
+            </div>
+          </motion.div>
         )}
 
         {status === "verified" && voter && (
@@ -172,5 +223,3 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
     </div>
   );
 }
-
-    
