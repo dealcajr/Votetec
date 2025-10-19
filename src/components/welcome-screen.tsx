@@ -35,15 +35,20 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
   useEffect(() => {
     setStatus("loading");
 
-    if (voterId === 'VOTER-001') {
-      postLog('Admin access initiated by VOTER-001.', 'INFO');
-      setStatus('admin');
-      return;
-    }
+    const verifyVoter = async () => {
+      try {
+        if (voterId === 'VOTER-001') {
+          postLog('Admin access initiated by VOTER-001.', 'INFO');
+          setStatus('admin');
+          return;
+        }
 
-    fetch('/api/voters')
-      .then(res => res.json())
-      .then((allVoters: Voter[]) => {
+        const res = await fetch('/api/voters');
+        if (!res.ok) {
+          throw new Error('Could not fetch voter list');
+        }
+        const allVoters: Voter[] = await res.json();
+        
         const voter = allVoters.find((v: Voter) => v.id === voterId);
         
         if (voter) {
@@ -60,8 +65,7 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
             postLog(`Scan check: Failed to find voter with ID ${voterId}.`, 'ERROR');
             setStatus("notFound");
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
         toast({
             title: "Error",
@@ -70,7 +74,11 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
         });
         postLog(`Scan check: Failed to fetch voter list to verify ID ${voterId}. Error: ${errorMessage}`, 'ERROR');
         setStatus("notFound");
-      });
+      }
+    };
+    
+    verifyVoter();
+
   }, [voterId, votes, toast]);
 
 
@@ -81,7 +89,7 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
   };
   
   const handleGoToAdmin = () => {
-    router.push("/admin");
+    router.push("/admin/login");
   };
   
   const voter = currentVoter;
@@ -199,7 +207,7 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
                     <p className="text-muted-foreground">
                       {status === 'alreadyVoted' && voter ?
                         <>Our records show that <strong className="text-primary/90">{voter.name}</strong> (ID: {voter.id}) has already cast a vote.</> :
-                        <>No voter found with the ID <strong className="text-primary/90">{voterId}</strong>.</>
+                        <>No match found for voter with ID <strong className="text-primary/90">{voterId}</strong>.</>
                       }
                     </p>
                 </div>
@@ -213,3 +221,5 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
     </div>
   );
 }
+
+    

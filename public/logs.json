@@ -1,7 +1,127 @@
 [
   {
-    "message": "Failed to connect to the device.",
-    "type": "ERROR",
-    "timestamp": "2025-10-10T09:52:06.858Z"
+    "message": "Admin access initiated by VOTER-001.",
+    "type": "INFO",
+    "timestamp": "2025-10-10T09:56:01.380Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T05:22:06.675Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-19T05:22:08.428Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T05:22:08.438Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T05:36:40.039Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-19T05:36:42.553Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T05:36:42.561Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:38.356Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-19T06:15:40.625Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:40.633Z"
+  },
+  {
+    "message": "Fingerprint scan detected. Received ID: VOTER-001",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:44.260Z"
+  },
+  {
+    "message": "Admin access initiated by VOTER-001.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:44.267Z"
+  },
+  {
+    "message": "Admin access initiated by VOTER-001.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:44.287Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:47.975Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:47.997Z"
+  },
+  {
+    "message": "Fingerprint scan detected. Received ID: VOTER-001",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:49.484Z"
+  },
+  {
+    "message": "Admin access initiated by VOTER-001.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:49.509Z"
+  },
+  {
+    "message": "Admin access initiated by VOTER-001.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:49.518Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:50.731Z"
+  },
+  {
+    "message": "Device is now scanning for fingerprints.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:15:50.781Z"
+  },
+  {
+    "message": "Fingerprint scan detected. Received ID: VOTER-001",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:16:06.034Z"
+  },
+  {
+    "message": "Admin access initiated by VOTER-001.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:16:06.041Z"
+  },
+  {
+    "message": "Admin access initiated by VOTER-001.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:16:06.060Z"
+  },
+  {
+    "message": "Admin login attempt.",
+    "type": "INFO",
+    "timestamp": "2025-10-19T06:17:35.351Z"
+  },
+  {
+    "message": "Admin login successful.",
+    "type": "SUCCESS",
+    "timestamp": "2025-10-19T06:17:35.380Z"
   }
 ]
