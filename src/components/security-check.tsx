@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Usb, CheckCircle, Wifi, AlertTriangle, Fingerprint, Loader2 } from "lucide-react";
+import { Usb, CheckCircle, Fingerprint, AlertTriangle, Loader2, FingerprintIcon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { SecurityStatus } from "./vote-app";
 
@@ -14,6 +14,22 @@ interface SecurityCheckProps {
 }
 
 export default function SecurityCheck({ status, errorMessage, onConnect, onRetry }: SecurityCheckProps) {
+
+    const isUnregisteredError = errorMessage.toLowerCase().includes('unregistered');
+
+    const renderErrorIcon = () => {
+        if (isUnregisteredError) {
+            return <FingerprintIcon className="h-20 w-20 text-destructive animate-shake" />;
+        }
+        return <AlertTriangle className="h-20 w-20 text-destructive animate-shake" />;
+    };
+
+     const renderErrorTitle = () => {
+        if (isUnregisteredError) {
+            return "Unregistered Fingerprint";
+        }
+        return "Connection Failed";
+    };
 
     const renderContent = () => {
         switch (status) {
@@ -101,10 +117,10 @@ export default function SecurityCheck({ status, errorMessage, onConnect, onRetry
                         className="space-y-6 text-center"
                     >
                         <div className="flex flex-col items-center gap-4">
-                            <AlertTriangle className="h-20 w-20 text-destructive animate-shake" />
+                            {renderErrorIcon()}
                             <div className="space-y-1">
                                 <h2 className="text-2xl font-semibold tracking-tight text-destructive">
-                                    Connection Failed
+                                   {renderErrorTitle()}
                                 </h2>
                                 <p className="text-muted-foreground max-w-xs">{errorMessage}</p>
                             </div>

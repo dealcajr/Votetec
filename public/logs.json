@@ -1,127 +1,132 @@
 [
   {
-    "message": "Admin access initiated by VOTER-001.",
+    "message": "Device is now scanning for fingerprints.",
     "type": "INFO",
-    "timestamp": "2025-10-10T09:56:01.380Z"
+    "timestamp": "2025-11-02T07:56:24.023Z"
+  },
+  {
+    "message": "Fingerprint scan detected. Received ID: VOTER-002",
+    "type": "INFO",
+    "timestamp": "2025-11-02T07:56:35.128Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-002 (Maria Clara) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-11-02T07:56:36.515Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-002 (Maria Clara) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-11-02T07:56:36.621Z"
+  },
+  {
+    "message": "Voter VOTER-002 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2025-11-02T07:56:39.863Z"
   },
   {
     "message": "Attempting to connect to serial device.",
     "type": "INFO",
-    "timestamp": "2025-10-19T05:22:06.675Z"
-  },
-  {
-    "message": "Serial device connected successfully.",
-    "type": "SUCCESS",
-    "timestamp": "2025-10-19T05:22:08.428Z"
+    "timestamp": "2025-11-02T07:56:48.266Z"
   },
   {
     "message": "Device is now scanning for fingerprints.",
     "type": "INFO",
-    "timestamp": "2025-10-19T05:22:08.438Z"
-  },
-  {
-    "message": "Attempting to connect to serial device.",
-    "type": "INFO",
-    "timestamp": "2025-10-19T05:36:40.039Z"
+    "timestamp": "2025-11-02T07:56:56.683Z"
   },
   {
     "message": "Serial device connected successfully.",
     "type": "SUCCESS",
-    "timestamp": "2025-10-19T05:36:42.553Z"
+    "timestamp": "2025-11-02T07:56:56.694Z"
   },
   {
-    "message": "Device is now scanning for fingerprints.",
+    "message": "Fingerprint scan detected. Received ID: VOTER-003",
     "type": "INFO",
-    "timestamp": "2025-10-19T05:36:42.561Z"
+    "timestamp": "2025-11-02T07:57:06.266Z"
   },
   {
-    "message": "Attempting to connect to serial device.",
-    "type": "INFO",
-    "timestamp": "2025-10-19T06:15:38.356Z"
+    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-11-02T07:57:06.483Z"
   },
   {
-    "message": "Serial device connected successfully.",
-    "type": "SUCCESS",
-    "timestamp": "2025-10-19T06:15:40.625Z"
-  },
-  {
-    "message": "Device is now scanning for fingerprints.",
-    "type": "INFO",
-    "timestamp": "2025-10-19T06:15:40.633Z"
-  },
-  {
-    "message": "Fingerprint scan detected. Received ID: VOTER-001",
-    "type": "INFO",
-    "timestamp": "2025-10-19T06:15:44.260Z"
-  },
-  {
-    "message": "Admin access initiated by VOTER-001.",
-    "type": "INFO",
-    "timestamp": "2025-10-19T06:15:44.267Z"
-  },
-  {
-    "message": "Admin access initiated by VOTER-001.",
-    "type": "INFO",
-    "timestamp": "2025-10-19T06:15:44.287Z"
+    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-11-02T07:57:06.805Z"
   },
   {
     "message": "Session reset. Ready for new voter.",
     "type": "INFO",
-    "timestamp": "2025-10-19T06:15:47.975Z"
+    "timestamp": "2025-11-02T07:57:10.940Z"
   },
   {
     "message": "Device is now scanning for fingerprints.",
     "type": "INFO",
-    "timestamp": "2025-10-19T06:15:47.997Z"
+    "timestamp": "2025-11-02T07:57:10.992Z"
   },
   {
-    "message": "Fingerprint scan detected. Received ID: VOTER-001",
+    "message": "Fingerprint scan detected. Received ID: VOTER-003",
     "type": "INFO",
-    "timestamp": "2025-10-19T06:15:49.484Z"
+    "timestamp": "2025-11-02T07:57:14.471Z"
   },
   {
-    "message": "Admin access initiated by VOTER-001.",
-    "type": "INFO",
-    "timestamp": "2025-10-19T06:15:49.509Z"
+    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-11-02T07:57:14.864Z"
   },
   {
-    "message": "Admin access initiated by VOTER-001.",
-    "type": "INFO",
-    "timestamp": "2025-10-19T06:15:49.518Z"
+    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-11-02T07:57:15.191Z"
   },
   {
     "message": "Session reset. Ready for new voter.",
     "type": "INFO",
-    "timestamp": "2025-10-19T06:15:50.731Z"
+    "timestamp": "2025-11-02T07:57:16.206Z"
   },
   {
     "message": "Device is now scanning for fingerprints.",
     "type": "INFO",
-    "timestamp": "2025-10-19T06:15:50.781Z"
+    "timestamp": "2025-11-02T07:57:16.242Z"
   },
   {
-    "message": "Fingerprint scan detected. Received ID: VOTER-001",
+    "message": "Fingerprint scan detected. Received ID: VOTER-003",
     "type": "INFO",
-    "timestamp": "2025-10-19T06:16:06.034Z"
+    "timestamp": "2025-11-02T07:57:22.274Z"
   },
   {
-    "message": "Admin access initiated by VOTER-001.",
+    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-11-02T07:57:22.482Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2025-11-02T07:57:22.656Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
     "type": "INFO",
-    "timestamp": "2025-10-19T06:16:06.041Z"
+    "timestamp": "2025-11-02T07:57:23.941Z"
   },
   {
-    "message": "Admin access initiated by VOTER-001.",
+    "message": "Device is now scanning for fingerprints.",
     "type": "INFO",
-    "timestamp": "2025-10-19T06:16:06.060Z"
+    "timestamp": "2025-11-02T07:57:23.956Z"
   },
   {
-    "message": "Admin login attempt.",
+    "message": "Fingerprint scan detected. Received ID: VOTER-002",
     "type": "INFO",
-    "timestamp": "2025-10-19T06:17:35.351Z"
+    "timestamp": "2025-11-02T07:57:26.737Z"
   },
   {
-    "message": "Admin login successful.",
+    "message": "Scan check: Voter VOTER-002 (Maria Clara) verified successfully.",
     "type": "SUCCESS",
-    "timestamp": "2025-10-19T06:17:35.380Z"
+    "timestamp": "2025-11-02T07:57:26.924Z"
+  },
+  {
+    "message": "Scan check: Voter VOTER-002 (Maria Clara) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2025-11-02T07:57:27.171Z"
   }
 ]

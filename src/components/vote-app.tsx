@@ -125,13 +125,19 @@ export function VoteApp() {
             const line = buffer.slice(0, newlineIndex).trim();
             buffer = buffer.slice(newlineIndex + 1);
 
-            const cleanedVoterId = line.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
+            const cleanedData = line.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
 
-            if (cleanedVoterId.startsWith('VOTER-')) {
-              postLog(`Fingerprint scan detected. Received ID: ${cleanedVoterId}`, 'INFO');
-              setVoterId(cleanedVoterId);
+            if (cleanedData.startsWith('VOTER-')) {
+              postLog(`Fingerprint scan detected. Received ID: ${cleanedData}`, 'INFO');
+              setVoterId(cleanedData);
               setStep("welcome");
               keepReadingRef.current = false; // Stop listening but keep port open
+            } else if (cleanedData.toLowerCase() === 'unregistered') {
+              const errorMessage = "Unregistered fingerprint detected. Please try again.";
+              setSecurityError(errorMessage);
+              setSecurityStatus("error");
+              postLog("Unregistered fingerprint scan detected.", "ERROR");
+              // Don't stop listening, allow for another scan attempt after retry
             }
           }
         }
@@ -186,6 +192,18 @@ export function VoteApp() {
       await cleanupSerial();
     }
   }, [cleanupSerial, listenForData, toast]);
+
+    const handleRetrySecurity = () => {
+      setSecurityError("");
+      // If port is still open, just start listening again.
+      if (portRef.current) {
+        listenForData();
+      } else {
+        // Otherwise, go back to idle to reconnect.
+        setSecurityStatus("idle");
+      }
+  };
+
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -313,7 +331,7 @@ export function VoteApp() {
 
     switch (step) {
       case "security-check":
-        return <SecurityCheck status={securityStatus} errorMessage={securityError} onConnect={handleConnect} onRetry={handleConnect} />;
+        return <SecurityCheck status={securityStatus} errorMessage={securityError} onConnect={handleConnect} onRetry={handleRetrySecurity} />;
       case "welcome":
         return <WelcomeScreen voterId={voterId} onStart={handleStartVoting} onReset={handleReset} votes={allVotes} />;
       case "voting":
