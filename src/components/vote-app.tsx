@@ -131,17 +131,35 @@ export function VoteApp() {
 
             const cleanedData = line.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
 
-            if (cleanedData === 'unregistered') {
+            if (cleanedData.startsWith('STATUS:')) {
+                postLog(`Device status: ${cleanedData.substring(7)}`, 'INFO');
+            } else if (cleanedData.startsWith('ERROR:')) {
+                 const errorMessage = `Device error: ${cleanedData.substring(6)}`;
+                 setSecurityError(errorMessage);
+                 setSecurityStatus("error");
+                 postLog(errorMessage, 'ERROR');
+            } else if (cleanedData.startsWith('WARNING:')) {
+                 postLog(`Device warning: ${cleanedData.substring(8)}`, 'INFO');
+            } else if (cleanedData.startsWith('data:')) {
+                postLog(`Fingerprint data received from device.`, 'SUCCESS');
+                // With the new firmware, this is raw data, not a voter ID.
+                // For now, we'll log it. A backend would be needed to match this.
+                console.log("Received fingerprint data:", cleanedData);
+                // SIMULATING a voter ID for now to allow flow to continue
+                const simulatedVoterId = 'VOTER-002'; // You can change this for testing
+                setVoterId(simulatedVoterId);
+                setStep("welcome");
+                keepReadingRef.current = false; // Stop listening
+            } else if (cleanedData === 'unregistered') { // Keep old logic for compatibility
                 const errorMessage = "Unregistered fingerprint detected. Please try again.";
                 setSecurityError(errorMessage);
                 setSecurityStatus("error");
                 postLog("Unregistered fingerprint scan detected.", "ERROR");
-                // Don't stop listening, allow for another scan attempt after retry
-            } else if (cleanedData.startsWith('VOTER-')) {
+            } else if (cleanedData.startsWith('VOTER-')) { // Keep old logic for compatibility
                 postLog(`Fingerprint scan detected. Received ID: ${cleanedData}`, 'INFO');
                 setVoterId(cleanedData);
                 setStep("welcome");
-                keepReadingRef.current = false; // Stop listening but keep port open
+                keepReadingRef.current = false;
             }
           }
         }
@@ -161,6 +179,25 @@ export function VoteApp() {
       }
     }
   }, [cleanupSerial]);
+  
+  const sendCommandToDevice = useCallback(async (command: string) => {
+    if (!portRef.current?.writable) {
+        postLog("Cannot send command: Port not writable.", "ERROR");
+        return;
+    }
+    try {
+        const writer = portRef.current.writable.getWriter();
+        const textEncoder = new TextEncoder();
+        await writer.write(textEncoder.encode(command + "\n"));
+        writer.releaseLock();
+        postLog(`Command sent to device: ${command}`, 'INFO');
+    } catch (err) {
+        const errorMessage = `Failed to send command: ${err instanceof Error ? err.message : "Unknown error"}`;
+        setSecurityError(errorMessage);
+        setSecurityStatus("error");
+        postLog(errorMessage, "ERROR");
+    }
+  }, []);
 
   const handleConnect = useCallback(async () => {
     if (!("serial" in navigator)) {
@@ -176,14 +213,18 @@ export function VoteApp() {
     try {
       // @ts-ignore
       const port = await navigator.serial.requestPort();
-      await port.open({ baudRate: 9600 });
+      await port.open({ baudRate: 115200 });
       portRef.current = port;
       setSecurityStatus("connected");
       const successMessage = "Serial device connected successfully.";
-      toast({ title: "Device Connected", description: "Ready to scan for fingerprints." });
+      toast({ title: "Device Connected", description: "Ready for next command." });
       postLog(successMessage, 'SUCCESS');
       
-      listenForData();
+      // Give the device a moment to settle after connection
+      setTimeout(async () => {
+        await sendCommandToDevice("SCAN_VOTER");
+        listenForData();
+      }, 1000);
 
     } catch (error) {
       let message = "Failed to connect to the device.";
@@ -195,12 +236,13 @@ export function VoteApp() {
       setSecurityStatus("idle"); 
       await cleanupSerial();
     }
-  }, [cleanupSerial, listenForData, toast]);
+  }, [cleanupSerial, listenForData, toast, sendCommandToDevice]);
 
     const handleRetrySecurity = () => {
       setSecurityError("");
       // If port is still open, just start listening again.
       if (portRef.current) {
+        sendCommandToDevice("SCAN_VOTER");
         listenForData();
       } else {
         // Otherwise, go back to idle to reconnect.
@@ -315,7 +357,8 @@ export function VoteApp() {
     
     // If connected, start listening again
     if (portRef.current) {
-      listenForData();
+        sendCommandToDevice("SCAN_VOTER");
+        listenForData();
     }
     // Re-fetch data in case it has changed
     fetchData();

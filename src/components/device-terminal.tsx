@@ -35,7 +35,7 @@ export default function DeviceTerminal() {
     try {
       // @ts-ignore
       const port = await navigator.serial.requestPort();
-      await port.open({ baudRate: 9600 });
+      await port.open({ baudRate: 115200 });
       portRef.current = port;
       setStatus("connected");
       toast({ title: "Device Connected", description: "Serial connection established." });
@@ -87,7 +87,9 @@ export default function DeviceTerminal() {
             break;
           }
           const decodedText = textDecoder.decode(value).trim();
-          setOutput(prev => [...prev, `[DEVICE]: ${decodedText}`]);
+          if (decodedText) {
+            setOutput(prev => [...prev, `[DEVICE]: ${decodedText}`]);
+          }
         }
       } catch (err) {
         if (keepReadingRef.current) {
