@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
@@ -26,6 +27,7 @@ import SecurityCheck from "@/components/security-check";
 import type { Candidate } from "@/types/candidate";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
+import type { AppSettings } from "@/app/api/settings/route";
 
 export type SelectedVotes = Record<Candidate['position'], string | null>;
 export type SecurityStatus = "idle" | "connecting" | "connected" | "scanning" | "error";
@@ -49,6 +51,7 @@ export function VoteApp() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [allVotes, setAllVotes] = useState<Record<string, SelectedVotes>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [appSettings, setAppSettings] = useState<AppSettings | null>(null);
   const [selectedVotes, setSelectedVotes] = useState<SelectedVotes>({
     President: null,
     'Vice President': null,
@@ -127,17 +130,17 @@ export function VoteApp() {
 
             const cleanedData = line.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
 
-            if (cleanedData.startsWith('VOTER-')) {
-              postLog(`Fingerprint scan detected. Received ID: ${cleanedData}`, 'INFO');
-              setVoterId(cleanedData);
-              setStep("welcome");
-              keepReadingRef.current = false; // Stop listening but keep port open
-            } else if (cleanedData.toLowerCase() === '❌ No match found.') {
-              const errorMessage = "Unregistered fingerprint detected. Please try again.";
-              setSecurityError(errorMessage);
-              setSecurityStatus("error");
-              postLog("Unregistered fingerprint scan detected.", "ERROR");
-              // Don't stop listening, allow for another scan attempt after retry
+            if (cleanedData === 'unregistered') {
+                const errorMessage = "Unregistered fingerprint detected. Please try again.";
+                setSecurityError(errorMessage);
+                setSecurityStatus("error");
+                postLog("Unregistered fingerprint scan detected.", "ERROR");
+                // Don't stop listening, allow for another scan attempt after retry
+            } else if (cleanedData.startsWith('VOTER-')) {
+                postLog(`Fingerprint scan detected. Received ID: ${cleanedData}`, 'INFO');
+                setVoterId(cleanedData);
+                setStep("welcome");
+                keepReadingRef.current = false; // Stop listening but keep port open
             }
           }
         }
@@ -208,19 +211,23 @@ export function VoteApp() {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [candidatesRes, votesRes] = await Promise.all([
+      const [candidatesRes, votesRes, settingsRes] = await Promise.all([
         fetch("/api/candidates"),
         fetch("/api/votes"),
+        fetch("/api/settings"),
       ]);
       
       if (!candidatesRes.ok) throw new Error("Could not load candidates.");
       if (!votesRes.ok) throw new Error("Could not load votes.");
+      if (!settingsRes.ok) throw new Error("Could not load settings.");
 
       const candidatesData = await candidatesRes.json();
       const votesData = await votesRes.json();
+      const settingsData = await settingsRes.json();
       
       setCandidates(Array.isArray(candidatesData) ? candidatesData : []);
       setAllVotes(votesData || {});
+      setAppSettings(settingsData);
 
     } catch (err) {
        if (err instanceof Error) {
@@ -318,6 +325,9 @@ export function VoteApp() {
   }, [selectedVotes]);
 
   const renderContent = () => {
+    if (isLoading && !appSettings) {
+        return <p>Loading settings...</p>
+    }
     if (error) {
       return (
         <div className="text-center text-destructive">
@@ -370,10 +380,10 @@ export function VoteApp() {
       <Card className="w-full max-w-lg shadow-2xl animate-fade-in border-0 sm:border">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold text-primary/90">
-            VoteChain
+            {appSettings?.appName || "VoteChain"}
           </CardTitle>
           <CardDescription>
-            A simulated, secure and transparent voting system.
+            {appSettings?.appDescription || "A simulated, secure and transparent voting system."}
           </CardDescription>
         </CardHeader>
         <CardContent className="px-2 sm:px-6 py-4">

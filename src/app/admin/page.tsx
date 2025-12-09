@@ -14,13 +14,19 @@ export default function AdminPage() {
 
   useEffect(() => {
     // Check for the authentication token in localStorage
-    const isAuthenticated = localStorage.getItem("admin-auth") === "true";
-    if (!isAuthenticated) {
-      router.replace("/admin/login");
-    } else {
-      setIsVerified(true);
+    try {
+        const isAuthenticated = localStorage.getItem("admin-auth") === "true";
+        if (!isAuthenticated) {
+            router.replace("/admin/login");
+        } else {
+            setIsVerified(true);
+        }
+    } catch (e) {
+        // If localStorage is not available, redirect to login
+        router.replace("/admin/login");
+    } finally {
+        setIsLoading(false);
     }
-    setIsLoading(false);
   }, [router]);
 
   if (isLoading || !isVerified) {
