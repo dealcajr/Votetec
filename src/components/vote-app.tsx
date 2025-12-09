@@ -28,6 +28,7 @@ import type { Candidate } from "@/types/candidate";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import type { AppSettings } from "@/app/api/settings/route";
+import { ThemeToggle } from "./theme-toggle";
 
 export type SelectedVotes = Record<Candidate['position'], string | null>;
 export type SecurityStatus = "idle" | "connecting" | "connected" | "scanning" | "error";
@@ -378,13 +379,16 @@ export function VoteApp() {
     <>
       <Toaster />
       <Card className="w-full max-w-lg shadow-2xl animate-fade-in border-0 sm:border">
-        <CardHeader className="text-center">
+        <CardHeader className="text-center relative">
           <CardTitle className="text-3xl font-bold text-primary/90">
             {appSettings?.appName || "VoteChain"}
           </CardTitle>
           <CardDescription>
             {appSettings?.appDescription || "A simulated, secure and transparent voting system."}
           </CardDescription>
+          <div className="absolute top-4 right-4">
+            <ThemeToggle />
+          </div>
         </CardHeader>
         <CardContent className="px-2 sm:px-6 py-4">
           <div className="min-h-[300px] flex items-center justify-center">

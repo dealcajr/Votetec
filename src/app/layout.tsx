@@ -3,6 +3,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AppSettings } from './api/settings/route';
+import { ThemeProvider } from '@/components/theme-provider';
 
 async function getAppSettings(): Promise<AppSettings> {
   // This is a placeholder. In a real app, you'd fetch this from a service
@@ -20,7 +21,7 @@ async function getAppSettings(): Promise<AppSettings> {
         appName: "VoteChain",
         appDescription: "A secure and transparent voting system.",
         theme: {
-            background: "220 17% 95%",
+            background: "0 0% 100%",
             foreground: "240 10% 3.9%",
             primary: "216 100% 74%",
             accent: "120 60% 45%",
@@ -65,8 +66,15 @@ export default async function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        {children}
-        <Toaster />
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+        >
+            {children}
+            <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

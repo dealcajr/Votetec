@@ -27,7 +27,7 @@ const defaultSettings: AppSettings = {
     appName: "VoteChain",
     appDescription: "A simulated, secure and transparent voting system.",
     theme: {
-        background: "220 17% 95%",
+        background: "0 0% 100%",
         foreground: "240 10% 3.9%",
         primary: "216 100% 74%",
         accent: "120 60% 45%",

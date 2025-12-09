@@ -41,6 +41,7 @@ import VoteAnalytics from "@/components/vote-analytics";
 import LogViewer from "@/components/log-viewer";
 import DeviceTerminal from "./device-terminal";
 import Settings from "./settings";
+import { ThemeToggle } from "./theme-toggle";
 
 export interface DisplayCandidate extends Candidate {
     voteCount: number;
@@ -110,10 +111,13 @@ export default function AdminDashboard() {
           <TabsTrigger value="terminal">Device Terminal</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
-        <Button onClick={fetchCandidatesAndVotes} disabled={isLoading} variant="outline" className="ml-4 shrink-0">
-          <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-          {isLoading ? 'Refreshing...' : 'Refresh Data'}
-        </Button>
+        <div className="flex items-center gap-2 ml-4">
+          <ThemeToggle />
+          <Button onClick={fetchCandidatesAndVotes} disabled={isLoading} variant="outline" className="shrink-0">
+            <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            {isLoading ? 'Refreshing...' : 'Refresh Data'}
+          </Button>
+        </div>
       </div>
       <TabsContent value="manage">
         <CandidateManagement initialCandidates={candidates} initialVotes={votes} onDataChange={fetchCandidatesAndVotes} />

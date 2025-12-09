@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { AppSettings } from "@/app/api/settings/route";
 import { Save } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const themeSchema = z.object({
     background: z.string().regex(/^(\d{1,3})\s+(\d{1,3})%\s+(\d{1,3})%$/, "Must be a valid HSL string 'H S% L%'"),
@@ -49,6 +50,7 @@ export default function Settings() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
+  const { theme } = useTheme();
 
   const {
     control,
@@ -62,7 +64,7 @@ export default function Settings() {
       appName: "",
       appDescription: "",
       theme: {
-        background: "220 17% 95%",
+        background: "0 0% 100%",
         foreground: "240 10% 3.9%",
         primary: "216 100% 74%",
         accent: "120 60% 45%",
@@ -109,8 +111,10 @@ export default function Settings() {
 
       toast({
         title: "Settings Saved!",
-        description: "Your changes have been saved. The interface will update on the next page load.",
+        description: "Your changes have been saved. Reload the page to see them applied.",
       });
+      // Force a reload to apply the theme from the server
+      setTimeout(() => window.location.reload(), 1000);
     } catch (error) {
       toast({
         title: "Error",
@@ -138,6 +142,14 @@ export default function Settings() {
       </Card>
     );
   }
+  
+  const previewStyle = theme === 'dark' ? {
+    backgroundColor: `hsl(var(--background-dark))`,
+    color: `hsl(var(--foreground-dark))`,
+  } : {
+    backgroundColor: `hsl(${currentTheme.background})`,
+    color: `hsl(${currentTheme.foreground})`,
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -188,17 +200,26 @@ export default function Settings() {
                         />
                         {errors.theme?.accent && <p className="text-sm text-destructive mt-1">{errors.theme.accent.message}</p>}
                     </div>
+                     <div>
+                        <Label>Light Theme Background</Label>
+                         <Controller
+                            name="theme.background"
+                            control={control}
+                            render={({ field }) => <HSLColorPicker {...field} />}
+                        />
+                        {errors.theme?.background && <p className="text-sm text-destructive mt-1">{errors.theme.background.message}</p>}
+                    </div>
                 </div>
                 <div className="space-y-4">
                     <Label>Live Preview</Label>
-                    <div className="rounded-lg border p-6 text-center" style={{ backgroundColor: `hsl(${currentTheme.background})`, color: `hsl(${currentTheme.foreground})`}}>
+                    <div className="rounded-lg border p-6 text-center" style={previewStyle}>
                         <h2 className="text-2xl font-bold" style={{ color: `hsl(${currentTheme.primary})` }}>
                             {watch("appName") || "App Name"}
                         </h2>
                         <p className="text-sm" >{watch("appDescription") || "App Description"}</p>
                         <div className="mt-6 flex justify-center gap-4">
-                            <Button style={{ backgroundColor: `hsl(${currentTheme.primary})` }}>Primary Button</Button>
-                            <Button style={{ backgroundColor: `hsl(${currentTheme.accent})` }}>Accent Button</Button>
+                            <Button style={{ backgroundColor: `hsl(${currentTheme.primary})`, color: 'hsl(var(--primary-foreground))' }}>Primary Button</Button>
+                            <Button style={{ backgroundColor: `hsl(${currentTheme.accent})`, color: 'hsl(var(--accent-foreground))' }}>Accent Button</Button>
                         </div>
                     </div>
                 </div>
