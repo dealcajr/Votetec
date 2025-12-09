@@ -125,7 +125,7 @@ export default function AdminDashboard() {
         <CandidateManagement initialCandidates={candidates} initialVotes={votes} onDataChange={fetchCandidatesAndVotes} />
       </TabsContent>
       <TabsContent value="voters">
-        <VoterManagement onDataChange={fetchCandidatesAndVotes} />
+        <VoterManagement onDataChange={fetchCandidatesAndVotes} votes={votes} />
       </TabsContent>
       <TabsContent value="rankings">
         <RankingOverview candidates={candidates} votes={votes} />

@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Upload } from "lucide-react";
 import Papa from "papaparse";
+import { Badge } from "./ui/badge";
 
 interface Voter {
   id: string;
@@ -26,9 +27,10 @@ interface Voter {
 
 interface VoterManagementProps {
   onDataChange: () => void;
+  votes: Record<string, any>;
 }
 
-export default function VoterManagement({ onDataChange }: VoterManagementProps) {
+export default function VoterManagement({ onDataChange, votes }: VoterManagementProps) {
   const [voters, setVoters] = useState<Voter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
@@ -156,6 +158,7 @@ export default function VoterManagement({ onDataChange }: VoterManagementProps) 
               <TableHead>Grade</TableHead>
               <TableHead>Track</TableHead>
               <TableHead>Strand</TableHead>
+              <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -166,11 +169,18 @@ export default function VoterManagement({ onDataChange }: VoterManagementProps) 
                 <TableCell>{voter.grade}</TableCell>
                 <TableCell>{voter.track}</TableCell>
                 <TableCell>{voter.strand}</TableCell>
+                <TableCell>
+                  {votes[voter.id] ? (
+                    <Badge className="bg-accent text-accent-foreground">Voted</Badge>
+                  ) : (
+                    <Badge variant="secondary">Not Voted</Badge>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
              {voters.length === 0 && (
                 <TableRow>
-                    <TableCell colSpan={5} className="text-center h-24">
+                    <TableCell colSpan={6} className="text-center h-24">
                         No voters found. Use the import button to add voters.
                     </TableCell>
                 </TableRow>
