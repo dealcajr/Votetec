@@ -1,22 +1,7 @@
 [
   {
-    "message": "Failed to connect to the device.",
-    "type": "ERROR",
-    "timestamp": "2025-12-09T00:37:10.311Z"
-  },
-  {
     "message": "Attempting to connect to serial device.",
     "type": "INFO",
-    "timestamp": "2025-12-09T00:37:10.399Z"
-  },
-  {
-    "message": "Attempting to connect to serial device.",
-    "type": "INFO",
-    "timestamp": "2025-12-09T01:05:03.314Z"
-  },
-  {
-    "message": "No device was selected by the user.",
-    "type": "ERROR",
-    "timestamp": "2025-12-09T01:05:05.305Z"
+    "timestamp": "2025-12-09T01:28:01.401Z"
   }
 ]

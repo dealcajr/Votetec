@@ -299,7 +299,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
           </TableHeader>
           <TableBody>
             {processedCandidates.map((candidate) => (
-              <TableRow key={candidate.id}>
+              <TableRow key={candidate.id} className={candidate.rank === 1 ? 'bg-primary/10' : ''}>
                 <TableCell className="font-medium">{candidate.name}</TableCell>
                 <TableCell>{candidate.partylist}</TableCell>
                 <TableCell>{candidate.position}</TableCell>
