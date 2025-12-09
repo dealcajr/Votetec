@@ -42,6 +42,7 @@ import LogViewer from "@/components/log-viewer";
 import DeviceTerminal from "./device-terminal";
 import Settings from "./settings";
 import { ThemeToggle } from "./theme-toggle";
+import VoterManagement from "./voter-management";
 
 export interface DisplayCandidate extends Candidate {
     voteCount: number;
@@ -103,8 +104,9 @@ export default function AdminDashboard() {
   return (
     <Tabs defaultValue="manage" className="w-full">
       <div className="flex justify-between items-center mb-4">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="manage">Manage Candidates</TabsTrigger>
+          <TabsTrigger value="voters">Manage Voters</TabsTrigger>
           <TabsTrigger value="rankings">Rankings</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="logs">Logs</TabsTrigger>
@@ -121,6 +123,9 @@ export default function AdminDashboard() {
       </div>
       <TabsContent value="manage">
         <CandidateManagement initialCandidates={candidates} initialVotes={votes} onDataChange={fetchCandidatesAndVotes} />
+      </TabsContent>
+      <TabsContent value="voters">
+        <VoterManagement onDataChange={fetchCandidatesAndVotes} />
       </TabsContent>
       <TabsContent value="rankings">
         <RankingOverview candidates={candidates} votes={votes} />

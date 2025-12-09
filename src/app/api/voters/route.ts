@@ -20,3 +20,14 @@ export async function GET() {
         return new NextResponse('Internal Server Error', { status: 500 });
     }
 }
+
+export async function POST(request: Request) {
+    try {
+        const voters = await request.json();
+        const filePath = getVotersPath();
+        await fs.writeFile(filePath, JSON.stringify(voters, null, 2), 'utf-8');
+        return new NextResponse('OK', { status: 200 });
+    } catch (error) {
+        return new NextResponse('Internal Server Error', { status: 500 });
+    }
+}
