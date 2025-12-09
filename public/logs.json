@@ -1,132 +1,22 @@
 [
   {
-    "message": "Device is now scanning for fingerprints.",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:56:24.023Z"
-  },
-  {
-    "message": "Fingerprint scan detected. Received ID: VOTER-002",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:56:35.128Z"
-  },
-  {
-    "message": "Scan check: Voter VOTER-002 (Maria Clara) verified successfully.",
-    "type": "SUCCESS",
-    "timestamp": "2025-11-02T07:56:36.515Z"
-  },
-  {
-    "message": "Scan check: Voter VOTER-002 (Maria Clara) verified successfully.",
-    "type": "SUCCESS",
-    "timestamp": "2025-11-02T07:56:36.621Z"
-  },
-  {
-    "message": "Voter VOTER-002 started the voting process.",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:56:39.863Z"
+    "message": "Failed to connect to the device.",
+    "type": "ERROR",
+    "timestamp": "2025-12-09T00:37:10.311Z"
   },
   {
     "message": "Attempting to connect to serial device.",
     "type": "INFO",
-    "timestamp": "2025-11-02T07:56:48.266Z"
+    "timestamp": "2025-12-09T00:37:10.399Z"
   },
   {
-    "message": "Device is now scanning for fingerprints.",
+    "message": "Attempting to connect to serial device.",
     "type": "INFO",
-    "timestamp": "2025-11-02T07:56:56.683Z"
+    "timestamp": "2025-12-09T01:05:03.314Z"
   },
   {
-    "message": "Serial device connected successfully.",
-    "type": "SUCCESS",
-    "timestamp": "2025-11-02T07:56:56.694Z"
-  },
-  {
-    "message": "Fingerprint scan detected. Received ID: VOTER-003",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:57:06.266Z"
-  },
-  {
-    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
+    "message": "No device was selected by the user.",
     "type": "ERROR",
-    "timestamp": "2025-11-02T07:57:06.483Z"
-  },
-  {
-    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
-    "type": "ERROR",
-    "timestamp": "2025-11-02T07:57:06.805Z"
-  },
-  {
-    "message": "Session reset. Ready for new voter.",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:57:10.940Z"
-  },
-  {
-    "message": "Device is now scanning for fingerprints.",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:57:10.992Z"
-  },
-  {
-    "message": "Fingerprint scan detected. Received ID: VOTER-003",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:57:14.471Z"
-  },
-  {
-    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
-    "type": "ERROR",
-    "timestamp": "2025-11-02T07:57:14.864Z"
-  },
-  {
-    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
-    "type": "ERROR",
-    "timestamp": "2025-11-02T07:57:15.191Z"
-  },
-  {
-    "message": "Session reset. Ready for new voter.",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:57:16.206Z"
-  },
-  {
-    "message": "Device is now scanning for fingerprints.",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:57:16.242Z"
-  },
-  {
-    "message": "Fingerprint scan detected. Received ID: VOTER-003",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:57:22.274Z"
-  },
-  {
-    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
-    "type": "ERROR",
-    "timestamp": "2025-11-02T07:57:22.482Z"
-  },
-  {
-    "message": "Scan check: Voter VOTER-003 (Jose Rizal) has already voted.",
-    "type": "ERROR",
-    "timestamp": "2025-11-02T07:57:22.656Z"
-  },
-  {
-    "message": "Session reset. Ready for new voter.",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:57:23.941Z"
-  },
-  {
-    "message": "Device is now scanning for fingerprints.",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:57:23.956Z"
-  },
-  {
-    "message": "Fingerprint scan detected. Received ID: VOTER-002",
-    "type": "INFO",
-    "timestamp": "2025-11-02T07:57:26.737Z"
-  },
-  {
-    "message": "Scan check: Voter VOTER-002 (Maria Clara) verified successfully.",
-    "type": "SUCCESS",
-    "timestamp": "2025-11-02T07:57:26.924Z"
-  },
-  {
-    "message": "Scan check: Voter VOTER-002 (Maria Clara) verified successfully.",
-    "type": "SUCCESS",
-    "timestamp": "2025-11-02T07:57:27.171Z"
+    "timestamp": "2025-12-09T01:05:05.305Z"
   }
 ]

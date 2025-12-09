@@ -132,7 +132,7 @@ export function VoteApp() {
               setVoterId(cleanedData);
               setStep("welcome");
               keepReadingRef.current = false; // Stop listening but keep port open
-            } else if (cleanedData.toLowerCase() === 'unregistered') {
+            } else if (cleanedData.toLowerCase() === '❌ No match found.') {
               const errorMessage = "Unregistered fingerprint detected. Please try again.";
               setSecurityError(errorMessage);
               setSecurityStatus("error");

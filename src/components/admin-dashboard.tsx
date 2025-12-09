@@ -39,6 +39,7 @@ import CandidateManagement from "@/components/candidate-management";
 import RankingOverview from "@/components/ranking-overview";
 import VoteAnalytics from "@/components/vote-analytics";
 import LogViewer from "@/components/log-viewer";
+import DeviceTerminal from "./device-terminal";
 
 export interface DisplayCandidate extends Candidate {
     voteCount: number;
@@ -100,11 +101,12 @@ export default function AdminDashboard() {
   return (
     <Tabs defaultValue="manage" className="w-full">
       <div className="flex justify-between items-center mb-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="manage">Manage Candidates</TabsTrigger>
           <TabsTrigger value="rankings">Rankings</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="logs">Logs</TabsTrigger>
+          <TabsTrigger value="terminal">Device Terminal</TabsTrigger>
         </TabsList>
         <Button onClick={fetchCandidatesAndVotes} disabled={isLoading} variant="outline" className="ml-4 shrink-0">
           <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -122,6 +124,9 @@ export default function AdminDashboard() {
       </TabsContent>
       <TabsContent value="logs">
         <LogViewer />
+      </TabsContent>
+      <TabsContent value="terminal">
+        <DeviceTerminal />
       </TabsContent>
     </Tabs>
   );
