@@ -8,5 +8,110 @@
     "message": "Session reset. Ready for new voter.",
     "type": "INFO",
     "timestamp": "2026-01-01T13:54:58.024Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:33:40.349Z"
+  },
+  {
+    "message": "Device connection failed: No device was selected.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T14:33:42.377Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:33:43.469Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:33:44.538Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T14:33:46.890Z"
+  },
+  {
+    "message": "Requested fingerprint scan from device.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:33:47.917Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:46:12.364Z"
+  },
+  {
+    "message": "Device connection failed: Failed to connect to the device. Please ensure it's plugged in and not in use by another program.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T14:46:14.179Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:46:27.586Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:46:28.723Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T14:46:30.701Z"
+  },
+  {
+    "message": "Requested fingerprint scan from device.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:46:31.660Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:49:49.202Z"
+  },
+  {
+    "message": "Device connection failed: Failed to connect to the device. Please ensure it's plugged in and not in use by another program.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T14:49:51.225Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:49:52.811Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:49:58.784Z"
+  },
+  {
+    "message": "Device connection failed: No device was selected.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T14:50:00.948Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:50:02.254Z"
+  },
+  {
+    "message": "Attempting to connect to serial device.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:50:03.315Z"
+  },
+  {
+    "message": "Serial device connected successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T14:50:04.941Z"
+  },
+  {
+    "message": "Requested fingerprint scan from device.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T14:50:05.992Z"
   }
 ]
