@@ -15,7 +15,6 @@ interface Voter {
   id: string;
   name: string;
   grade: string;
-  track: string;
   strand: string;
 }
 
@@ -172,10 +171,6 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Grade:</span>
                   <span className="font-medium">{voter.grade}</span>
-                </div>
-                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Track:</span>
-                  <span className="font-medium">{voter.track}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Strand:</span>

@@ -32,7 +32,6 @@ interface Voter {
   id: string;
   name: string;
   grade: string;
-  track: string;
   strand: string;
 }
 
@@ -81,10 +80,12 @@ export default function VoterManagement({ onDataChange, votes }: VoterManagement
         skipEmptyLines: true,
         complete: async (results) => {
             try {
-                const newVoters = results.data as Voter[];
+                // Remove 'track' from the processed data
+                const newVoters = (results.data as any[]).map(({ track, ...rest }) => rest) as Voter[];
 
-                if (!Array.isArray(newVoters) || !newVoters.every(v => v.id && v.name && v.grade)) {
-                    throw new Error("Invalid CSV format. Expected columns: id, name, grade, track, strand.");
+
+                if (!Array.isArray(newVoters) || !newVoters.every(v => v.id && v.name && v.grade && v.strand)) {
+                    throw new Error("Invalid CSV format. Expected columns: id, name, grade, strand.");
                 }
                 
                 const res = await fetch('/api/voters', {
@@ -192,7 +193,6 @@ export default function VoterManagement({ onDataChange, votes }: VoterManagement
               <TableHead>Voter ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Grade</TableHead>
-              <TableHead>Track</TableHead>
               <TableHead>Strand</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
@@ -204,7 +204,6 @@ export default function VoterManagement({ onDataChange, votes }: VoterManagement
                 <TableCell className="font-medium">{voter.id}</TableCell>
                 <TableCell>{voter.name}</TableCell>
                 <TableCell>{voter.grade}</TableCell>
-                <TableCell>{voter.track}</TableCell>
                 <TableCell>{voter.strand}</TableCell>
                 <TableCell>
                   {votes[voter.id] ? (
