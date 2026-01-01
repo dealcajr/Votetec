@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, LogIn } from "lucide-react";
+import { User, LogIn, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
+
 
 interface VoterLoginScreenProps {
   onLogin: (voterId: string) => void;
@@ -17,10 +19,12 @@ export default function VoterLoginScreen({ onLogin }: VoterLoginScreenProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (voterId.trim()) {
+    if (voterId.trim().length === 12) {
       onLogin(voterId.trim());
     }
   };
+
+  const isInvalidLrn = voterId.length > 0 && voterId.length !== 12;
 
   return (
     <div className="w-full max-w-sm animate-fade-in">
@@ -30,7 +34,7 @@ export default function VoterLoginScreen({ onLogin }: VoterLoginScreenProps) {
                     Voter Verification
                 </h2>
                 <p className="text-muted-foreground">
-                    Please enter your Learner Reference Number (LRN).
+                    Please enter your 12-digit Learner Reference Number (LRN).
                 </p>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -42,14 +46,26 @@ export default function VoterLoginScreen({ onLogin }: VoterLoginScreenProps) {
                             id="voterId"
                             type="text"
                             value={voterId}
-                            onChange={(e) => setVoterId(e.target.value)}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                // Allow only numbers and limit to 12 characters
+                                if (/^\d*$/.test(value) && value.length <= 12) {
+                                    setVoterId(value);
+                                }
+                            }}
                             required
-                            placeholder="Enter your LRN"
-                            className="pl-10"
+                            placeholder="Enter your 12-digit LRN"
+                            className={cn("pl-10", isInvalidLrn && "border-destructive ring-destructive ring-1")}
                         />
                     </div>
+                     {isInvalidLrn && (
+                        <div className="flex items-center text-xs text-destructive">
+                           <AlertTriangle className="h-4 w-4 mr-1" />
+                           LRN must be exactly 12 digits.
+                        </div>
+                    )}
                 </div>
-                <Button type="submit" className="w-full" disabled={!voterId.trim()}>
+                <Button type="submit" className="w-full" disabled={voterId.trim().length !== 12}>
                     <LogIn className="mr-2" />
                     Verify and Proceed
                 </Button>
