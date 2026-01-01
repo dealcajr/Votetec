@@ -43,6 +43,7 @@ import DeviceTerminal from "./device-terminal";
 import Settings from "./settings";
 import { ThemeToggle } from "./theme-toggle";
 import VoterManagement from "./voter-management";
+import ElectionActions from "./election-actions";
 
 export interface DisplayCandidate extends Candidate {
     voteCount: number;
@@ -104,11 +105,12 @@ export default function AdminDashboard() {
   return (
     <Tabs defaultValue="manage" className="w-full">
       <div className="flex justify-between items-center mb-4">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="manage">Manage Candidates</TabsTrigger>
           <TabsTrigger value="voters">Manage Voters</TabsTrigger>
           <TabsTrigger value="rankings">Rankings</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="actions">Election Actions</TabsTrigger>
           <TabsTrigger value="logs">Logs</TabsTrigger>
           <TabsTrigger value="terminal">Device Terminal</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -132,6 +134,9 @@ export default function AdminDashboard() {
       </TabsContent>
       <TabsContent value="analytics">
         <VoteAnalytics candidates={candidates} votes={votes} />
+      </TabsContent>
+      <TabsContent value="actions">
+        <ElectionActions />
       </TabsContent>
       <TabsContent value="logs">
         <LogViewer />
