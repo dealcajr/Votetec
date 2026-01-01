@@ -3,5 +3,10 @@
     "message": "Attempting to connect to serial device.",
     "type": "INFO",
     "timestamp": "2025-12-09T01:28:01.401Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T13:54:58.024Z"
   }
 ]
