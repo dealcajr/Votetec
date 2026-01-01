@@ -11,9 +11,20 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Upload } from "lucide-react";
+import { Upload, Trash2 } from "lucide-react";
 import Papa from "papaparse";
 import { Badge } from "./ui/badge";
 
@@ -33,7 +44,7 @@ interface VoterManagementProps {
 export default function VoterManagement({ onDataChange, votes }: VoterManagementProps) {
   const [voters, setVoters] = useState<Voter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -63,7 +74,7 @@ export default function VoterManagement({ onDataChange, votes }: VoterManagement
     const file = event.target.files?.[0];
     if (!file) return;
 
-    setIsUploading(true);
+    setIsProcessing(true);
 
     const reader = new FileReader();
     reader.onload = async (e) => {
@@ -79,11 +90,10 @@ export default function VoterManagement({ onDataChange, votes }: VoterManagement
                 description: "Please upload a JSON file.",
                 variant: "destructive",
             });
-            setIsUploading(false);
+            setIsProcessing(false);
             return;
         }
 
-        // Basic validation
         if (!Array.isArray(newVoters) || !newVoters.every(v => v.id && v.name && v.grade)) {
             throw new Error("Invalid JSON format. Expected an array of voters with id, name, and grade.");
         }
@@ -110,8 +120,7 @@ export default function VoterManagement({ onDataChange, votes }: VoterManagement
           variant: "destructive",
         });
       } finally {
-        setIsUploading(false);
-        // Reset file input
+        setIsProcessing(false);
         if(fileInputRef.current) fileInputRef.current.value = "";
       }
     };
@@ -121,6 +130,37 @@ export default function VoterManagement({ onDataChange, votes }: VoterManagement
 
   const handleImportClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleRemoveVoter = async (voterId: string) => {
+    setIsProcessing(true);
+    try {
+        const updatedVoters = voters.filter(v => v.id !== voterId);
+        
+        const res = await fetch('/api/voters', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedVoters)
+        });
+
+        if (!res.ok) throw new Error("Failed to remove voter on the server.");
+
+        setVoters(updatedVoters);
+        onDataChange();
+        toast({
+          title: "Success!",
+          description: `Voter has been removed.`,
+        });
+
+    } catch (error) {
+        toast({
+            title: "Error",
+            description: error instanceof Error ? error.message : "Could not remove voter.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsProcessing(false);
+    }
   };
   
   if (isLoading) {
@@ -144,9 +184,9 @@ export default function VoterManagement({ onDataChange, votes }: VoterManagement
           className="hidden"
           accept=".json"
         />
-        <Button onClick={handleImportClick} disabled={isUploading}>
+        <Button onClick={handleImportClick} disabled={isProcessing}>
           <Upload className="mr-2" />
-          {isUploading ? "Uploading..." : "Import Voters (JSON)"}
+          {isProcessing ? "Processing..." : "Import Voters (JSON)"}
         </Button>
       </div>
       <div className="rounded-lg border">
@@ -159,6 +199,7 @@ export default function VoterManagement({ onDataChange, votes }: VoterManagement
               <TableHead>Track</TableHead>
               <TableHead>Strand</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -176,11 +217,42 @@ export default function VoterManagement({ onDataChange, votes }: VoterManagement
                     <Badge variant="secondary">Not Voted</Badge>
                   )}
                 </TableCell>
+                <TableCell className="text-right">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                         <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={isProcessing}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will permanently remove the voter "{voter.name}". This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleRemoveVoter(voter.id)}
+                            className="bg-destructive hover:bg-destructive/90"
+                          >
+                            Yes, remove voter
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                </TableCell>
               </TableRow>
             ))}
              {voters.length === 0 && (
                 <TableRow>
-                    <TableCell colSpan={6} className="text-center h-24">
+                    <TableCell colSpan={7} className="text-center h-24">
                         No voters found. Use the import button to add voters.
                     </TableCell>
                 </TableRow>
