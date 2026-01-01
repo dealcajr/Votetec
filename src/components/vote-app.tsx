@@ -1,8 +1,7 @@
 
-
 "use client";
 
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Card,
   CardHeader,
@@ -23,7 +22,7 @@ import {
 import WelcomeScreen from "@/components/welcome-screen";
 import VotingScreen from "@/components/voting-screen";
 import VotedScreen from "@/components/voted-screen";
-import SecurityCheck from "@/components/security-check";
+import VoterLoginScreen from "@/components/voter-login-screen"; 
 import type { Candidate } from "@/types/candidate";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
@@ -31,7 +30,6 @@ import type { AppSettings } from "@/app/api/settings/route";
 import { ThemeToggle } from "./theme-toggle";
 
 export type SelectedVotes = Record<Candidate['position'], string | null>;
-export type SecurityStatus = "idle" | "connecting" | "connected" | "scanning" | "error";
 
 export async function postLog(message: string, type: 'INFO' | 'ERROR' | 'SUCCESS') {
     try {
@@ -45,9 +43,8 @@ export async function postLog(message: string, type: 'INFO' | 'ERROR' | 'SUCCESS
     }
 }
 
-
 export function VoteApp() {
-  const [step, setStep] = useState<"security-check" | "welcome" | "voting" | "voted">("security-check");
+  const [step, setStep] = useState<"login" | "welcome" | "voting" | "voted">("login");
   const [voterId, setVoterId] = useState("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [allVotes, setAllVotes] = useState<Record<string, SelectedVotes>>({});
@@ -65,191 +62,6 @@ export function VoteApp() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-
-  const [securityStatus, setSecurityStatus] = useState<SecurityStatus>("idle");
-  const [securityError, setSecurityError] = useState("");
-  const portRef = useRef<SerialPort | null>(null);
-  const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
-  const keepReadingRef = useRef(false);
-
-  const cleanupSerial = useCallback(async (isError = false) => {
-    if (!portRef.current) return;
-  
-    keepReadingRef.current = false;
-  
-    if (readerRef.current) {
-      try {
-        await readerRef.current.cancel();
-      } catch (err) {
-        // Ignore cancel errors
-      } finally {
-        readerRef.current = null;
-      }
-    }
-  
-    if (portRef.current.readable) {
-      // The reader is automatically released when the port is closed.
-    }
-  
-    try {
-      await portRef.current.close();
-    } catch (err) {
-      // Ignore errors if the port is already closing or closed.
-    }
-  
-    portRef.current = null;
-    if (!isError) {
-      setSecurityStatus("idle");
-    }
-  }, []);
-
-  const listenForData = useCallback(async () => {
-    if (!portRef.current || !portRef.current.readable) return;
-  
-    setSecurityStatus("scanning");
-    postLog('Device is now scanning for fingerprints.', 'INFO');
-    keepReadingRef.current = true;
-    const textDecoder = new TextDecoder();
-  
-    while (portRef.current.readable && keepReadingRef.current) {
-      readerRef.current = portRef.current.readable.getReader();
-      let buffer = '';
-      try {
-        while (keepReadingRef.current) {
-          const { value, done } = await readerRef.current.read();
-          if (done) {
-            break;
-          }
-  
-          const decodedChunk = textDecoder.decode(value, { stream: true });
-          buffer += decodedChunk;
-          
-          let newlineIndex;
-          while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
-            const line = buffer.slice(0, newlineIndex).trim();
-            buffer = buffer.slice(newlineIndex + 1);
-
-            const cleanedData = line.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
-
-            if (cleanedData.startsWith('STATUS:')) {
-                postLog(`Device status: ${cleanedData.substring(7)}`, 'INFO');
-            } else if (cleanedData.startsWith('ERROR:')) {
-                 const errorMessage = `Device error: ${cleanedData.substring(6)}`;
-                 setSecurityError(errorMessage);
-                 setSecurityStatus("error");
-                 postLog(errorMessage, 'ERROR');
-            } else if (cleanedData.startsWith('WARNING:')) {
-                 postLog(`Device warning: ${cleanedData.substring(8)}`, 'INFO');
-            } else if (cleanedData.startsWith('data:')) {
-                postLog(`Fingerprint data received from device.`, 'SUCCESS');
-                // With the new firmware, this is raw data, not a voter ID.
-                // For now, we'll log it. A backend would be needed to match this.
-                console.log("Received fingerprint data:", cleanedData);
-                // SIMULATING a voter ID for now to allow flow to continue
-                const simulatedVoterId = 'VOTER-002'; // You can change this for testing
-                setVoterId(simulatedVoterId);
-                setStep("welcome");
-                keepReadingRef.current = false; // Stop listening
-            } else if (cleanedData === 'unregistered') { // Keep old logic for compatibility
-                const errorMessage = "Unregistered fingerprint detected. Please try again.";
-                setSecurityError(errorMessage);
-                setSecurityStatus("error");
-                postLog("Unregistered fingerprint scan detected.", "ERROR");
-            } else if (cleanedData.startsWith('VOTER-')) { // Keep old logic for compatibility
-                postLog(`Fingerprint scan detected. Received ID: ${cleanedData}`, 'INFO');
-                setVoterId(cleanedData);
-                setStep("welcome");
-                keepReadingRef.current = false;
-            }
-          }
-        }
-      } catch (error) {
-        if (!keepReadingRef.current) break; // Expected when cleaning up
-        const errorMessage = "Device disconnected during scan.";
-        setSecurityError(errorMessage);
-        postLog(errorMessage, 'ERROR');
-        setSecurityStatus("error");
-        await cleanupSerial(true);
-        break;
-      } finally {
-        if (readerRef.current) {
-          readerRef.current.releaseLock();
-          readerRef.current = null;
-        }
-      }
-    }
-  }, [cleanupSerial]);
-  
-  const sendCommandToDevice = useCallback(async (command: string) => {
-    if (!portRef.current?.writable) {
-        postLog("Cannot send command: Port not writable.", "ERROR");
-        return;
-    }
-    try {
-        const writer = portRef.current.writable.getWriter();
-        const textEncoder = new TextEncoder();
-        await writer.write(textEncoder.encode(command + "\n"));
-        writer.releaseLock();
-        postLog(`Command sent to device: ${command}`, 'INFO');
-    } catch (err) {
-        const errorMessage = `Failed to send command: ${err instanceof Error ? err.message : "Unknown error"}`;
-        setSecurityError(errorMessage);
-        setSecurityStatus("error");
-        postLog(errorMessage, "ERROR");
-    }
-  }, []);
-
-  const handleConnect = useCallback(async () => {
-    if (!("serial" in navigator)) {
-      const errorMessage = "Web Serial API not supported. Please use a compatible browser like Chrome or Edge.";
-      setSecurityError(errorMessage);
-      postLog(errorMessage, 'ERROR');
-      setSecurityStatus("error");
-      return;
-    }
-  
-    setSecurityStatus("connecting");
-    postLog('Attempting to connect to serial device.', 'INFO');
-    try {
-      // @ts-ignore
-      const port = await navigator.serial.requestPort();
-      await port.open({ baudRate: 115200 });
-      portRef.current = port;
-      setSecurityStatus("connected");
-      const successMessage = "Serial device connected successfully.";
-      toast({ title: "Device Connected", description: "Ready for next command." });
-      postLog(successMessage, 'SUCCESS');
-      
-      // Give the device a moment to settle after connection
-      setTimeout(async () => {
-        await sendCommandToDevice("SCAN_VOTER");
-        listenForData();
-      }, 1000);
-
-    } catch (error) {
-      let message = "Failed to connect to the device.";
-      if (error instanceof Error && error.name === 'NotFoundError') {
-        message = "No device was selected by the user.";
-      }
-      setSecurityError(message);
-      postLog(message, 'ERROR');
-      setSecurityStatus("idle"); 
-      await cleanupSerial();
-    }
-  }, [cleanupSerial, listenForData, toast, sendCommandToDevice]);
-
-    const handleRetrySecurity = () => {
-      setSecurityError("");
-      // If port is still open, just start listening again.
-      if (portRef.current) {
-        sendCommandToDevice("SCAN_VOTER");
-        listenForData();
-      } else {
-        // Otherwise, go back to idle to reconnect.
-        setSecurityStatus("idle");
-      }
-  };
-
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -288,6 +100,11 @@ export function VoteApp() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleLogin = (id: string) => {
+    setVoterId(id);
+    setStep("welcome");
+  };
 
   const handleStartVoting = () => {
     postLog(`Voter ${voterId} started the voting process.`, 'INFO');
@@ -351,15 +168,9 @@ export function VoteApp() {
       Auditor: null,
       'Public Information Officer': null,
     });
-    setStep("security-check");
+    setStep("login");
     setError(null);
     setVoterId("");
-    
-    // If connected, start listening again
-    if (portRef.current) {
-        sendCommandToDevice("SCAN_VOTER");
-        listenForData();
-    }
     // Re-fetch data in case it has changed
     fetchData();
   };
@@ -384,8 +195,8 @@ export function VoteApp() {
     }
 
     switch (step) {
-      case "security-check":
-        return <SecurityCheck status={securityStatus} errorMessage={securityError} onConnect={handleConnect} onRetry={handleRetrySecurity} />;
+      case "login":
+        return <VoterLoginScreen onLogin={handleLogin} />;
       case "welcome":
         return <WelcomeScreen voterId={voterId} onStart={handleStartVoting} onReset={handleReset} votes={allVotes} />;
       case "voting":
