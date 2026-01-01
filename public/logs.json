@@ -113,5 +113,35 @@
     "message": "Requested fingerprint scan from device.",
     "type": "INFO",
     "timestamp": "2026-01-01T14:50:05.992Z"
+  },
+  {
+    "message": "Scan check: Failed to find voter with ID 102939484483.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:00:26.000Z"
+  },
+  {
+    "message": "Scan check: Failed to find voter with ID 102939484483.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:00:26.268Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:00:28.421Z"
+  },
+  {
+    "message": "Teacher fingerprint scan initiated for closing election.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:01:04.485Z"
+  },
+  {
+    "message": "Teacher fingerprint scan initiated for closing election.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:02:50.885Z"
+  },
+  {
+    "message": "Election closing authorized by teacher.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T15:02:56.817Z"
   }
 ]
