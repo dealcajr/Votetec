@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   Card,
   CardHeader,
@@ -22,7 +22,7 @@ import {
 import WelcomeScreen from "@/components/welcome-screen";
 import VotingScreen from "@/components/voting-screen";
 import VotedScreen from "@/components/voted-screen";
-import VoterLoginScreen from "@/components/voter-login-screen"; 
+import SecurityCheck from "@/components/security-check";
 import type { Candidate } from "@/types/candidate";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +30,7 @@ import type { AppSettings } from "@/app/api/settings/route";
 import { ThemeToggle } from "./theme-toggle";
 
 export type SelectedVotes = Record<Candidate['position'], string | null>;
+export type SecurityStatus = "idle" | "connecting" | "connected" | "scanning" | "error" | "success";
 
 export async function postLog(message: string, type: 'INFO' | 'ERROR' | 'SUCCESS') {
     try {
@@ -44,7 +45,7 @@ export async function postLog(message: string, type: 'INFO' | 'ERROR' | 'SUCCESS
 }
 
 export function VoteApp() {
-  const [step, setStep] = useState<"login" | "welcome" | "voting" | "voted">("login");
+  const [step, setStep] = useState<"security" | "welcome" | "voting" | "voted">("security");
   const [voterId, setVoterId] = useState("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [allVotes, setAllVotes] = useState<Record<string, SelectedVotes>>({});
@@ -60,7 +61,14 @@ export function VoteApp() {
   });
   const [isConfirming, setIsConfirming] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  
+  const [securityStatus, setSecurityStatus] = useState<SecurityStatus>('idle');
+  const [securityError, setSecurityError] = useState("");
+
+  const portRef = useRef<SerialPort | null>(null);
+  const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
+  const keepReadingRef = useRef(false);
+
   const { toast } = useToast();
 
   const fetchData = async () => {
@@ -86,10 +94,12 @@ export function VoteApp() {
 
     } catch (err) {
        if (err instanceof Error) {
-        setError(err.message);
+        setSecurityError(err.message);
+        setSecurityStatus("error");
         postLog(`Data fetch error: ${err.message}`, 'ERROR');
        } else {
-        setError("An unknown error occurred.");
+        setSecurityError("An unknown error occurred.");
+        setSecurityStatus("error");
         postLog("An unknown error occurred during data fetch.", 'ERROR');
        }
     } finally {
@@ -100,11 +110,6 @@ export function VoteApp() {
   useEffect(() => {
     fetchData();
   }, []);
-
-  const handleLogin = (id: string) => {
-    setVoterId(id);
-    setStep("welcome");
-  };
 
   const handleStartVoting = () => {
     postLog(`Voter ${voterId} started the voting process.`, 'INFO');
@@ -158,7 +163,7 @@ export function VoteApp() {
     }
   };
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     postLog("Session reset. Ready for new voter.", 'INFO');
     setSelectedVotes({
       President: null,
@@ -168,12 +173,152 @@ export function VoteApp() {
       Auditor: null,
       'Public Information Officer': null,
     });
-    setStep("login");
-    setError(null);
+    setStep("security");
+    setSecurityStatus("idle");
+    setSecurityError("");
     setVoterId("");
-    // Re-fetch data in case it has changed
+    if (portRef.current) {
+      handleDisconnect();
+    }
     fetchData();
+  }, []);
+
+  const handleConnect = useCallback(async () => {
+    if (!("serial" in navigator)) {
+      setSecurityError("Web Serial API not supported by this browser.");
+      setSecurityStatus("error");
+      postLog("Web Serial API not supported.", "ERROR");
+      return;
+    }
+
+    setSecurityStatus("connecting");
+    postLog("Attempting to connect to serial device.", "INFO");
+
+    try {
+      // @ts-ignore
+      const port = await navigator.serial.requestPort();
+      await port.open({ baudRate: 115200 });
+      portRef.current = port;
+      setSecurityStatus("connected");
+      toast({ title: "Device Connected", description: "Serial connection established." });
+      postLog("Serial device connected successfully.", "SUCCESS");
+
+      keepReadingRef.current = true;
+      listenForData();
+      
+      // Now that we are connected, ask the device to scan.
+      setTimeout(() => {
+        sendCommand("SCAN_VOTER");
+        setSecurityStatus("scanning");
+        postLog("Requested fingerprint scan from device.", "INFO");
+      }, 1000); // Wait a moment for the device to be ready
+
+    } catch (err) {
+      const message = (err instanceof Error && err.name === 'NotFoundError') 
+        ? "No device was selected." 
+        : "Failed to connect to the device. Please ensure it's plugged in and not in use by another program.";
+      setSecurityError(message);
+      setSecurityStatus("error");
+      postLog(`Device connection failed: ${message}`, "ERROR");
+    }
+  }, [toast]);
+  
+  const handleDisconnect = useCallback(async () => {
+    keepReadingRef.current = false;
+    if (readerRef.current) {
+      try {
+        await readerRef.current.cancel();
+      } catch (err) { /* Ignore cancel errors */ }
+    }
+    if (portRef.current?.readable) {
+      // It's good practice to ensure the reader is released
+      // before closing the port.
+       readerRef.current?.releaseLock();
+    }
+    if (portRef.current) {
+      try {
+        await portRef.current.close();
+      } catch (err) { /* Ignore errors if port is already closing */ }
+      portRef.current = null;
+    }
+    postLog("Serial device disconnected.", "INFO");
+  }, []);
+  
+  const sendCommand = async (command: string) => {
+    if (!portRef.current?.writable) return;
+    try {
+      const writer = portRef.current.writable.getWriter();
+      const textEncoder = new TextEncoder();
+      await writer.write(textEncoder.encode(command + "\n"));
+      writer.releaseLock();
+    } catch (err) {
+      const message = `Failed to send command to device: ${(err as Error).message}`;
+      setSecurityError(message);
+      setSecurityStatus("error");
+      postLog(message, 'ERROR');
+    }
   };
+
+  const listenForData = useCallback(async () => {
+    if (!portRef.current?.readable) return;
+    
+    const textDecoder = new TextDecoder();
+    let partialData = "";
+
+    while (portRef.current.readable && keepReadingRef.current) {
+      readerRef.current = portRef.current.readable.getReader();
+      try {
+        while (true) {
+          const { value, done } = await readerRef.current.read();
+          if (done) {
+            readerRef.current.releaseLock();
+            break;
+          }
+          
+          partialData += textDecoder.decode(value, { stream: true });
+          
+          const lines = partialData.split('\n');
+          partialData = lines.pop() || ""; // Keep the last, possibly incomplete, line
+          
+          for (const line of lines) {
+            const trimmedLine = line.trim();
+            if (trimmedLine.startsWith("VOTER_ID:")) {
+              const id = trimmedLine.split(":")[1];
+              setVoterId(id);
+              setStep("welcome");
+              keepReadingRef.current = false; // Stop listening
+              break;
+            } else if (trimmedLine === "unregistered") {
+              setSecurityError("This fingerprint is not registered in the system.");
+              setSecurityStatus("error");
+              postLog("Fingerprint scan resulted in 'unregistered'.", "ERROR");
+              keepReadingRef.current = false; // Stop listening
+              break;
+            } else if (trimmedLine.startsWith("STATUS:") || trimmedLine.startsWith("ERROR:") || trimmedLine.startsWith("WARNING:")) {
+              postLog(`Device: ${trimmedLine}`, 'INFO'); // Log device status messages
+            }
+          }
+          if (!keepReadingRef.current) break;
+        }
+      } catch (err) {
+        if (keepReadingRef.current) {
+          const message = `Error reading from device: ${(err as Error).message}`;
+          setSecurityError(message);
+          setSecurityStatus("error");
+          postLog(message, 'ERROR');
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    // Cleanup on component unmount
+    return () => {
+        if(portRef.current) {
+            handleDisconnect();
+        }
+    }
+  }, [handleDisconnect]);
   
   const isVoteButtonDisabled = useMemo(() => {
     return Object.values(selectedVotes).every(v => v === null);
@@ -183,20 +328,10 @@ export function VoteApp() {
     if (isLoading && !appSettings) {
         return <p>Loading settings...</p>
     }
-    if (error) {
-      return (
-        <div className="text-center text-destructive">
-          <p>{error}</p>
-          <button onClick={handleReset} className="mt-4 text-primary underline">
-            Try again
-          </button>
-        </div>
-      );
-    }
 
     switch (step) {
-      case "login":
-        return <VoterLoginScreen onLogin={handleLogin} />;
+      case "security":
+        return <SecurityCheck status={securityStatus} errorMessage={securityError} onConnect={handleConnect} onRetry={handleReset} />;
       case "welcome":
         return <WelcomeScreen voterId={voterId} onStart={handleStartVoting} onReset={handleReset} votes={allVotes} />;
       case "voting":
@@ -227,7 +362,6 @@ export function VoteApp() {
         return { position, name: candidate?.name || 'Unknown' };
       });
   }, [selectedVotes, candidates, isConfirming]);
-
 
   return (
     <>
