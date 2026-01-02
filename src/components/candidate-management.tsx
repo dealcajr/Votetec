@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   Table,
   TableHeader,
@@ -43,9 +43,10 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import type { Candidate } from "@/types/candidate";
-import { PlusCircle, Edit, Trash2, Trash } from "lucide-react";
+import { PlusCircle, Edit, Trash2, Trash, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import Papa from "papaparse";
 
 interface DisplayCandidate extends Candidate {
     voteCount: number;
@@ -74,6 +75,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
     setCandidates(initialCandidates);
@@ -276,6 +278,65 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
     }
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsSaving(true);
+
+    Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: async (results) => {
+            try {
+                const newCandidates = results.data as Candidate[];
+
+                const requiredFields = ['id', 'name', 'partylist', 'icon', 'position'];
+                if (!Array.isArray(newCandidates) || !newCandidates.every(c => requiredFields.every(field => field in c))) {
+                    throw new Error("Invalid CSV format. Expected columns: id, name, partylist, icon, position.");
+                }
+
+                const res = await fetch('/api/candidates', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newCandidates)
+                });
+
+                if (!res.ok) throw new Error("Failed to update candidates on the server.");
+
+                setCandidates(newCandidates);
+                onDataChange();
+                toast({
+                  title: "Success!",
+                  description: `Imported ${newCandidates.length} candidates.`,
+                });
+
+            } catch (error) {
+                toast({
+                  title: "Import Failed",
+                  description: error instanceof Error ? error.message : "An unknown error occurred.",
+                  variant: "destructive",
+                });
+            } finally {
+                setIsSaving(false);
+                if(fileInputRef.current) fileInputRef.current.value = "";
+            }
+        },
+        error: (error) => {
+            toast({
+              title: "Import Failed",
+              description: error.message,
+              variant: "destructive",
+            });
+            setIsSaving(false);
+        }
+    });
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <>
       <div className="flex justify-end my-4 gap-2">
@@ -301,6 +362,17 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+          accept=".csv"
+        />
+        <Button onClick={handleImportClick} disabled={isSaving} variant="outline">
+          <Upload className="mr-2" />
+          {isSaving ? "Processing..." : "Import Candidates (CSV)"}
+        </Button>
         <Button onClick={handleAddNewClick} disabled={isSaving}>
             <PlusCircle className="mr-2" />
             Add New Candidate
@@ -363,7 +435,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
         {Object.keys(processedCandidatesByPartylist).length === 0 && (
             <Card>
                 <CardContent className="p-8 text-center text-muted-foreground">
-                    No candidates have been added yet. Click "Add New Candidate" to begin.
+                    No candidates have been added yet. Click "Add New Candidate" or "Import Candidates" to begin.
                 </CardContent>
             </Card>
         )}
