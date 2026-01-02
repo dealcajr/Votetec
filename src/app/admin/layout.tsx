@@ -51,8 +51,8 @@ function AdminSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              href="/admin"
-              isActive={pathname === "/admin"}
+              href="/admin/assistant"
+              isActive={pathname === "/admin/assistant" || pathname === "/admin"}
               onClick={handleNavigation}
               tooltip={{ children: "AI Assistant" }}
             >
