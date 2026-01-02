@@ -51,15 +51,15 @@ function AdminSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          <SidebarMenuItem>
+           <SidebarMenuItem>
             <SidebarMenuButton
-              href="/admin/assistant"
-              isActive={pathname === "/admin/assistant" || pathname === "/admin"}
-              onClick={() => handleNavigation("/admin/assistant")}
-              tooltip={{ children: "AI Assistant" }}
+              href="/admin"
+              isActive={pathname === "/admin"}
+              onClick={() => handleNavigation("/admin")}
+              tooltip={{ children: "Home" }}
             >
-              <Bot />
-              <span>AI Assistant</span>
+              <LayoutGrid />
+              <span>Home</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
@@ -69,7 +69,7 @@ function AdminSidebar() {
               onClick={() => handleNavigation("/admin/candidates")}
               tooltip={{ children: "Manage Candidates" }}
             >
-              <LayoutGrid />
+              <Users />
               <span>Candidates</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
