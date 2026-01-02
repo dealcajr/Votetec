@@ -23,11 +23,13 @@ import VoterLoginScreen from "@/components/voter-login-screen";
 import WelcomeScreen from "@/components/welcome-screen";
 import VotingScreen from "@/components/voting-screen";
 import VotedScreen from "@/components/voted-screen";
+import PollsClosedScreen from "@/components/polls-closed-screen";
 import type { Candidate } from "@/types/candidate";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import type { AppSettings } from "@/app/api/settings/route";
 import { ThemeToggle } from "./theme-toggle";
+import { Skeleton } from "./ui/skeleton";
 
 export type SelectedVotes = Record<Candidate['position'], string | null>;
 
@@ -45,6 +47,7 @@ export async function postLog(message: string, type: 'INFO' | 'ERROR' | 'SUCCESS
 
 export function VoteApp() {
   const [step, setStep] = useState<"login" | "welcome" | "voting" | "voted">("login");
+  const [electionStatus, setElectionStatus] = useState<'open' | 'closed' | 'loading'>('loading');
   const [voterId, setVoterId] = useState("");
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [allVotes, setAllVotes] = useState<Record<string, SelectedVotes>>({});
@@ -65,24 +68,29 @@ export function VoteApp() {
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
+    setElectionStatus('loading');
     try {
-      const [candidatesRes, votesRes, settingsRes] = await Promise.all([
+      const [candidatesRes, votesRes, settingsRes, statusRes] = await Promise.all([
         fetch("/api/candidates"),
         fetch("/api/votes"),
         fetch("/api/settings"),
+        fetch("/api/election-status"),
       ]);
       
       if (!candidatesRes.ok) throw new Error("Could not load candidates.");
       if (!votesRes.ok) throw new Error("Could not load votes.");
       if (!settingsRes.ok) throw new Error("Could not load settings.");
+      if (!statusRes.ok) throw new Error("Could not check election status.");
 
       const candidatesData = await candidatesRes.json();
       const votesData = await votesRes.json();
       const settingsData = await settingsRes.json();
+      const statusData = await statusRes.json();
       
       setCandidates(Array.isArray(candidatesData) ? candidatesData : []);
       setAllVotes(votesData || {});
       setAppSettings(settingsData);
+      setElectionStatus(statusData.status);
 
     } catch (err) {
        const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
@@ -178,8 +186,19 @@ export function VoteApp() {
   }, [selectedVotes]);
 
   const renderContent = () => {
-    if (isLoading && !appSettings) {
-        return <p>Loading settings...</p>
+    if (isLoading || electionStatus === 'loading') {
+        return (
+          <div className="w-full max-w-sm space-y-4">
+            <Skeleton className="h-8 w-3/4 mx-auto" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        );
+    }
+
+    if (electionStatus === 'closed') {
+      return <PollsClosedScreen />;
     }
 
     switch (step) {
