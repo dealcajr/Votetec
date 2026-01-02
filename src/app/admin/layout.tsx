@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -9,6 +10,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarProvider,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
