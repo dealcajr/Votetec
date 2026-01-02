@@ -428,5 +428,85 @@
     "message": "Session reset. Ready for new voter.",
     "type": "INFO",
     "timestamp": "2026-01-02T07:31:49.832Z"
+  },
+  {
+    "message": "Teacher fingerprint scan initiated for closing election.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T07:36:23.887Z"
+  },
+  {
+    "message": "Election closing authorized by teacher. Final report generated.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T07:36:27.247Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T07:42:05.983Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T07:42:06.203Z"
+  },
+  {
+    "message": "Voter 112527130012 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T07:42:18.107Z"
+  },
+  {
+    "message": "Voter 112527130012 is submitting their vote.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T07:42:30.881Z"
+  },
+  {
+    "message": "Voter 112527130012 successfully submitted their vote.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T07:42:31.702Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T07:42:33.823Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T07:43:03.869Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T07:43:04.077Z"
+  },
+  {
+    "message": "Voter 112562130007 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T07:43:05.050Z"
+  },
+  {
+    "message": "Voter 112562130007 is submitting their vote.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T07:43:15.131Z"
+  },
+  {
+    "message": "Voter 112562130007 successfully submitted their vote.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T07:43:16.187Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T07:43:18.495Z"
+  },
+  {
+    "message": "Teacher fingerprint scan initiated for closing election.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T07:44:53.571Z"
+  },
+  {
+    "message": "Election closing authorized by teacher. Final report generated.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T07:44:58.344Z"
   }
 ]

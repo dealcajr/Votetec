@@ -1,41 +1,13 @@
 {
-  "generatedAt": "2026-01-02T07:29:18.409Z",
+  "generatedAt": "2026-01-02T07:44:59.271Z",
   "summary": {
     "totalVotersWhoVoted": 2
   },
   "results": [
     {
-      "id": "candidate-1758292470339",
-      "name": "Harvy A'l Dump",
-      "description": "Padayon Party-list",
-      "icon": "Candidate",
-      "position": "President",
-      "voteCount": 2,
-      "rank": 2,
-      "partylist": "Padayon Partylist"
-    },
-    {
-      "id": "candidate-1758292513611",
-      "name": "Norman Admin",
-      "description": "Padayon Party-list",
-      "icon": "Candidate",
-      "position": "Vice President",
-      "voteCount": 2,
-      "rank": 1,
-      "partylist": "Padayon Partylist"
-    },
-    {
-      "id": "candidate-1758294176166",
-      "name": "Tiara Lara",
-      "partylist": "Padayon Partylist",
-      "icon": "User",
-      "position": "Secretary",
-      "voteCount": 2
-    },
-    {
-      "id": "candidate-1758294371909",
-      "name": "Ralph Cama",
-      "partylist": "Padayon Partylist",
+      "id": "candidate-1758294421982",
+      "name": "Jovilyn Dianela",
+      "partylist": "Sapagueta Partylist",
       "icon": "User",
       "position": "Treasurer",
       "voteCount": 2
@@ -49,14 +21,42 @@
       "voteCount": 2
     },
     {
+      "id": "candidate-1758292470339",
+      "name": "Harvy A'l Dump",
+      "description": "Padayon Party-list",
+      "icon": "Candidate",
+      "position": "President",
+      "voteCount": 1,
+      "rank": 2,
+      "partylist": "Padayon Partylist"
+    },
+    {
+      "id": "candidate-1758292513611",
+      "name": "Norman Admin",
+      "description": "Padayon Party-list",
+      "icon": "Candidate",
+      "position": "Vice President",
+      "voteCount": 1,
+      "rank": 1,
+      "partylist": "Padayon Partylist"
+    },
+    {
       "id": "candidate-1758293359544",
       "name": "Reemarc Antonio",
       "description": "Sampagueta Party-list",
       "icon": "User",
       "position": "President",
-      "voteCount": 0,
+      "voteCount": 1,
       "rank": 1,
       "partylist": "Sapagueta Partylist"
+    },
+    {
+      "id": "candidate-1758294176166",
+      "name": "Tiara Lara",
+      "partylist": "Padayon Partylist",
+      "icon": "User",
+      "position": "Secretary",
+      "voteCount": 1
     },
     {
       "id": "candidate-1758294253500",
@@ -64,7 +64,7 @@
       "partylist": "Sapagueta Partylist",
       "icon": "User",
       "position": "Secretary",
-      "voteCount": 0
+      "voteCount": 1
     },
     {
       "id": "candidate-1758294288365",
@@ -72,13 +72,13 @@
       "partylist": "Sapagueta Partylist",
       "icon": "User",
       "position": "Vice President",
-      "voteCount": 0,
+      "voteCount": 1,
       "rank": 2
     },
     {
-      "id": "candidate-1758294421982",
-      "name": "Jovilyn Dianela",
-      "partylist": "Sapagueta Partylist",
+      "id": "candidate-1758294371909",
+      "name": "Ralph Cama",
+      "partylist": "Padayon Partylist",
       "icon": "User",
       "position": "Treasurer",
       "voteCount": 0

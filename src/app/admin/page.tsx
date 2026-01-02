@@ -76,6 +76,7 @@ export default function AdminPage() {
                          <Skeleton className="h-96 w-full" />
                     </div>
                 </div>
+                 <Skeleton className="h-96 w-full" />
             </div>
         );
     }
@@ -92,6 +93,9 @@ export default function AdminPage() {
                 <div className="lg:col-span-3">
                     <LatestLogs logs={logs} />
                 </div>
+             </div>
+             <div className="mt-8">
+                <VoteAnalytics candidates={candidates} votes={votes} />
              </div>
         </div>
     );

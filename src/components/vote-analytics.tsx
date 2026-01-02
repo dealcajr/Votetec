@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo } from "react";
@@ -43,7 +44,7 @@ const positions: Candidate["position"][] = [
 
 export default function VoteAnalytics({ candidates, votes }: VoteAnalyticsProps) {
   const analyticsData = useMemo(() => {
-    const totalVotes = Object.keys(votes).length;
+    const totalVotersWhoVoted = Object.keys(votes).length;
     
     const votesPerPosition = positions.map((position) => {
       const candidatesForPosition = candidates.filter(
@@ -59,7 +60,7 @@ export default function VoteAnalytics({ candidates, votes }: VoteAnalyticsProps)
     const totalCandidates = candidates.length;
     const totalCastedVotes = votesPerPosition.reduce((sum, item) => sum + item.value, 0);
 
-    return { totalVotes, totalCastedVotes, totalCandidates, votesPerPosition };
+    return { totalVotersWhoVoted, totalCastedVotes, totalCandidates, votesPerPosition };
   }, [candidates, votes]);
 
   return (
@@ -74,13 +75,13 @@ export default function VoteAnalytics({ candidates, votes }: VoteAnalyticsProps)
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Voters</CardTitle>
+              <CardTitle className="text-sm font-medium">Voters Participated</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{analyticsData.totalVotes}</div>
+              <div className="text-2xl font-bold">{analyticsData.totalVotersWhoVoted}</div>
               <p className="text-xs text-muted-foreground">
-                voters have participated
+                voters have submitted ballots
               </p>
             </CardContent>
           </Card>
