@@ -508,5 +508,15 @@
     "message": "Election closing authorized by teacher. Final report generated.",
     "type": "SUCCESS",
     "timestamp": "2026-01-02T07:44:58.344Z"
+  },
+  {
+    "message": "Teacher fingerprint scan initiated for closing election.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T08:02:21.846Z"
+  },
+  {
+    "message": "Election closing authorized by teacher. Final report generated.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T08:02:24.527Z"
   }
 ]

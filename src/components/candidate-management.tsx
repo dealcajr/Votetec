@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -228,20 +229,29 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
   const handleResetVotes = async () => {
     setIsSaving(true);
     try {
-      const res = await fetch("/api/votes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}), // Sending an empty object will clear the votes
-      });
+      const [votesRes, resultsRes] = await Promise.all([
+          fetch("/api/votes", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({}), // Sending an empty object will clear the votes
+          }),
+          fetch("/api/delete-results", {
+              method: 'DELETE',
+          })
+      ]);
 
-      if (!res.ok) {
+      if (!votesRes.ok) {
         throw new Error("Failed to reset votes");
+      }
+      if (!resultsRes.ok) {
+        // This is not a critical failure if the file didn't exist, so just log it.
+        console.warn("Could not delete final results file, it may not have existed.");
       }
       
       onDataChange();
       toast({
         title: "Success!",
-        description: "All votes have been reset.",
+        description: "All votes have been reset and the election is re-opened.",
       });
 
     } catch (error) {
@@ -269,13 +279,13 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete all casted votes and reset all rankings to zero.
+                This action cannot be undone. This will permanently delete all casted votes, remove the final results file, and re-open the election.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction onClick={handleResetVotes} className="bg-destructive hover:bg-destructive/90">
-                Yes, reset votes
+                Yes, reset election
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

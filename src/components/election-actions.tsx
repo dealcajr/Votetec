@@ -15,19 +15,38 @@ import { Fingerprint, Loader2, XCircle, CheckCircle, ShieldAlert } from "lucide-
 import { cn } from "@/lib/utils";
 import { postLog } from "./vote-app";
 
-type SecurityStatus = "idle" | "connecting" | "scanning" | "error" | "success";
+type SecurityStatus = "idle" | "connecting" | "scanning" | "error" | "success" | "loading";
 
 // In a real app, this would be a list of trusted teacher fingerprint templates
 const TRUSTED_FINGERPRINT_DATA = "VOTER-001"; 
 
 export default function ElectionActions() {
-  const [status, setStatus] = useState<SecurityStatus>("idle");
+  const [status, setStatus] = useState<SecurityStatus>("loading");
   const [error, setError] = useState("");
 
   const portRef = useRef<SerialPort | null>(null);
   const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
   const keepReadingRef = useRef(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const checkStatus = async () => {
+        try {
+            const res = await fetch("/api/election-status");
+            if (!res.ok) throw new Error("Could not check status");
+            const data = await res.json();
+            if (data.status === 'closed') {
+                setStatus('success');
+            } else {
+                setStatus('idle');
+            }
+        } catch (e) {
+            setStatus('error');
+            setError("Could not verify election status. Please refresh.")
+        }
+    };
+    checkStatus();
+  }, []);
 
   const cleanup = useCallback(async () => {
     keepReadingRef.current = false;
@@ -40,7 +59,6 @@ export default function ElectionActions() {
     }
     if (portRef.current?.readable) {
         try {
-            // It's important to close the port to release it.
             await portRef.current.close();
         } catch(e) { /* Ignore errors if already closing */ }
         portRef.current = null;
@@ -49,7 +67,6 @@ export default function ElectionActions() {
 
   const generateAndSaveResults = async () => {
     try {
-      // 1. Fetch all necessary data
       const [candidatesRes, votesRes] = await Promise.all([
         fetch("/api/candidates"),
         fetch("/api/votes"),
@@ -62,7 +79,6 @@ export default function ElectionActions() {
       const candidates = await candidatesRes.json();
       const votes = await votesRes.json();
 
-      // 2. Calculate final results
       const voteCounts = Object.values(votes).flatMap(voterVotes => Object.values(voterVotes)).reduce((acc, candidateId) => {
           if (candidateId) {
               acc[candidateId] = (acc[candidateId] || 0) + 1;
@@ -85,7 +101,6 @@ export default function ElectionActions() {
         results: finalResults,
       };
 
-      // 3. Save the report to a file by calling a new API route
       const saveRes = await fetch("/api/save-results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -130,12 +145,11 @@ export default function ElectionActions() {
           
           if (receivedData.includes('\n')) {
               const lines = receivedData.split('\n');
-              receivedData = lines.pop() || ''; // Keep the last, potentially incomplete line
+              receivedData = lines.pop() || ''; 
               
               for (const line of lines) {
                 const trimmedLine = line.trim();
                 if (trimmedLine.startsWith('VOTER-')) {
-                  // This is the data we're waiting for
                   if (trimmedLine === TRUSTED_FINGERPRINT_DATA) {
                     
                     const reportGenerated = await generateAndSaveResults();
@@ -156,7 +170,7 @@ export default function ElectionActions() {
                     postLog(`Unauthorized attempt to close election. Scanned ID: ${trimmedLine}`, "ERROR");
                     cleanup();
                   }
-                  return; // Stop listening
+                  return; 
                 }
               }
           }
@@ -210,7 +224,6 @@ export default function ElectionActions() {
   }, [listenForData, cleanup]);
   
   useEffect(() => {
-    // Ensure cleanup is called when the component unmounts
     return () => {
       cleanup();
     };
@@ -219,6 +232,8 @@ export default function ElectionActions() {
 
   const renderStatus = () => {
     switch (status) {
+      case "loading":
+        return <div className="flex items-center gap-2 text-lg text-muted-foreground"><Loader2 className="animate-spin" /> Checking election status...</div>;
       case "idle":
         return <Button onClick={handleStartSecurityCheck} size="lg"><ShieldAlert className="mr-2" />Close Vote & Save Results</Button>;
       case "connecting":
@@ -234,14 +249,14 @@ export default function ElectionActions() {
             <XCircle className="h-24 w-24" />
             <h3 className="text-2xl font-semibold">Verification Failed</h3>
             <p className="max-w-md text-center">{error || "An unknown error occurred."}</p>
-            <Button onClick={handleStartSecurityCheck} variant="secondary">Try Again</Button>
+            <Button onClick={() => setStatus('idle')} variant="secondary">Try Again</Button>
         </div>;
       case "success":
         return <div className="flex flex-col items-center gap-4 text-accent">
             <CheckCircle className="h-24 w-24 animate-scale-in" />
             <h3 className="text-2xl font-semibold">Election Closed & Report Saved</h3>
             <p className="max-w-md text-center text-muted-foreground">The final results have been saved to <code className="bg-muted px-1 py-0.5 rounded">public/final-results.json</code>.</p>
-            <Button onClick={() => setStatus('idle')} variant="secondary">Perform Another Action</Button>
+            <Button onClick={() => window.location.reload()} variant="secondary">Perform Another Action</Button>
         </div>;
     }
   };
