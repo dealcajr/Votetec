@@ -56,10 +56,18 @@ export function VoteApp() {
   const [selectedVotes, setSelectedVotes] = useState<SelectedVotes>({
     President: null,
     'Vice President': null,
+    'Senior High school VP': null,
+    'Junior High School VP': null,
     Secretary: null,
     Treasurer: null,
     Auditor: null,
     'Public Information Officer': null,
+    'Protocol Officer': null,
+    'Representative Grade 8': null,
+    'Representative Grade 9': null,
+    'Representative Grade 10': null,
+    'Representative Grade 11': null,
+    'Representative Grade 12': null,
   });
   const [isConfirming, setIsConfirming] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -171,10 +179,18 @@ export function VoteApp() {
     setSelectedVotes({
       President: null,
       'Vice President': null,
+      'Senior High school VP': null,
+      'Junior High School VP': null,
       Secretary: null,
       Treasurer: null,
       Auditor: null,
       'Public Information Officer': null,
+      'Protocol Officer': null,
+      'Representative Grade 8': null,
+      'Representative Grade 9': null,
+      'Representative Grade 10': null,
+      'Representative Grade 11': null,
+      'Representative Grade 12': null,
     });
     setStep("login");
     setVoterId("");

@@ -61,10 +61,18 @@ export default function VotingScreen({
   const positions: Candidate['position'][] = [
     'President',
     'Vice President',
+    'Senior High school VP',
+    'Junior High School VP',
     'Secretary',
     'Treasurer',
     'Auditor',
     'Public Information Officer',
+    'Protocol Officer',
+    'Representative Grade 8',
+    'Representative Grade 9',
+    'Representative Grade 10',
+    'Representative Grade 11',
+    'Representative Grade 12',
   ];
 
   const handleSelect = (position: Candidate['position'], candidateId: string) => {
