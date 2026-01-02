@@ -9,4 +9,5 @@ export default function ActionsPage() {
             <p className="text-muted-foreground mb-8">Perform secure, high-privilege actions like closing the election.</p>
             <ElectionActions />
         </div>
-    
+    );
+}
