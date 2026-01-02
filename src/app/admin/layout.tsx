@@ -33,7 +33,7 @@ function AdminSidebar() {
     <Sidebar
       collapsible="icon"
       className={cn(
-        "border-sidebar-border shadow-sm",
+        "bg-transparent border-none shadow-none",
         "group-data-[collapsed=icon]:w-[4.5rem]"
       )}
     >
