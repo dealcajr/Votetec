@@ -64,4 +64,9 @@ export default function AssistantPage() {
                     </div>
                 </div>
             </div>
-            <div className="flex-1 text-center text-xs text-muted-foreground/
+            <div className="flex-1 text-center text-xs text-muted-foreground/50 pt-16">
+                The AI can make mistakes. Consider checking important information.
+            </div>
+        </div>
+    );
+}
