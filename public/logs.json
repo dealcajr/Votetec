@@ -518,5 +518,25 @@
     "message": "Election closing authorized by teacher. Final report generated.",
     "type": "SUCCESS",
     "timestamp": "2026-01-02T08:02:24.527Z"
+  },
+  {
+    "message": "Teacher fingerprint scan initiated for closing election.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T09:31:43.043Z"
+  },
+  {
+    "message": "Election closing authorized by teacher. Final report generated.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T09:31:50.802Z"
+  },
+  {
+    "message": "Scan check: Voter 112569130018 (ELPA, AIRA SINGSON) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T09:47:09.305Z"
+  },
+  {
+    "message": "Scan check: Voter 112569130018 (ELPA, AIRA SINGSON) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T09:47:09.521Z"
   }
 ]

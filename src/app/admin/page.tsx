@@ -9,6 +9,7 @@ import RankingOverview from "@/components/ranking-overview";
 import VoteAnalytics from "@/components/vote-analytics";
 import ElectionOverview from "@/components/election-overview";
 import LatestLogs from "@/components/latest-logs";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage() {
     const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -17,6 +18,7 @@ export default function AdminPage() {
     const [logs, setLogs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
+    const router = useRouter();
 
     const fetchData = useCallback(async () => {
         setIsLoading(true);
@@ -86,11 +88,11 @@ export default function AdminPage() {
              <h1 className="text-3xl font-bold mb-4">Home</h1>
              <p className="text-muted-foreground mb-8">An overview of the current election status.</p>
              <ElectionOverview candidates={candidates} votes={votes} voters={voters} />
-             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-8">
-                <div className="lg:col-span-4">
+             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-8">
+                <div className="lg:col-span-2">
                     <RankingOverview candidates={candidates} votes={votes} />
                 </div>
-                <div className="lg:col-span-3">
+                <div className="lg:col-span-1">
                     <LatestLogs logs={logs} />
                 </div>
              </div>

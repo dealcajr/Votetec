@@ -287,7 +287,6 @@ export default function ElectionActions() {
             <CheckCircle className="h-24 w-24 animate-scale-in" />
             <h3 className="text-2xl font-semibold">Election Closed & Report Saved</h3>
             <p className="max-w-md text-center text-muted-foreground">The final results have been saved to <code className="bg-muted px-1 py-0.5 rounded">public/final-results.json</code>.</p>
-            <Button onClick={() => window.location.reload()} variant="secondary">Perform Another Action</Button>
         </div>;
     }
   };
