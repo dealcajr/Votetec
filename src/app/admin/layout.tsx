@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -10,12 +9,10 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarProvider,
-  SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { Bot, LayoutDashboard, Lock, Settings, User } from "lucide-react";
+import { BarChart2, Bot, Fingerprint, LayoutGrid, ListTodo, Lock, Settings, Users, Terminal } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,7 +21,7 @@ function AdminSidebar() {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
 
-  const handleNavigation = (path: string) => {
+  const handleNavigation = () => {
     if (isMobile) {
       setOpenMobile(false);
     }
@@ -52,12 +49,10 @@ function AdminSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              href="/admin/assistant"
-              isActive={pathname.startsWith("/admin/assistant")}
-              onClick={() => handleNavigation("/admin/assistant")}
-              tooltip={{
-                children: "AI Assistant",
-              }}
+              href="/admin"
+              isActive={pathname === "/admin"}
+              onClick={handleNavigation}
+              tooltip={{ children: "AI Assistant" }}
             >
               <Bot />
               <span>AI Assistant</span>
@@ -65,15 +60,79 @@ function AdminSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
-              href="/admin/dashboard"
-              isActive={pathname.startsWith("/admin/dashboard")}
-              onClick={() => handleNavigation("/admin/dashboard")}
-              tooltip={{
-                children: "Dashboard",
-              }}
+              href="/admin/candidates"
+              isActive={pathname.startsWith("/admin/candidates")}
+              onClick={handleNavigation}
+              tooltip={{ children: "Manage Candidates" }}
             >
-              <LayoutDashboard />
-              <span>Dashboard</span>
+              <LayoutGrid />
+              <span>Candidates</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+           <SidebarMenuItem>
+            <SidebarMenuButton
+              href="/admin/voters"
+              isActive={pathname.startsWith("/admin/voters")}
+              onClick={handleNavigation}
+              tooltip={{ children: "Manage Voters" }}
+            >
+              <Users />
+              <span>Voters</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              href="/admin/rankings"
+              isActive={pathname.startsWith("/admin/rankings")}
+              onClick={handleNavigation}
+              tooltip={{ children: "Rankings" }}
+            >
+              <BarChart2 />
+              <span>Rankings</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              href="/admin/actions"
+              isActive={pathname.startsWith("/admin/actions")}
+              onClick={handleNavigation}
+              tooltip={{ children: "Election Actions" }}
+            >
+              <Fingerprint />
+              <span>Actions</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              href="/admin/logs"
+              isActive={pathname.startsWith("/admin/logs")}
+              onClick={handleNavigation}
+              tooltip={{ children: "Logs" }}
+            >
+              <ListTodo />
+              <span>Logs</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+           <SidebarMenuItem>
+            <SidebarMenuButton
+              href="/admin/terminal"
+              isActive={pathname.startsWith("/admin/terminal")}
+              onClick={handleNavigation}
+              tooltip={{ children: "Terminal" }}
+            >
+              <Terminal />
+              <span>Terminal</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              href="/admin/settings"
+              isActive={pathname.startsWith("/admin/settings")}
+              onClick={handleNavigation}
+              tooltip={{ children: "Settings" }}
+            >
+              <Settings />
+              <span>Settings</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
