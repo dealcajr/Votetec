@@ -45,4 +45,8 @@ export default function VotersPage() {
     return (
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-4">Manage Voters</h1>
-            <p className="text-muted-foreground mb-8">Import and manage the list of eligible
+            <p className="text-muted-foreground mb-8">Import and manage the list of eligible voters.</p>
+            <VoterManagement votes={votes} onDataChange={fetchData} />
+        </div>
+    );
+}
