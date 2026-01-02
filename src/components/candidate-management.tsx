@@ -45,6 +45,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { Candidate } from "@/types/candidate";
 import { PlusCircle, Edit, Trash2, Trash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 interface DisplayCandidate extends Candidate {
     voteCount: number;
@@ -79,7 +80,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
   }, [initialCandidates]);
 
 
-  const processedCandidates = useMemo<DisplayCandidate[]>(() => {
+  const processedCandidatesByPartylist = useMemo<{ [key: string]: DisplayCandidate[] }>(() => {
     const voteCounts = Object.values(initialVotes).flatMap(voterVotes => Object.values(voterVotes)).reduce((acc, candidateId) => {
         if (candidateId) {
             acc[candidateId] = (acc[candidateId] || 0) + 1;
@@ -100,11 +101,21 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
     for (const position in groupedByPosition) {
         groupedByPosition[position as Candidate['position']].sort((a, b) => b.voteCount - a.voteCount);
     }
-
-    return candidatesWithVotes.map(c => {
+    
+    const candidatesWithRank = candidatesWithVotes.map(c => {
         const rank = groupedByPosition[c.position].findIndex(rankedC => rankedC.id === c.id) + 1;
         return { ...c, rank };
-    }).sort((a,b) => positions.indexOf(a.position) - positions.indexOf(b.position) || a.name.localeCompare(b.name));
+    });
+
+    return candidatesWithRank.reduce((acc, candidate) => {
+      const { partylist } = candidate;
+      if (!acc[partylist]) {
+        acc[partylist] = [];
+      }
+      acc[partylist].push(candidate);
+      acc[partylist].sort((a,b) => positions.indexOf(a.position) - positions.indexOf(b.position));
+      return acc;
+    }, {} as { [key: string]: DisplayCandidate[] });
 
   }, [candidates, initialVotes]);
 
@@ -295,53 +306,67 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
             Add New Candidate
         </Button>
       </div>
-      <div className="rounded-lg border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Partylist Group</TableHead>
-              <TableHead>Position</TableHead>
-              <TableHead>Votes</TableHead>
-              <TableHead>Rank</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {processedCandidates.map((candidate) => (
-              <TableRow key={candidate.id} className={candidate.rank === 1 ? 'bg-primary/10' : ''}>
-                <TableCell className="font-medium">{candidate.name}</TableCell>
-                <TableCell>{candidate.partylist}</TableCell>
-                <TableCell>{candidate.position}</TableCell>
-                <TableCell>{candidate.voteCount}</TableCell>
-                 <TableCell>
-                  <Badge variant={candidate.rank === 1 ? 'default' : 'secondary'}>
-                    #{candidate.rank}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleEditClick(candidate)}
-                    disabled={isSaving}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDeleteClick(candidate.id)}
-                    className="text-destructive hover:text-destructive"
-                    disabled={isSaving}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <div className="space-y-6">
+        {Object.entries(processedCandidatesByPartylist).sort(([a], [b]) => a.localeCompare(b)).map(([partylist, candidates]) => (
+            <Card key={partylist}>
+                <CardHeader>
+                    <CardTitle>{partylist}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                    <TableHeader>
+                        <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Position</TableHead>
+                        <TableHead>Votes</TableHead>
+                        <TableHead>Rank</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {candidates.map((candidate) => (
+                        <TableRow key={candidate.id} className={candidate.rank === 1 ? 'bg-primary/10' : ''}>
+                            <TableCell className="font-medium">{candidate.name}</TableCell>
+                            <TableCell>{candidate.position}</TableCell>
+                            <TableCell>{candidate.voteCount}</TableCell>
+                            <TableCell>
+                            <Badge variant={candidate.rank === 1 ? 'default' : 'secondary'}>
+                                #{candidate.rank}
+                            </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleEditClick(candidate)}
+                                disabled={isSaving}
+                            >
+                                <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDeleteClick(candidate.id)}
+                                className="text-destructive hover:text-destructive"
+                                disabled={isSaving}
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                            </TableCell>
+                        </TableRow>
+                        ))}
+                    </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        ))}
+        {Object.keys(processedCandidatesByPartylist).length === 0 && (
+            <Card>
+                <CardContent className="p-8 text-center text-muted-foreground">
+                    No candidates have been added yet. Click "Add New Candidate" to begin.
+                </CardContent>
+            </Card>
+        )}
       </div>
       
       <Dialog open={isDialogOpen} onOpenChange={(isOpen) => !isSaving && setIsDialogOpen(isOpen)}>

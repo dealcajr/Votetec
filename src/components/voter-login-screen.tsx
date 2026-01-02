@@ -34,7 +34,7 @@ export default function VoterLoginScreen({ onLogin }: VoterLoginScreenProps) {
                     Voter Verification
                 </h2>
                 <p className="text-muted-foreground">
-                    Please enter your 12-digit Learner Reference Number (LRN).
+                    Please enter your Learner Reference Number (LRN).
                 </p>
             </CardHeader>
             <CardContent className="space-y-4">

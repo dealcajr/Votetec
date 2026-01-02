@@ -538,5 +538,15 @@
     "message": "Scan check: Voter 112569130018 (ELPA, AIRA SINGSON) verified successfully.",
     "type": "SUCCESS",
     "timestamp": "2026-01-02T09:47:09.521Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T09:59:27.319Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T09:59:27.652Z"
   }
 ]
