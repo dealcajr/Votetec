@@ -548,5 +548,135 @@
     "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
     "type": "SUCCESS",
     "timestamp": "2026-01-02T09:59:27.652Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:42:25.487Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:42:25.681Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:42:34.921Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:42:35.138Z"
+  },
+  {
+    "message": "Voter 112527130012 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:42:40.549Z"
+  },
+  {
+    "message": "Voter 112527130012 is submitting their vote.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:42:59.255Z"
+  },
+  {
+    "message": "Voter 112527130012 successfully submitted their vote.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:42:59.760Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:43:02.407Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:43:06.099Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:43:06.338Z"
+  },
+  {
+    "message": "Voter 112562130007 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:43:07.461Z"
+  },
+  {
+    "message": "Voter 112562130007 is submitting their vote.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:43:13.535Z"
+  },
+  {
+    "message": "Voter 112562130007 successfully submitted their vote.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:43:14.054Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:43:15.165Z"
+  },
+  {
+    "message": "Scan check: Voter 112569130018 (ELPA, AIRA SINGSON) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:43:18.910Z"
+  },
+  {
+    "message": "Scan check: Voter 112569130018 (ELPA, AIRA SINGSON) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:43:19.147Z"
+  },
+  {
+    "message": "Voter 112569130018 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:43:20.236Z"
+  },
+  {
+    "message": "Voter 112569130018 is submitting their vote.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:43:28.137Z"
+  },
+  {
+    "message": "Voter 112569130018 successfully submitted their vote.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:43:28.601Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:43:29.740Z"
+  },
+  {
+    "message": "Scan check: Voter 112569130022 (SANTELICES, NATHALIE VALENCIA) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:43:43.493Z"
+  },
+  {
+    "message": "Scan check: Voter 112569130022 (SANTELICES, NATHALIE VALENCIA) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:43:43.746Z"
+  },
+  {
+    "message": "Voter 112569130022 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:43:44.761Z"
+  },
+  {
+    "message": "Voter 112569130022 is submitting their vote.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:43:51.247Z"
+  },
+  {
+    "message": "Voter 112569130022 successfully submitted their vote.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-02T10:43:51.973Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-02T10:43:53.160Z"
   }
 ]
