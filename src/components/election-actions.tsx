@@ -4,6 +4,17 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Card,
   CardContent,
   CardHeader,
@@ -235,7 +246,27 @@ export default function ElectionActions() {
       case "loading":
         return <div className="flex items-center gap-2 text-lg text-muted-foreground"><Loader2 className="animate-spin" /> Checking election status...</div>;
       case "idle":
-        return <Button onClick={handleStartSecurityCheck} size="lg"><ShieldAlert className="mr-2" />Close Vote & Save Results</Button>;
+        return (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size="lg"><ShieldAlert className="mr-2" />Close Vote & Save Results</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action will close the election for all voters, generate the final results file, and cannot be undone without resetting all vote data.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleStartSecurityCheck}>
+                  Yes, Close Election
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        );
       case "connecting":
         return <div className="flex items-center gap-2 text-lg text-muted-foreground"><Loader2 className="animate-spin" /> Connecting to device...</div>;
       case "scanning":
