@@ -47,6 +47,69 @@ export default function ElectionActions() {
     }
   }, []);
 
+  const generateAndSaveResults = async () => {
+    try {
+      // 1. Fetch all necessary data
+      const [candidatesRes, votesRes] = await Promise.all([
+        fetch("/api/candidates"),
+        fetch("/api/votes"),
+      ]);
+
+      if (!candidatesRes.ok || !votesRes.ok) {
+        throw new Error("Failed to fetch all data for report generation.");
+      }
+
+      const candidates = await candidatesRes.json();
+      const votes = await votesRes.json();
+
+      // 2. Calculate final results
+      const voteCounts = Object.values(votes).flatMap(voterVotes => Object.values(voterVotes)).reduce((acc, candidateId) => {
+          if (candidateId) {
+              acc[candidateId] = (acc[candidateId] || 0) + 1;
+          }
+          return acc;
+      }, {} as Record<string, number>);
+
+      const finalResults = candidates.map((c: any) => ({
+        ...c,
+        voteCount: voteCounts[c.id] || 0,
+      })).sort((a: any, b: any) => b.voteCount - a.voteCount);
+      
+      const totalVoters = Object.keys(votes).length;
+
+      const report = {
+        generatedAt: new Date().toISOString(),
+        summary: {
+          totalVotersWhoVoted: totalVoters,
+        },
+        results: finalResults,
+      };
+
+      // 3. Save the report to a file by calling a new API route
+      const saveRes = await fetch("/api/save-results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(report),
+      });
+
+      if (!saveRes.ok) {
+        throw new Error("Failed to save the final results file.");
+      }
+      
+      return true;
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "An unknown error occurred.";
+      postLog(`Error generating final report: ${errorMessage}`, "ERROR");
+      toast({
+        title: "Report Generation Failed",
+        description: errorMessage,
+        variant: "destructive"
+      });
+      return false;
+    }
+  }
+
   const listenForData = useCallback(async () => {
     if (!portRef.current?.readable) return;
     
@@ -74,10 +137,19 @@ export default function ElectionActions() {
                 if (trimmedLine.startsWith('VOTER-')) {
                   // This is the data we're waiting for
                   if (trimmedLine === TRUSTED_FINGERPRINT_DATA) {
-                    setStatus("success");
-                    postLog("Election closing authorized by teacher.", "SUCCESS");
-                    toast({ title: "Authorized", description: "Election has been closed and results finalized."});
+                    
+                    const reportGenerated = await generateAndSaveResults();
+
+                    if (reportGenerated) {
+                        setStatus("success");
+                        postLog("Election closing authorized by teacher. Final report generated.", "SUCCESS");
+                        toast({ title: "Authorized & Results Saved", description: "The final report (final-results.json) has been generated."});
+                    } else {
+                        setError("Authorization succeeded, but failed to generate the report.");
+                        setStatus("error");
+                    }
                     cleanup();
+
                   } else {
                     setError("Unauthorized fingerprint. Please use a registered teacher's finger.");
                     setStatus("error");
@@ -148,7 +220,7 @@ export default function ElectionActions() {
   const renderStatus = () => {
     switch (status) {
       case "idle":
-        return <Button onClick={handleStartSecurityCheck} size="lg"><ShieldAlert className="mr-2" />Close Vote & Submit Results</Button>;
+        return <Button onClick={handleStartSecurityCheck} size="lg"><ShieldAlert className="mr-2" />Close Vote & Save Results</Button>;
       case "connecting":
         return <div className="flex items-center gap-2 text-lg text-muted-foreground"><Loader2 className="animate-spin" /> Connecting to device...</div>;
       case "scanning":
@@ -167,8 +239,9 @@ export default function ElectionActions() {
       case "success":
         return <div className="flex flex-col items-center gap-4 text-accent">
             <CheckCircle className="h-24 w-24 animate-scale-in" />
-            <h3 className="text-2xl font-semibold">Election Closed</h3>
-            <p className="max-w-md text-center text-muted-foreground">The election has been successfully closed and the results are now final.</p>
+            <h3 className="text-2xl font-semibold">Election Closed & Report Saved</h3>
+            <p className="max-w-md text-center text-muted-foreground">The final results have been saved to <code className="bg-muted px-1 py-0.5 rounded">public/final-results.json</code>.</p>
+            <Button onClick={() => setStatus('idle')} variant="secondary">Perform Another Action</Button>
         </div>;
     }
   };

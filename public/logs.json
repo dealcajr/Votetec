@@ -238,5 +238,45 @@
     "message": "Session reset. Ready for new voter.",
     "type": "INFO",
     "timestamp": "2026-01-01T15:27:00.103Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T15:53:57.442Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T15:53:57.615Z"
+  },
+  {
+    "message": "Voter 112527130012 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:54:00.628Z"
+  },
+  {
+    "message": "Voter 112527130012 is submitting their vote.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:54:07.753Z"
+  },
+  {
+    "message": "Voter 112527130012 successfully submitted their vote.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-01T15:54:08.249Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-01T15:54:10.603Z"
+  },
+  {
+    "message": "Failed to connect for security check: No device selected.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:56:49.589Z"
+  },
+  {
+    "message": "Failed to connect for security check: No device selected.",
+    "type": "ERROR",
+    "timestamp": "2026-01-01T15:56:52.889Z"
   }
 ]
