@@ -25,6 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Fingerprint, Loader2, XCircle, CheckCircle, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { postLog } from "./vote-app";
+import { SelectedVotes } from "./vote-app";
 
 type SecurityStatus = "idle" | "connecting" | "scanning" | "error" | "success" | "loading";
 
@@ -34,6 +35,7 @@ const TRUSTED_FINGERPRINT_DATA = "VOTER-001";
 export default function ElectionActions() {
   const [status, setStatus] = useState<SecurityStatus>("loading");
   const [error, setError] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const portRef = useRef<SerialPort | null>(null);
   const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
@@ -88,9 +90,9 @@ export default function ElectionActions() {
       }
 
       const candidates = await candidatesRes.json();
-      const votes = await votesRes.json();
+      const votes: Record<string, SelectedVotes> = await votesRes.json();
 
-      const voteCounts = Object.values(votes).flatMap(voterVotes => Object.values(voterVotes)).reduce((acc, candidateId) => {
+      const voteCounts = Object.values(votes).flatMap(voterVotes => Object.values(voterVotes).flat()).reduce((acc, candidateId) => {
           if (candidateId) {
               acc[candidateId] = (acc[candidateId] || 0) + 1;
           }
@@ -240,37 +242,35 @@ export default function ElectionActions() {
     };
   }, [cleanup]);
 
+  const handleAlertClose = (open: boolean) => {
+    if (!open) {
+      cleanup();
+      // If we were in a final state (success/error), reset to idle, otherwise check status again
+      if (status === 'success' || status === 'error') {
+        setStatus('idle');
+        const checkStatusOnClose = async () => {
+            const res = await fetch("/api/election-status");
+            const data = await res.json();
+             if (data.status === 'closed') {
+                setStatus('success');
+            } else {
+                setStatus('idle');
+            }
+        }
+        checkStatusOnClose();
+      }
+    }
+    setIsDialogOpen(open);
+  }
 
   const renderStatus = () => {
     switch (status) {
       case "loading":
         return <div className="flex items-center gap-2 text-lg text-muted-foreground"><Loader2 className="animate-spin" /> Checking election status...</div>;
-      case "idle":
-        return (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button size="lg"><ShieldAlert className="mr-2" />Close Vote & Save Results</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action will close the election for all voters, generate the final results file, and cannot be undone without resetting all vote data.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleStartSecurityCheck}>
-                  Yes, Close Election
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        );
       case "connecting":
         return <div className="flex items-center gap-2 text-lg text-muted-foreground"><Loader2 className="animate-spin" /> Connecting to device...</div>;
       case "scanning":
-        return <div className={cn("flex flex-col items-center gap-4 p-6 rounded-lg border-2 border-dashed", status === 'scanning' && "border-primary")}>
+        return <div className={cn("flex flex-col items-center gap-4 p-6 rounded-lg")}>
             <Fingerprint className="h-24 w-24 text-primary animate-pulse" />
             <h3 className="text-2xl font-semibold text-primary">Scan Fingerprint</h3>
             <p className="text-muted-foreground">Place the authorized teacher's finger on the scanner to finalize the results.</p>
@@ -280,7 +280,6 @@ export default function ElectionActions() {
             <XCircle className="h-24 w-24" />
             <h3 className="text-2xl font-semibold">Verification Failed</h3>
             <p className="max-w-md text-center">{error || "An unknown error occurred."}</p>
-            <Button onClick={() => setStatus('idle')} variant="secondary">Try Again</Button>
         </div>;
       case "success":
         return <div className="flex flex-col items-center gap-4 text-accent">
@@ -288,6 +287,8 @@ export default function ElectionActions() {
             <h3 className="text-2xl font-semibold">Election Closed & Report Saved</h3>
             <p className="max-w-md text-center text-muted-foreground">The final results have been saved to <code className="bg-muted px-1 py-0.5 rounded">public/final-results.json</code>.</p>
         </div>;
+      default:
+        return null;
     }
   };
 
@@ -301,9 +302,66 @@ export default function ElectionActions() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-center min-h-[300px] p-4 bg-muted/30 rounded-lg">
-          {renderStatus()}
-        </div>
+         <AlertDialog open={isDialogOpen} onOpenChange={handleAlertClose}>
+             {status === 'idle' && (
+                <AlertDialogTrigger asChild>
+                    <Button size="lg" className="w-full min-h-[300px] flex-col text-lg">
+                        <ShieldAlert className="h-16 w-16 mb-4" />
+                        Close Vote & Save Results
+                    </Button>
+                </AlertDialogTrigger>
+             )}
+              {status === 'success' && (
+                 <div className="flex items-center justify-center min-h-[300px] p-4 bg-muted/30 rounded-lg">
+                    {renderStatus()}
+                 </div>
+              )}
+               {status === 'loading' && (
+                 <div className="flex items-center justify-center min-h-[300px] p-4 bg-muted/30 rounded-lg">
+                    {renderStatus()}
+                 </div>
+              )}
+
+            <AlertDialogContent>
+              {status === 'idle' || status === 'connecting' || status === 'scanning' || status === 'error' ? (
+                <>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                        {status === 'idle' && 'Are you absolutely sure?'}
+                        {status === 'connecting' && 'Connecting...'}
+                        {status === 'scanning' && 'Awaiting Scan...'}
+                        {status === 'error' && 'Error'}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription asChild>
+                        <div>
+                             {status === 'idle' && 'This action will close the election for all voters, generate the final results file, and cannot be undone without resetting all vote data.'}
+                             {status === 'connecting' && 'Please select the serial device from the popup window.'}
+                             {status === 'scanning' && <div className="flex justify-center">{renderStatus()}</div>}
+                             {status === 'error' && <div className="flex justify-center">{renderStatus()}</div>}
+                        </div>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    {status === 'idle' && (
+                      <AlertDialogAction onClick={handleStartSecurityCheck}>
+                        Yes, Close Election
+                      </AlertDialogAction>
+                    )}
+                    {status === 'error' && (
+                      <AlertDialogAction onClick={handleStartSecurityCheck}>
+                        Try Again
+                      </AlertDialogAction>
+                    )}
+                  </AlertDialogFooter>
+                </>
+              ) : (
+                <div className="p-6">
+                    {renderStatus()}
+                </div>
+              )}
+            </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
     </Card>
   );

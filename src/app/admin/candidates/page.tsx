@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -5,10 +6,11 @@ import type { Candidate } from "@/types/candidate";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import CandidateManagement from "@/components/candidate-management";
+import { SelectedVotes } from "@/components/vote-app";
 
 export default function CandidatesPage() {
     const [candidates, setCandidates] = useState<Candidate[]>([]);
-    const [votes, setVotes] = useState<Record<string, Record<string, string>>>({});
+    const [votes, setVotes] = useState<Record<string, SelectedVotes>>({});
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
 

@@ -47,6 +47,7 @@ import { PlusCircle, Edit, Trash2, Trash, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import Papa from "papaparse";
+import { SelectedVotes } from "./vote-app";
 
 interface DisplayCandidate extends Candidate {
     voteCount: number;
@@ -72,7 +73,7 @@ const positions: Candidate['position'][] = [
 
 interface CandidateManagementProps {
     initialCandidates: Candidate[];
-    initialVotes: Record<string, Record<string, string>>;
+    initialVotes: Record<string, SelectedVotes>;
     onDataChange: () => void;
 }
 
@@ -90,7 +91,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
 
 
   const processedCandidatesByPartylist = useMemo<{ [key: string]: DisplayCandidate[] }>(() => {
-    const voteCounts = Object.values(initialVotes).flatMap(voterVotes => Object.values(voterVotes)).reduce((acc, candidateId) => {
+    const voteCounts = Object.values(initialVotes).flatMap(voterVotes => Object.values(voterVotes).flat()).reduce((acc, candidateId) => {
         if (candidateId) {
             acc[candidateId] = (acc[candidateId] || 0) + 1;
         }
@@ -105,7 +106,7 @@ export default function CandidateManagement({ initialCandidates, initialVotes, o
     const groupedByPosition = candidatesWithVotes.reduce((acc, c) => {
         (acc[c.position] = acc[c.position] || []).push(c);
         return acc;
-    }, {} as Record<Candidate['position'], (typeof candidatesWithVotes)>);
+    }, {} as Record<string, (typeof candidatesWithVotes)>);
 
     for (const position in groupedByPosition) {
         groupedByPosition[position as Candidate['position']].sort((a, b) => b.voteCount - a.voteCount);

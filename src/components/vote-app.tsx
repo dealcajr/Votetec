@@ -31,7 +31,7 @@ import type { AppSettings } from "@/app/api/settings/route";
 import { ThemeToggle } from "./theme-toggle";
 import { Skeleton } from "./ui/skeleton";
 
-export type SelectedVotes = Record<Candidate['position'], string | null>;
+export type SelectedVotes = Record<string, string | string[] | null>;
 
 export async function postLog(message: string, type: 'INFO' | 'ERROR' | 'SUCCESS') {
     try {
@@ -45,15 +45,7 @@ export async function postLog(message: string, type: 'INFO' | 'ERROR' | 'SUCCESS
     }
 }
 
-export function VoteApp() {
-  const [step, setStep] = useState<"login" | "welcome" | "voting" | "voted">("login");
-  const [electionStatus, setElectionStatus] = useState<'open' | 'closed' | 'loading'>('loading');
-  const [voterId, setVoterId] = useState("");
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [allVotes, setAllVotes] = useState<Record<string, SelectedVotes>>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [appSettings, setAppSettings] = useState<AppSettings | null>(null);
-  const [selectedVotes, setSelectedVotes] = useState<SelectedVotes>({
+const initialSelectedVotes: SelectedVotes = {
     President: null,
     'Senior High School Vice President': null,
     'Junior High School Vice President': null,
@@ -62,12 +54,22 @@ export function VoteApp() {
     Auditor: null,
     'Public Information Officer': null,
     'Protocol Officer': null,
-    'Grade 8 Representative': null,
-    'Grade 9 Representative': null,
-    'Grade 10 Representative': null,
-    'Grade 11 Representative': null,
-    'Grade 12 Representative': null,
-  });
+    'Grade 8 Representative': [],
+    'Grade 9 Representative': [],
+    'Grade 10 Representative': [],
+    'Grade 11 Representative': [],
+    'Grade 12 Representative': [],
+};
+
+export function VoteApp() {
+  const [step, setStep] = useState<"login" | "welcome" | "voting" | "voted">("login");
+  const [electionStatus, setElectionStatus] = useState<'open' | 'closed' | 'loading'>('loading');
+  const [voterId, setVoterId] = useState("");
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [allVotes, setAllVotes] = useState<Record<string, SelectedVotes>>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [appSettings, setAppSettings] = useState<AppSettings | null>(null);
+  const [selectedVotes, setSelectedVotes] = useState<SelectedVotes>(initialSelectedVotes);
   const [isConfirming, setIsConfirming] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -127,7 +129,7 @@ export function VoteApp() {
   };
 
   const handleVote = () => {
-    if (Object.values(selectedVotes).some(v => v !== null)) {
+    if (Object.values(selectedVotes).some(v => v !== null && (!Array.isArray(v) || v.length > 0))) {
       setIsConfirming(true);
     }
   };
@@ -175,28 +177,14 @@ export function VoteApp() {
 
   const handleReset = useCallback(() => {
     postLog("Session reset. Ready for new voter.", 'INFO');
-    setSelectedVotes({
-      President: null,
-      'Senior High School Vice President': null,
-      'Junior High School Vice President': null,
-      Secretary: null,
-      Treasurer: null,
-      Auditor: null,
-      'Public Information Officer': null,
-      'Protocol Officer': null,
-      'Grade 8 Representative': null,
-      'Grade 9 Representative': null,
-      'Grade 10 Representative': null,
-      'Grade 11 Representative': null,
-      'Grade 12 Representative': null,
-    });
+    setSelectedVotes(initialSelectedVotes);
     setStep("login");
     setVoterId("");
     fetchData();
   }, [fetchData]);
 
   const isVoteButtonDisabled = useMemo(() => {
-    return Object.values(selectedVotes).every(v => v === null);
+    return Object.values(selectedVotes).every(v => v === null || (Array.isArray(v) && v.length === 0));
   }, [selectedVotes]);
 
   const renderContent = () => {
@@ -242,11 +230,22 @@ export function VoteApp() {
     if (!isConfirming) return [];
     
     return Object.entries(selectedVotes)
-      .filter(([, candidateId]) => candidateId !== null)
-      .map(([position, candidateId]) => {
-        const candidate = candidates.find(c => c.id === candidateId);
-        return { position, name: candidate?.name || 'Unknown' };
-      });
+      .map(([position, selection]) => {
+        if (Array.isArray(selection)) {
+           if (selection.length === 0) return null;
+           const selectedCandidates = selection.map(candidateId => {
+               const candidate = candidates.find(c => c.id === candidateId);
+               return candidate?.name || 'Unknown';
+           })
+           return { position, name: selectedCandidates.join(', ') };
+        }
+        if (selection !== null) {
+            const candidate = candidates.find(c => c.id === selection);
+            return { position, name: candidate?.name || 'Unknown' };
+        }
+        return null;
+      })
+      .filter(Boolean) as { position: string; name: string }[];
   }, [selectedVotes, candidates, isConfirming]);
 
   return (

@@ -19,10 +19,11 @@ import {
   Legend,
 } from "recharts";
 import { Users, Vote, CheckSquare } from "lucide-react";
+import { SelectedVotes } from "./vote-app";
 
 interface VoteAnalyticsProps {
   candidates: Candidate[];
-  votes: Record<string, Record<string, string>>;
+  votes: Record<string, SelectedVotes>;
 }
 
 const COLORS = [
@@ -54,12 +55,14 @@ export default function VoteAnalytics({ candidates, votes }: VoteAnalyticsProps)
     const totalVotersWhoVoted = Object.keys(votes).length;
     
     const votesPerPosition = positions.map((position) => {
-      const candidatesForPosition = candidates.filter(
-        (c) => c.position === position
-      );
-      const votesForPosition = Object.values(votes).filter(voterVotes => 
-        voterVotes[position] && candidatesForPosition.some(c => c.id === voterVotes[position])
-      ).length;
+      const isRepresentative = position.includes('Representative');
+      const votesForPosition = Object.values(votes).reduce((count, voterVotes) => {
+        const selection = voterVotes[position];
+        if (isRepresentative) {
+          return count + (Array.isArray(selection) ? selection.length : 0);
+        }
+        return count + (selection ? 1 : 0);
+      }, 0);
 
       return { name: position, value: votesForPosition };
     });

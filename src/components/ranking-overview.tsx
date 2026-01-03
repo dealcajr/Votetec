@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo } from "react";
@@ -20,10 +21,11 @@ import {
   LabelList,
 } from "recharts";
 import { Badge } from "./ui/badge";
+import { SelectedVotes } from "./vote-app";
 
 interface RankingOverviewProps {
   candidates: Candidate[];
-  votes: Record<string, Record<string, string>>;
+  votes: Record<string, SelectedVotes>;
 }
 
 const positions: Candidate["position"][] = [
@@ -48,7 +50,7 @@ export default function RankingOverview({
 }: RankingOverviewProps) {
   const chartData = useMemo(() => {
     const voteCounts = Object.values(votes)
-      .flatMap((voterVotes) => Object.values(voterVotes))
+      .flatMap((voterVotes) => Object.values(voterVotes).flat())
       .reduce((acc, candidateId) => {
         if (candidateId) {
           acc[candidateId] = (acc[candidateId] || 0) + 1;
