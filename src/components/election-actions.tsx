@@ -22,7 +22,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Fingerprint, Loader2, XCircle, CheckCircle, ShieldAlert } from "lucide-react";
+import { Fingerprint, Loader2, XCircle, CheckCircle, ShieldAlert, Trash } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { postLog } from "./vote-app";
 import { SelectedVotes } from "./vote-app";
@@ -36,30 +36,32 @@ export default function ElectionActions() {
   const [status, setStatus] = useState<SecurityStatus>("loading");
   const [error, setError] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   const portRef = useRef<SerialPort | null>(null);
   const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
   const keepReadingRef = useRef(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const checkStatus = async () => {
-        try {
-            const res = await fetch("/api/election-status");
-            if (!res.ok) throw new Error("Could not check status");
-            const data = await res.json();
-            if (data.status === 'closed') {
-                setStatus('success');
-            } else {
-                setStatus('idle');
-            }
-        } catch (e) {
-            setStatus('error');
-            setError("Could not verify election status. Please refresh.")
+  const checkStatus = useCallback(async () => {
+    try {
+        const res = await fetch("/api/election-status");
+        if (!res.ok) throw new Error("Could not check status");
+        const data = await res.json();
+        if (data.status === 'closed') {
+            setStatus('success');
+        } else {
+            setStatus('idle');
         }
-    };
-    checkStatus();
+    } catch (e) {
+        setStatus('error');
+        setError("Could not verify election status. Please refresh.")
+    }
   }, []);
+
+  useEffect(() => {
+    checkStatus();
+  }, [checkStatus]);
 
   const cleanup = useCallback(async () => {
     keepReadingRef.current = false;
@@ -292,77 +294,153 @@ export default function ElectionActions() {
     }
   };
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Election Actions</CardTitle>
-        <CardDescription>
-          Perform secure, high-privilege actions related to the election.
-          These actions require fingerprint authorization.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-         <AlertDialog open={isDialogOpen} onOpenChange={handleAlertClose}>
-             {status === 'idle' && (
-                <AlertDialogTrigger asChild>
-                    <Button size="lg" className="w-full min-h-[300px] flex-col text-lg">
-                        <ShieldAlert className="h-16 w-16 mb-4" />
-                        Close Vote & Save Results
-                    </Button>
-                </AlertDialogTrigger>
-             )}
-              {status === 'success' && (
-                 <div className="flex items-center justify-center min-h-[300px] p-4 bg-muted/30 rounded-lg">
-                    {renderStatus()}
-                 </div>
-              )}
-               {status === 'loading' && (
-                 <div className="flex items-center justify-center min-h-[300px] p-4 bg-muted/30 rounded-lg">
-                    {renderStatus()}
-                 </div>
-              )}
+  const handleResetVotes = async () => {
+    setIsResetting(true);
+    try {
+      const [votesRes, resultsRes] = await Promise.all([
+          fetch("/api/votes", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({}), // Sending an empty object will clear the votes
+          }),
+          fetch("/api/delete-results", {
+              method: 'DELETE',
+          })
+      ]);
 
-            <AlertDialogContent>
-              {status === 'idle' || status === 'connecting' || status === 'scanning' || status === 'error' ? (
-                <>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                        {status === 'idle' && 'Are you absolutely sure?'}
-                        {status === 'connecting' && 'Connecting...'}
-                        {status === 'scanning' && 'Awaiting Scan...'}
-                        {status === 'error' && 'Error'}
-                    </AlertDialogTitle>
-                    <AlertDialogDescription asChild>
-                        <div>
-                             {status === 'idle' && 'This action will close the election for all voters, generate the final results file, and cannot be undone without resetting all vote data.'}
-                             {status === 'connecting' && 'Please select the serial device from the popup window.'}
-                             {status === 'scanning' && <div className="flex justify-center">{renderStatus()}</div>}
-                             {status === 'error' && <div className="flex justify-center">{renderStatus()}</div>}
-                        </div>
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    {status === 'idle' && (
-                      <AlertDialogAction onClick={handleStartSecurityCheck}>
-                        Yes, Close Election
+      if (!votesRes.ok) {
+        throw new Error("Failed to reset votes");
+      }
+      if (!resultsRes.ok) {
+        // This is not a critical failure if the file didn't exist, so just log it.
+        console.warn("Could not delete final results file, it may not have existed.");
+      }
+      
+      toast({
+        title: "Success!",
+        description: "All votes have been reset and the election is re-opened.",
+      });
+      // Re-check status after resetting
+      await checkStatus();
+
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to reset votes. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Close Election</CardTitle>
+            <CardDescription>
+              Perform the final action of closing the election. This requires fingerprint authorization.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+             <AlertDialog open={isDialogOpen} onOpenChange={handleAlertClose}>
+                 {status === 'idle' && (
+                    <AlertDialogTrigger asChild>
+                        <Button size="lg" className="w-full min-h-[200px] flex-col text-lg">
+                            <ShieldAlert className="h-16 w-16 mb-4" />
+                            Close Vote & Save Results
+                        </Button>
+                    </AlertDialogTrigger>
+                 )}
+                  {status === 'success' && (
+                     <div className="flex items-center justify-center min-h-[200px] p-4 bg-muted/30 rounded-lg">
+                        {renderStatus()}
+                     </div>
+                  )}
+                   {status === 'loading' && (
+                     <div className="flex items-center justify-center min-h-[200px] p-4 bg-muted/30 rounded-lg">
+                        {renderStatus()}
+                     </div>
+                  )}
+
+                <AlertDialogContent>
+                  {status === 'idle' || status === 'connecting' || status === 'scanning' || status === 'error' ? (
+                    <>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            {status === 'idle' && 'Are you absolutely sure?'}
+                            {status === 'connecting' && 'Connecting...'}
+                            {status === 'scanning' && 'Awaiting Scan...'}
+                            {status === 'error' && 'Error'}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription asChild>
+                            <div>
+                                 {status === 'idle' && 'This action will close the election for all voters, generate the final results file, and cannot be undone without resetting all vote data.'}
+                                 {status === 'connecting' && 'Please select the serial device from the popup window.'}
+                                 {status === 'scanning' && <div className="flex justify-center">{renderStatus()}</div>}
+                                 {status === 'error' && <div className="flex justify-center">{renderStatus()}</div>}
+                            </div>
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        {status === 'idle' && (
+                          <AlertDialogAction onClick={handleStartSecurityCheck}>
+                            Yes, Close Election
+                          </AlertDialogAction>
+                        )}
+                        {status === 'error' && (
+                          <AlertDialogAction onClick={handleStartSecurityCheck}>
+                            Try Again
+                          </AlertDialogAction>
+                        )}
+                      </AlertDialogFooter>
+                    </>
+                  ) : (
+                    <div className="p-6">
+                        {renderStatus()}
+                    </div>
+                  )}
+                </AlertDialogContent>
+            </AlertDialog>
+          </CardContent>
+        </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-destructive">Danger Zone</CardTitle>
+                <CardDescription>
+                    These are destructive actions. Be absolutely sure before proceeding.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                 <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" disabled={isResetting}>
+                        {isResetting && <Loader2 className="mr-2 animate-spin" />}
+                      <Trash className="mr-2" />
+                      Reset All Votes
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete all casted votes, remove the final results file, and re-open the election.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleResetVotes} className="bg-destructive hover:bg-destructive/90">
+                        Yes, reset election
                       </AlertDialogAction>
-                    )}
-                    {status === 'error' && (
-                      <AlertDialogAction onClick={handleStartSecurityCheck}>
-                        Try Again
-                      </AlertDialogAction>
-                    )}
-                  </AlertDialogFooter>
-                </>
-              ) : (
-                <div className="p-6">
-                    {renderStatus()}
-                </div>
-              )}
-            </AlertDialogContent>
-        </AlertDialog>
-      </CardContent>
-    </Card>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+            </CardContent>
+        </Card>
+    </div>
   );
 }
+
+    
