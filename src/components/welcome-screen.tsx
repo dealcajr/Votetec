@@ -37,7 +37,7 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
     const verifyVoter = async () => {
       try {
         if (voterId === 'VOTER-001') {
-          postLog('Admin access initiated by VOTER-001.', 'INFO');
+          postLog('Admin access initiated by special ID.', 'INFO');
           setStatus('admin');
           return;
         }
@@ -76,7 +76,9 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
       }
     };
     
-    verifyVoter();
+    // Use a small delay to make loading state visible
+    const timer = setTimeout(verifyVoter, 500);
+    return () => clearTimeout(timer);
 
   }, [voterId, votes, toast]);
 
@@ -121,9 +123,9 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
               <KeyRound className="h-20 w-20 text-primary animate-scale-in" />
               <div className="space-y-1">
                 <h2 className="text-2xl font-semibold tracking-tight">
-                  Admin Access
+                  Admin Access Detected
                 </h2>
-                <p className="text-muted-foreground">Welcome, Administrator.</p>
+                <p className="text-muted-foreground">This ID provides access to the admin area.</p>
               </div>
             </div>
             <div className="grid grid-cols-1 gap-2">
