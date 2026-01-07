@@ -4,19 +4,16 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { AppSettings } from './api/settings/route';
 import { ThemeProvider } from '@/components/theme-provider';
+import fs from 'fs/promises';
+import path from 'path';
 
 async function getAppSettings(): Promise<AppSettings> {
-  // This is a placeholder. In a real app, you'd fetch this from a service
-  // or have it available during the build process.
-  // For this example, we fetch it on every request, which is not optimal.
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_URL || 'http://localhost:9002'}/api/settings`, { cache: 'no-store' });
-    if (!res.ok) {
-        throw new Error("Failed to fetch settings")
-    }
-    return res.json();
+    const filePath = path.resolve(process.cwd(), 'public/settings.json');
+    const data = await fs.readFile(filePath, 'utf-8');
+    return JSON.parse(data);
   } catch(e) {
-    // Return default settings if fetch fails
+    // Return default settings if the file doesn't exist or there's an error
     return {
         appName: "VoteChain",
         appDescription: "A secure and transparent voting system.",
@@ -26,6 +23,8 @@ async function getAppSettings(): Promise<AppSettings> {
             primary: "216 100% 74%",
             accent: "120 60% 45%",
         },
+        adminPasscode: "admin123",
+        trustedFingerprintId: "VOTER-001",
     }
   }
 }
