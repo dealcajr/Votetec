@@ -893,5 +893,45 @@
     "message": "Voter 112562130007 started the voting process.",
     "type": "INFO",
     "timestamp": "2026-01-07T03:43:06.846Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T03:44:35.775Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:44:37.041Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-07T03:44:40.884Z"
+  },
+  {
+    "message": "Voter 112562130007 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:44:42.224Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T03:50:59.713Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:51:08.948Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-07T03:52:43.035Z"
+  },
+  {
+    "message": "Voter 112562130007 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:52:47.455Z"
   }
 ]

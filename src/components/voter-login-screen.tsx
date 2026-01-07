@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardHeader, CardDescription } from "@/components/ui/card";
-import { User, LogIn, AlertTriangle, Usb, Loader2 } from "lucide-react";
+import { User, LogIn, AlertTriangle, Usb, Loader2, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { postLog } from "./vote-app";
+import Link from "next/link";
 
 interface VoterLoginScreenProps {
   onLogin: (voterId: string) => void;
@@ -170,6 +171,12 @@ export default function VoterLoginScreen({ onLogin }: VoterLoginScreenProps) {
               <LogIn className="mr-2" />
               Continue
             </Button>
+          </div>
+          <div className="text-center text-sm text-muted-foreground pt-4">
+              Don't have an account?{" "}
+              <Link href="/register" className="underline text-primary hover:text-primary/80">
+                  Register here
+              </Link>
           </div>
         </CardContent>
       </form>
