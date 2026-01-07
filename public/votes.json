@@ -1,1 +1,20 @@
-{}
+{
+  "112527130012": {
+    "President": "candidate-1758292470339",
+    "Senior High School Vice President": "candidate-1758292513611",
+    "Junior High School Vice President": "candidate-1758294176166",
+    "Secretary": "candidate-1758294253500",
+    "Treasurer": "candidate-1758294421982",
+    "Auditor": "candidate-1758294481053",
+    "Public Information Officer": null,
+    "Protocol Officer": null,
+    "Grade 8 Representative": [
+      "candidate-1767756851610",
+      "candidate-1767756877417"
+    ],
+    "Grade 9 Representative": [],
+    "Grade 10 Representative": [],
+    "Grade 11 Representative": [],
+    "Grade 12 Representative": []
+  }
+}

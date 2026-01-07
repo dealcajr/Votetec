@@ -251,7 +251,7 @@ export function VoteApp() {
   return (
     <>
       <Toaster />
-      <Card className="w-full max-w-lg shadow-2xl animate-fade-in border-0 sm:border">
+      <Card className="w-full max-w-4xl shadow-2xl animate-fade-in border-0 sm:border">
         <CardHeader className="text-center relative">
           <CardTitle className="text-3xl font-bold text-primary/90">
             {appSettings?.appName || "VoteChain"}

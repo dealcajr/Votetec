@@ -85,5 +85,19 @@
     "partylist": "Sapagueta Partylist",
     "icon": "User",
     "position": "Auditor"
+  },
+  {
+    "id": "candidate-1767756851610",
+    "name": "Juan Dela Cruz",
+    "partylist": "Padayon Partylist",
+    "icon": "User",
+    "position": "Grade 8 Representative"
+  },
+  {
+    "id": "candidate-1767756877417",
+    "name": "Maria Clara",
+    "partylist": "Padayon Partylist",
+    "icon": "User",
+    "position": "Grade 8 Representative"
   }
 ]

@@ -823,5 +823,75 @@
     "message": "Voter 112527130012 started the voting process.",
     "type": "INFO",
     "timestamp": "2026-01-07T03:19:32.106Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-07T03:30:59.666Z"
+  },
+  {
+    "message": "Voter 112527130012 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:31:01.018Z"
+  },
+  {
+    "message": "Attempting to connect to smart key scanner.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:31:35.072Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-07T03:33:25.237Z"
+  },
+  {
+    "message": "Voter 112527130012 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:33:34.427Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-07T03:35:10.063Z"
+  },
+  {
+    "message": "Voter 112527130012 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:35:11.257Z"
+  },
+  {
+    "message": "Voter 112527130012 is submitting their vote.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:35:51.215Z"
+  },
+  {
+    "message": "Voter 112527130012 successfully submitted their vote.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-07T03:35:51.666Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:35:55.927Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T03:35:59.479Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:36:44.558Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-07T03:36:47.973Z"
+  },
+  {
+    "message": "Voter 112562130007 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:43:06.846Z"
   }
 ]

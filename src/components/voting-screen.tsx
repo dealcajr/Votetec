@@ -101,7 +101,7 @@ export default function VotingScreen({
   const handleSingleSelect = (position: Candidate['position'], candidateId: string) => {
     onSelectVote({
         ...selectedVotes,
-        [position]: candidateId,
+        [position]: selectedVotes[position] === candidateId ? null : candidateId,
     });
   };
 
@@ -133,7 +133,7 @@ export default function VotingScreen({
           Select one for each position, and up to two for Representatives.
         </p>
       </div>
-      <Accordion type="multiple" className="w-full space-y-1" defaultValue={positions}>
+      <Accordion type="multiple" className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-8" defaultValue={positions}>
         {positions.map((position) => {
           const isRepresentative = position.includes('Representative');
           const candidatesForPosition = groupedCandidates[position] || [];
