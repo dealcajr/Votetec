@@ -15,6 +15,8 @@ const settingsSchema = z.object({
   appName: z.string().min(1),
   appDescription: z.string(),
   theme: themeSchema,
+  adminPasscode: z.string().min(1, "Admin Passcode is required"),
+  trustedFingerprintId: z.string().min(1, "Trusted Fingerprint ID is required"),
 });
 
 export type AppSettings = z.infer<typeof settingsSchema>;
@@ -32,6 +34,8 @@ const defaultSettings: AppSettings = {
         primary: "216 100% 74%",
         accent: "120 60% 45%",
     },
+    adminPasscode: "admin123",
+    trustedFingerprintId: "VOTER-001",
 };
 
 // Ensure default settings file exists

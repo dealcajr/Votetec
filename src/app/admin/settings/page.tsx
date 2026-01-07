@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { AppSettings } from "@/app/api/settings/route";
-import { Save } from "lucide-react";
+import { KeyRound, Save } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -28,6 +28,8 @@ const settingsSchema = z.object({
   appName: z.string().min(1, "App Name is required"),
   appDescription: z.string(),
   theme: themeSchema,
+  adminPasscode: z.string().min(1, "Admin Passcode is required"),
+  trustedFingerprintId: z.string().min(1, "Trusted Fingerprint ID is required"),
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
@@ -135,6 +137,49 @@ function GeneralSettingsTab({ control, errors, watch, isSaving }: { control: any
   );
 }
 
+function SecuritySettingsTab({ control, errors, isSaving }: { control: any, errors: any, isSaving: boolean }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Security Settings</CardTitle>
+        <CardDescription>
+          Manage passcodes and other security-related settings.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6 max-w-md">
+        <div>
+          <Label htmlFor="adminPasscode">Admin Passcode</Label>
+          <div className="relative">
+             <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+             <Controller
+                name="adminPasscode"
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} id="adminPasscode" type="password" disabled={isSaving} className="pl-10" />
+                )}
+              />
+          </div>
+          {errors.adminPasscode && <p className="text-sm text-destructive mt-1">{errors.adminPasscode.message}</p>}
+           <p className="text-xs text-muted-foreground mt-2">This is the passcode used to log into the admin dashboard.</p>
+        </div>
+        <div>
+          <Label htmlFor="trustedFingerprintId">Trusted Fingerprint ID</Label>
+           <div className="relative">
+             <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Controller
+                name="trustedFingerprintId"
+                control={control}
+                render={({ field }) => <Input {...field} id="trustedFingerprintId" disabled={isSaving} className="pl-10"/>}
+            />
+           </div>
+          {errors.trustedFingerprintId && <p className="text-sm text-destructive mt-1">{errors.trustedFingerprintId.message}</p>}
+          <p className="text-xs text-muted-foreground mt-2">The unique ID sent by the authorized device (fingerprint scanner, smart key) to perform high-privilege actions like closing an election.</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 
 export default function SettingsPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -149,15 +194,30 @@ export default function SettingsPage() {
     watch
   } = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
-    defaultValues: {
-      appName: "",
-      appDescription: "",
-      theme: {
-        background: "0 0% 100%",
-        foreground: "240 10% 3.9%",
-        primary: "216 100% 74%",
-        accent: "120 60% 45%",
-      }
+    defaultValues: async () => {
+        try {
+            const res = await fetch("/api/settings");
+            if (!res.ok) throw new Error("Failed to fetch settings");
+            return res.json();
+        } catch (error) {
+             toast({
+                title: "Error",
+                description: "Could not load default settings.",
+                variant: "destructive",
+            });
+            return {
+                appName: "VoteChain",
+                appDescription: "A simulated, secure and transparent voting system.",
+                theme: {
+                    background: "0 0% 100%",
+                    foreground: "240 10% 3.9%",
+                    primary: "216 100% 74%",
+                    accent: "120 60% 45%",
+                },
+                adminPasscode: "",
+                trustedFingerprintId: "",
+            };
+        }
     }
   });
 
@@ -237,10 +297,7 @@ export default function SettingsPage() {
                     <GeneralSettingsTab control={control} errors={errors} watch={watch} isSaving={isSaving} />
                 </TabsContent>
                 <TabsContent value="security">
-                    <Card>
-                        <CardHeader><CardTitle>Security Settings</CardTitle></CardHeader>
-                        <CardContent><p className="text-muted-foreground">Security settings will be configured here.</p></CardContent>
-                    </Card>
+                   <SecuritySettingsTab control={control} errors={errors} isSaving={isSaving} />
                 </TabsContent>
                 <TabsContent value="network">
                      <Card>

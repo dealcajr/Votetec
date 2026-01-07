@@ -26,29 +26,37 @@ import { Fingerprint, Loader2, XCircle, CheckCircle, ShieldAlert, Trash } from "
 import { cn } from "@/lib/utils";
 import { postLog } from "./vote-app";
 import { SelectedVotes } from "./vote-app";
+import type { AppSettings } from "@/app/api/settings/route";
 
 type SecurityStatus = "idle" | "connecting" | "scanning" | "error" | "success" | "loading";
-
-// In a real app, this would be a list of trusted teacher fingerprint templates
-const TRUSTED_FINGERPRINT_DATA = "VOTER-001"; 
 
 export default function ElectionActions() {
   const [status, setStatus] = useState<SecurityStatus>("loading");
   const [error, setError] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [trustedFingerprintId, setTrustedFingerprintId] = useState("");
 
   const portRef = useRef<SerialPort | null>(null);
   const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null);
   const keepReadingRef = useRef(false);
   const { toast } = useToast();
 
-  const checkStatus = useCallback(async () => {
+  const checkStatusAndSettings = useCallback(async () => {
     try {
-        const res = await fetch("/api/election-status");
-        if (!res.ok) throw new Error("Could not check status");
-        const data = await res.json();
-        if (data.status === 'closed') {
+        const [statusRes, settingsRes] = await Promise.all([
+             fetch("/api/election-status"),
+             fetch("/api/settings")
+        ]);
+        if (!statusRes.ok) throw new Error("Could not check status");
+        if (!settingsRes.ok) throw new Error("Could not load settings");
+
+        const statusData = await statusRes.json();
+        const settingsData: AppSettings = await settingsRes.json();
+
+        setTrustedFingerprintId(settingsData.trustedFingerprintId);
+
+        if (statusData.status === 'closed') {
             setStatus('success');
         } else {
             setStatus('idle');
@@ -60,8 +68,8 @@ export default function ElectionActions() {
   }, []);
 
   useEffect(() => {
-    checkStatus();
-  }, [checkStatus]);
+    checkStatusAndSettings();
+  }, [checkStatusAndSettings]);
 
   const cleanup = useCallback(async () => {
     keepReadingRef.current = false;
@@ -165,7 +173,7 @@ export default function ElectionActions() {
               for (const line of lines) {
                 const trimmedLine = line.trim();
                 if (trimmedLine.startsWith('VOTER-')) {
-                  if (trimmedLine === TRUSTED_FINGERPRINT_DATA) {
+                  if (trimmedLine === trustedFingerprintId) {
                     
                     const reportGenerated = await generateAndSaveResults();
 
@@ -200,7 +208,7 @@ export default function ElectionActions() {
         break;
       }
     }
-  }, [toast, cleanup]);
+  }, [toast, cleanup, trustedFingerprintId]);
 
   const handleStartSecurityCheck = useCallback(async () => {
     if (!("serial" in navigator)) {
@@ -247,19 +255,9 @@ export default function ElectionActions() {
   const handleAlertClose = (open: boolean) => {
     if (!open) {
       cleanup();
-      // If we were in a final state (success/error), reset to idle, otherwise check status again
       if (status === 'success' || status === 'error') {
         setStatus('idle');
-        const checkStatusOnClose = async () => {
-            const res = await fetch("/api/election-status");
-            const data = await res.json();
-             if (data.status === 'closed') {
-                setStatus('success');
-            } else {
-                setStatus('idle');
-            }
-        }
-        checkStatusOnClose();
+        checkStatusAndSettings();
       }
     }
     setIsDialogOpen(open);
@@ -312,7 +310,6 @@ export default function ElectionActions() {
         throw new Error("Failed to reset votes");
       }
       if (!resultsRes.ok) {
-        // This is not a critical failure if the file didn't exist, so just log it.
         console.warn("Could not delete final results file, it may not have existed.");
       }
       
@@ -320,8 +317,7 @@ export default function ElectionActions() {
         title: "Success!",
         description: "All votes have been reset and the election is re-opened.",
       });
-      // Re-check status after resetting
-      await checkStatus();
+      await checkStatusAndSettings();
 
     } catch (error) {
       toast({
@@ -442,5 +438,3 @@ export default function ElectionActions() {
     </div>
   );
 }
-
-    

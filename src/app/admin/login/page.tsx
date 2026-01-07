@@ -1,25 +1,40 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle, LogIn } from "lucide-react";
+import { AlertTriangle, LogIn, Loader2 } from "lucide-react";
 import { postLog } from "@/components/vote-app";
-
-// The admin passcode is hardcoded here for simplicity.
-// In a real-world application, this should be handled securely on the backend.
-const ADMIN_PASSCODE = "admin123";
+import { AppSettings } from "@/app/api/settings/route";
 
 export default function AdminLoginPage() {
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSettingsLoading, setIsSettingsLoading] = useState(true);
+  const [adminPasscode, setAdminPasscode] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await fetch("/api/settings");
+        if (!res.ok) throw new Error("Failed to fetch settings");
+        const settings: AppSettings = await res.json();
+        setAdminPasscode(settings.adminPasscode);
+      } catch (e) {
+        setError("Could not load login settings. Please try again.");
+      } finally {
+        setIsSettingsLoading(false);
+      }
+    }
+    fetchSettings();
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,12 +42,9 @@ export default function AdminLoginPage() {
     setError("");
     postLog("Admin login attempt.", "INFO");
 
-
     // Simulate a network request
     setTimeout(() => {
-      if (passcode === ADMIN_PASSCODE) {
-        // In a real app, you would get a token from a server.
-        // For this demo, we'll use localStorage.
+      if (passcode === adminPasscode) {
         try {
           localStorage.setItem("admin-auth", "true");
           postLog("Admin login successful.", "SUCCESS");
@@ -58,28 +70,36 @@ export default function AdminLoginPage() {
             <CardDescription>Enter the passcode to manage the election.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="passcode">Passcode</Label>
-              <Input
-                id="passcode"
-                type="password"
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                required
-                disabled={isLoading}
-                placeholder="••••••••"
-              />
-            </div>
-            {error && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Login Failed</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
+            {isSettingsLoading ? (
+                <div className="flex items-center justify-center p-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                </div>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="passcode">Passcode</Label>
+                  <Input
+                    id="passcode"
+                    type="password"
+                    value={passcode}
+                    onChange={(e) => setPasscode(e.target.value)}
+                    required
+                    disabled={isLoading}
+                    placeholder="••••••••"
+                  />
+                </div>
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Login Failed</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+              </>
             )}
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading || isSettingsLoading}>
               {isLoading ? "Verifying..." : "Login"}
               {!isLoading && <LogIn className="ml-2 h-4 w-4" />}
             </Button>
