@@ -1,3 +1,4 @@
+
 "use client";
 import DeviceTerminal from "@/components/device-terminal";
 

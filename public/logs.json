@@ -708,5 +708,70 @@
     "message": "Session reset. Ready for new voter.",
     "type": "INFO",
     "timestamp": "2026-01-03T10:42:22.143Z"
+  },
+  {
+    "message": "Failed to connect for security check: Failed to connect to the device.",
+    "type": "ERROR",
+    "timestamp": "2026-01-03T10:53:54.834Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T01:49:29.065Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T01:49:29.200Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T01:49:31.414Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T01:49:34.683Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T01:49:34.824Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T01:49:36.068Z"
+  },
+  {
+    "message": "Scan check: Voter 112569130018 (ELPA, AIRA SINGSON) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T01:49:46.191Z"
+  },
+  {
+    "message": "Scan check: Voter 112569130018 (ELPA, AIRA SINGSON) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T01:49:46.326Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T01:49:48.505Z"
+  },
+  {
+    "message": "Scan check: Failed to find voter with ID 102939484483.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T01:49:52.132Z"
+  },
+  {
+    "message": "Scan check: Failed to find voter with ID 102939484483.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T01:49:52.297Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T01:49:53.489Z"
   }
 ]

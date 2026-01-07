@@ -131,7 +131,7 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
                  Go to Admin Login
                </Button>
                <Button onClick={onReset} variant="outline" className="w-full">
-                 Scan Another Fingerprint
+                 Scan Another ID
                </Button>
             </div>
           </motion.div>
@@ -208,7 +208,7 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
                 </div>
             </div>
              <Button onClick={onReset} variant="outline" className="w-full">
-              Enter Another Voter
+              Enter Another ID
             </Button>
           </motion.div>
         )}
@@ -216,5 +216,3 @@ export default function WelcomeScreen({ voterId, onStart, onReset, votes }: Welc
     </div>
   );
 }
-
-    

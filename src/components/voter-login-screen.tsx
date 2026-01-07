@@ -19,12 +19,12 @@ export default function VoterLoginScreen({ onLogin }: VoterLoginScreenProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (voterId.trim().length === 12) {
+    if (voterId.trim()) {
       onLogin(voterId.trim());
     }
   };
 
-  const isInvalidLrn = voterId.length > 0 && voterId.length !== 12;
+  const isInvalidLrn = voterId.length > 0 && /^\d+$/.test(voterId) && voterId.length !== 12;
 
   return (
     <div className="w-full max-w-sm animate-fade-in">
@@ -34,27 +34,21 @@ export default function VoterLoginScreen({ onLogin }: VoterLoginScreenProps) {
                     Voter Verification
                 </h2>
                 <p className="text-muted-foreground">
-                    Please enter your Learner Reference Number (LRN).
+                    Please enter your Learner Reference Number (LRN) or scan your ID.
                 </p>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="voterId" className="sr-only">Voter ID (LRN)</Label>
+                    <Label htmlFor="voterId" className="sr-only">Voter ID</Label>
                     <div className="relative">
                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             id="voterId"
                             type="text"
                             value={voterId}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                // Allow only numbers and limit to 12 characters
-                                if (/^\d*$/.test(value) && value.length <= 12) {
-                                    setVoterId(value);
-                                }
-                            }}
+                            onChange={(e) => setVoterId(e.target.value)}
                             required
-                            placeholder="Enter your 12-digit LRN"
+                            placeholder="Enter your LRN or scan ID"
                             className={cn("pl-10", isInvalidLrn && "border-destructive ring-destructive ring-1")}
                         />
                     </div>
@@ -65,7 +59,7 @@ export default function VoterLoginScreen({ onLogin }: VoterLoginScreenProps) {
                         </div>
                     )}
                 </div>
-                <Button type="submit" className="w-full" disabled={voterId.trim().length !== 12}>
+                <Button type="submit" className="w-full" disabled={!voterId.trim()}>
                     <LogIn className="mr-2" />
                     Verify and Proceed
                 </Button>
