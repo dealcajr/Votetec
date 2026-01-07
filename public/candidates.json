@@ -14,7 +14,7 @@
     "name": "Norman Admin",
     "description": "Padayon Party-list",
     "icon": "Candidate",
-    "position": "Vice President",
+    "position": "Senior High School Vice President",
     "voteCount": 0,
     "rank": 1,
     "partylist": "Padayon Partylist"
@@ -34,7 +34,9 @@
     "name": "Tiara Lara",
     "partylist": "Padayon Partylist",
     "icon": "User",
-    "position": "Secretary"
+    "position": "Junior High School Vice President",
+    "voteCount": 0,
+    "rank": 1
   },
   {
     "id": "candidate-1758294253500",
@@ -57,7 +59,9 @@
     "name": "Ralph Cama",
     "partylist": "Padayon Partylist",
     "icon": "User",
-    "position": "Treasurer"
+    "position": "Secretary",
+    "voteCount": 0,
+    "rank": 1
   },
   {
     "id": "candidate-1758294421982",
@@ -71,7 +75,9 @@
     "name": "Marian Basas",
     "partylist": "Padayon Partylist",
     "icon": "User",
-    "position": "Auditor"
+    "position": "Treasurer",
+    "voteCount": 0,
+    "rank": 1
   },
   {
     "id": "candidate-1758294481053",

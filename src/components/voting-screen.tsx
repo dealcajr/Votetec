@@ -2,22 +2,19 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Candidate } from "@/types/candidate";
-import { User, Vote, ShieldCheck, Rocket } from "lucide-react";
+import { User, Check, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { SelectedVotes } from "./vote-app";
-import { Checkbox } from "./ui/checkbox";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 const iconMap = {
-  User: <User className="h-6 w-6 text-primary/80" />,
-  Vote: <Vote className="h-6 w-6 text-primary/80" />,
-  ShieldCheck: <ShieldCheck className="h-6 w-6 text-primary/80" />,
-  Rocket: <Rocket className="h-6 w-6 text-primary/80" />,
+  User: User,
+  Users: Users,
 };
+
 
 interface VotingScreenProps {
   candidates: Candidate[];
@@ -27,6 +24,34 @@ interface VotingScreenProps {
   onVote: () => void;
   isVoteDisabled: boolean;
 }
+
+const CandidateListItem = ({ candidate, isSelected, onSelect, disabled = false }: { candidate: Candidate, isSelected: boolean, onSelect: () => void, disabled?: boolean }) => {
+    const Icon = iconMap[candidate.icon as keyof typeof iconMap] || User;
+    return (
+        <button
+            onClick={onSelect}
+            disabled={disabled}
+            className={cn(
+                "w-full text-left p-2 rounded-lg flex items-center gap-4 transition-colors duration-200",
+                "hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/50",
+                isSelected ? "bg-primary/10" : "bg-transparent",
+                disabled && "opacity-50 cursor-not-allowed"
+            )}
+        >
+            <Avatar className="h-10 w-10">
+                <AvatarFallback className={cn("bg-muted", isSelected && "bg-primary/20")}>
+                    <Icon className={cn("h-5 w-5", isSelected ? "text-primary" : "text-muted-foreground")} />
+                </AvatarFallback>
+            </Avatar>
+            <div className="flex-grow">
+                <p className="font-semibold text-card-foreground">{candidate.name}</p>
+                <p className="text-sm text-muted-foreground">{candidate.partylist}</p>
+            </div>
+            {isSelected && <Check className="h-5 w-5 text-primary" />}
+        </button>
+    );
+};
+
 
 export default function VotingScreen({
   candidates,
@@ -40,10 +65,7 @@ export default function VotingScreen({
     return (
       <div className="space-y-4 w-full">
         {[...Array(3)].map((_, i) => (
-          <div
-            key={i}
-            className="flex items-center space-x-4 rounded-md border p-4"
-          >
+          <div key={i} className="flex items-center space-x-4 p-4">
             <Skeleton className="h-12 w-12 rounded-full" />
             <div className="space-y-2">
               <Skeleton className="h-4 w-[250px]" />
@@ -106,109 +128,55 @@ export default function VotingScreen({
   return (
     <div className="space-y-6 w-full animate-fade-in">
       <div className="text-center">
-        <h2 className="text-2xl font-semibold tracking-tight">Cast Your Vote</h2>
+        <h1 className="text-2xl font-bold tracking-tight">Choose your candidates</h1>
         <p className="text-muted-foreground">
-          Select one candidate for each position, and up to two for Representatives.
+          Select one for each position, and up to two for Representatives.
         </p>
       </div>
-      <Accordion type="multiple" className="w-full space-y-3" defaultValue={positions}>
+      <Accordion type="multiple" className="w-full space-y-1" defaultValue={positions}>
         {positions.map((position) => {
           const isRepresentative = position.includes('Representative');
+          const candidatesForPosition = groupedCandidates[position] || [];
 
-          return groupedCandidates[position] && (
-            <AccordionItem value={position} key={position} className="border rounded-lg">
-              <AccordionTrigger className="p-4 hover:no-underline">
-                <h3 className="text-lg font-semibold text-primary/90">{position}</h3>
+          return candidatesForPosition.length > 0 && (
+            <AccordionItem value={position} key={position} className="border-b">
+              <AccordionTrigger className="py-3 hover:no-underline">
+                <h3 className="text-md font-semibold text-foreground">{position}</h3>
               </AccordionTrigger>
-              <AccordionContent className="p-1">
-                {isRepresentative ? (
-                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-3">
-                        {groupedCandidates[position].map((candidate) => {
-                            const isSelected = ((selectedVotes[position] as string[]) || []).includes(candidate.id);
-                            const isDisabled = !isSelected && ((selectedVotes[position] as string[]) || []).length >= 2;
-                            return (
-                                <Label
-                                    key={candidate.id}
-                                    htmlFor={`${position}-${candidate.id}`}
-                                    className={cn(
-                                    "flex flex-col items-center justify-center space-y-3 rounded-lg border p-4 cursor-pointer transition-all duration-300 text-center",
-                                    "hover:bg-primary/10",
-                                     isSelected && "ring-2 ring-primary border-primary bg-primary/20",
-                                     isDisabled && "cursor-not-allowed opacity-50"
-                                    )}
-                                >
-                                    <div className="flex-shrink-0 bg-primary/10 p-3 rounded-full">
-                                    {iconMap[candidate.icon as keyof typeof iconMap] || (
-                                        <User className="h-6 w-6 text-primary" />
-                                    )}
-                                    </div>
-                                    <div className="flex-grow">
-                                    <p className="font-semibold text-card-foreground text-sm">
-                                        {candidate.name}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        {candidate.partylist}
-                                    </p>
-                                    </div>
-                                    <Checkbox 
-                                        id={`${position}-${candidate.id}`} 
-                                        checked={isSelected}
-                                        disabled={isDisabled}
-                                        onCheckedChange={() => handleMultiSelect(position, candidate.id)}
-                                        className="h-5 w-5"
-                                     />
-                                </Label>
-                            )
-                        })}
-                     </div>
-                ) : (
-                    <RadioGroup
-                        value={selectedVotes[position] as string ?? ""}
-                        onValueChange={(candidateId) => handleSingleSelect(position, candidateId)}
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-3"
-                    >
-                        {groupedCandidates[position].map((candidate) => (
-                        <Label
-                            key={candidate.id}
-                            htmlFor={`${position}-${candidate.id}`}
-                            className={cn(
-                            "flex flex-col items-center justify-center space-y-3 rounded-lg border p-4 cursor-pointer transition-all duration-300 text-center",
-                            "hover:bg-primary/10",
-                            selectedVotes[position] === candidate.id &&
-                                "ring-2 ring-primary border-primary bg-primary/20"
-                            )}
-                        >
-                            <div className="flex-shrink-0 bg-primary/10 p-3 rounded-full">
-                            {iconMap[candidate.icon as keyof typeof iconMap] || (
-                                <User className="h-6 w-6 text-primary" />
-                            )}
-                            </div>
-                            <div className="flex-grow">
-                            <p className="font-semibold text-card-foreground text-sm">
-                                {candidate.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                                {candidate.partylist}
-                            </p>
-                            </div>
-                            <RadioGroupItem value={candidate.id} id={`${position}-${candidate.id}`} className="h-5 w-5" />
-                        </Label>
-                        ))}
-                    </RadioGroup>
-                )}
+              <AccordionContent className="pb-2">
+                 <div className="flex flex-col gap-1">
+                    {candidatesForPosition.map((candidate) => {
+                        const isSelected = isRepresentative 
+                            ? ((selectedVotes[position] as string[]) || []).includes(candidate.id)
+                            : selectedVotes[position] === candidate.id;
+                        
+                        const isDisabled = isRepresentative && !isSelected && ((selectedVotes[position] as string[]) || []).length >= 2;
+
+                        return (
+                           <CandidateListItem 
+                                key={candidate.id}
+                                candidate={candidate}
+                                isSelected={isSelected}
+                                onSelect={() => isRepresentative ? handleMultiSelect(position, candidate.id) : handleSingleSelect(position, candidate.id)}
+                                disabled={isDisabled}
+                           />
+                        )
+                    })}
+                 </div>
               </AccordionContent>
             </AccordionItem>
           )
         })}
       </Accordion>
-      <Button
-        onClick={onVote}
-        disabled={isVoteDisabled}
-        className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-        size="lg"
-      >
-        Cast Your Vote
-      </Button>
+      <div className="pt-4">
+        <Button
+          onClick={onVote}
+          disabled={isVoteDisabled}
+          className="w-full h-12 text-base"
+        >
+          Review & Cast Your Vote
+        </Button>
+      </div>
     </div>
   );
 }

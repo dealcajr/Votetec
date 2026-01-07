@@ -773,5 +773,55 @@
     "message": "Session reset. Ready for new voter.",
     "type": "INFO",
     "timestamp": "2026-01-07T01:49:53.489Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T02:53:13.298Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T02:53:13.536Z"
+  },
+  {
+    "message": "Session reset. Ready for new voter.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T02:53:15.652Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T02:53:22.219Z"
+  },
+  {
+    "message": "Scan check: Voter 112562130007 (BASAS, MARIAN, CORPORAL) has already voted.",
+    "type": "ERROR",
+    "timestamp": "2026-01-07T02:53:22.359Z"
+  },
+  {
+    "message": "Attempting to connect to smart key scanner.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:17:38.222Z"
+  },
+  {
+    "message": "Attempting to connect to smart key scanner.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:19:03.034Z"
+  },
+  {
+    "message": "Attempting to connect to smart key scanner.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:19:10.090Z"
+  },
+  {
+    "message": "Scan check: Voter 112527130012 (DEALCA, NORMAN DE JESUS, JR. ) verified successfully.",
+    "type": "SUCCESS",
+    "timestamp": "2026-01-07T03:19:30.619Z"
+  },
+  {
+    "message": "Voter 112527130012 started the voting process.",
+    "type": "INFO",
+    "timestamp": "2026-01-07T03:19:32.106Z"
   }
 ]

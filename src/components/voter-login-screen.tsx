@@ -5,7 +5,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CardContent, CardHeader } from "@/components/ui/card";
+import { CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { User, LogIn, AlertTriangle, Usb, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -130,45 +130,45 @@ export default function VoterLoginScreen({ onLogin }: VoterLoginScreenProps) {
   const isInvalidLrn = voterId.length > 0 && /^\d+$/.test(voterId) && voterId.length !== 12;
 
   return (
-    <div className="w-full max-w-sm animate-fade-in">
+    <div className="w-full max-w-md animate-fade-in mx-auto">
       <form onSubmit={handleSubmit}>
         <CardHeader className="text-center p-0 pb-6">
-          <h2 className="text-2xl font-semibold tracking-tight">Voter Verification</h2>
-          <p className="text-muted-foreground">Please enter your ID or use a connected device.</p>
+          <h1 className="text-2xl font-bold tracking-tight">Sign in to Vote</h1>
+          <CardDescription>Enter your voter ID or use a connected device.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="voterId" className="sr-only">Voter ID</Label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
               <Input
                 id="voterId"
                 type="text"
                 value={voterId}
                 onChange={(e) => setVoterId(e.target.value)}
                 required
-                placeholder="Enter ID or use device"
-                className={cn("pl-10", isInvalidLrn && "border-destructive ring-destructive ring-1")}
+                placeholder="Enter Voter ID"
+                className={cn("pl-10 h-12 text-base", isInvalidLrn && "border-destructive ring-destructive ring-1")}
               />
             </div>
             {isInvalidLrn && (
-              <div className="flex items-center text-xs text-destructive">
+              <div className="flex items-center text-xs text-destructive px-1">
                 <AlertTriangle className="h-4 w-4 mr-1" />
                 LRN must be exactly 12 digits.
               </div>
             )}
           </div>
 
-          <div className="space-y-2">
-            <Button type="submit" className="w-full" disabled={!voterId.trim() || deviceStatus === 'connecting'}>
-              <LogIn className="mr-2" />
-              Verify and Proceed
-            </Button>
-             <Button type="button" variant="secondary" className="w-full" onClick={handleConnectDevice} disabled={deviceStatus !== 'disconnected'}>
+          <div className="flex flex-col space-y-2">
+             <Button type="button" variant="outline" className="w-full h-12 text-base" onClick={handleConnectDevice} disabled={deviceStatus !== 'disconnected'}>
                 {deviceStatus === 'connecting' && <Loader2 className="animate-spin mr-2" />}
                 {deviceStatus === 'connected' && <Usb className="mr-2 text-accent" />}
                 {deviceStatus === 'disconnected' && <Usb className="mr-2" />}
-                {deviceStatus === 'connecting' ? 'Connecting...' : deviceStatus === 'connected' ? 'Device Connected' : 'Scan with Device'}
+                {deviceStatus === 'connecting' ? 'Connecting...' : deviceStatus === 'connected' ? 'Device Connected' : 'Use Smart Key'}
+            </Button>
+            <Button type="submit" className="w-full h-12 text-base" disabled={!voterId.trim() || deviceStatus === 'connecting'}>
+              <LogIn className="mr-2" />
+              Continue
             </Button>
           </div>
         </CardContent>

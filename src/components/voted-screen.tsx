@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Lock } from "lucide-react";
 
@@ -7,28 +8,28 @@ interface VotedScreenProps {
 
 export default function VotedScreen({ onReset }: VotedScreenProps) {
   return (
-    <div className="space-y-6 text-center flex flex-col items-center animate-fade-in">
+    <div className="space-y-6 text-center flex flex-col items-center animate-fade-in w-full max-w-md mx-auto">
       <div className="relative">
-        <CheckCircle2 className="h-24 w-24 text-accent animate-scale-in" />
+        <CheckCircle2 className="h-16 w-16 text-accent animate-scale-in" />
       </div>
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight">
-          Vote Submitted Successfully!
+          Vote Submitted!
         </h2>
-        <p className="text-muted-foreground">
-          Thank you for participating in the election. Your vote is recorded.
+        <p className="text-muted-foreground max-w-sm">
+          Thank you for participating. Your vote has been securely recorded.
         </p>
       </div>
-      <div className="flex items-center space-x-2 rounded-md bg-muted p-4 w-full justify-center">
-        <Lock className="h-5 w-5 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground font-medium">
-          The system is now locked for this session.
-        </p>
-      </div>
-      <div className="flex flex-col sm:flex-row gap-2 w-full">
-        <Button onClick={onReset} variant="secondary" className="w-full">
-            Start New Session
+      
+      <div className="w-full pt-4">
+        <Button onClick={onReset} variant="outline" className="w-full h-12 text-base">
+            Finish & Start New Session
         </Button>
+      </div>
+
+       <div className="flex items-center space-x-2 text-sm text-muted-foreground pt-4">
+        <Lock className="h-4 w-4" />
+        <p>This session is now closed.</p>
       </div>
     </div>
   );
